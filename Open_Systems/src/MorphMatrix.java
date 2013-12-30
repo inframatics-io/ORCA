@@ -1,10 +1,26 @@
+/*
+ * Copyright (c) 2013 Open Systems(WWW.OPENSYSTEMS.IO). All rights reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ * FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ *
+ */
 import java.awt.*;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.Font;
-import java.awt.Frame;
 import java.awt.dnd.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -25,9 +41,11 @@ import java.util.Hashtable;
 
 
 
+
+
 import javax.swing.*;
-import javax.swing.JFileChooser;
 import javax.swing.filechooser.*;
+import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.ImageIcon;
 import javax.swing.border.BevelBorder;
@@ -43,6 +61,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+
 import layouts.*;
 
 
@@ -82,7 +101,8 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	protected JCheckBoxMenuItem menuTrlFilter;
 	
 	protected JButton createCompatMatrix, addActionItem,
-			  makeMorphMatrix,saveAttributes,backToMain,backToCompatibility,resetCompatibility;
+			  makeMorphMatrix,saveAttributes,backToMain,
+			  backToCompatibility,resetCompatibility,ref1Button;
 	protected JTextField nameTextField, trlTextField;
 	protected JTextArea descriptionTextField,infoTextField;
 	protected JTable compatMatrix, morphMatrix;
@@ -109,13 +129,15 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	Dimension buttonDim;
 	Font textFont;
 	private boolean isAttributeSaved=true;
+	private boolean isFileSaved=false;
 	protected boolean ableToSave = false;
 	protected boolean reToMorphMatrix = false;
 	
-	protected JRadioButton ref=new JRadioButton("Hyperlink");//remove late
-	protected JLabel ref1Label;//remove later
-	protected JRadioButton ref2=new JRadioButton("Hyperlink");//remove late
-	protected JLabel ref2Label;//remove later 
+	
+	//protected JRadioButton ref=new JRadioButton("Hyperlink");//remove late
+	protected JLabel probLabel, costLabel;//remove later
+	//protected JRadioButton ref2=new JRadioButton("Hyperlink");//remove late
+	//protected JLabel ref2Label;//remove later 
 	
 
 	
@@ -176,10 +198,11 @@ public class MorphMatrix extends JFrame implements ActionListener {
 			//Dialog box asking for a name
 		    String rootName=(String) JOptionPane.showInputDialog(main_desktop,"Please Enter a name for your " +
 			"Root Cause Investigation\n ex.  Name:...Gearbox Failure","Gearbox Failure");
-			if (rootName==null|| rootName.length()==0)
-				rootName="Failure Investigation";
-			treePanel = new DynamicTree(rootName,textFont);
-			newMorphMatrixFrame(true);
+		   // To Be Done: check input throughly
+			if (rootName != null /* && rootName.length() >0 */ ){
+				treePanel = new DynamicTree(rootName,textFont);
+				newMorphMatrixFrame(true);
+			}			
 		}else if (e.getSource() == menuViewDesktop){
 		}else if (e.getSource() == menuItemEdit){
 			if (true){
@@ -233,9 +256,42 @@ public class MorphMatrix extends JFrame implements ActionListener {
 			dlg.setVisible(true);
 		}
 		else if(e.getSource() == menuItemExit){
-			// check if saved 
-			//....
-			System.exit(NORMAL);
+		    // check to see if the data is saved
+		    if (!isAttributeSaved || !isFileSaved){
+			    int answer =JOptionPane.showConfirmDialog(jifNewMorphMatrixFrame,"Do you want to save the changes?");
+			    switch (answer){
+			    case JOptionPane.YES_OPTION:
+			    	boolean statusOfSaveDataToTree = saveInputsToNode(previousNode);
+					jifNewMorphMatrixFrame.repaint();
+					if (ableToSave){
+						setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+						JFileChooser m_chooser=new JFileChooser();
+						m_chooser.addChoosableFileFilter(new xmlFileFilter("xml","XML Data"));
+						if (m_currentDir == null )
+							m_chooser.setCurrentDirectory((new File(treePanel.rootNode.toString())));
+						else
+							m_chooser.setCurrentDirectory(m_currentDir);
+						int result=m_chooser.showSaveDialog(main_desktop);
+						repaint();
+						if (result != JFileChooser.APPROVE_OPTION){
+							setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+							return;
+						}
+						m_currentDir=m_chooser.getCurrentDirectory();
+						File m_currentFile= m_chooser.getSelectedFile();
+						Save saveFile = new Save(treePanel.treeModel, treePanel.tree,m_currentFile);
+						setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+						isFileSaved=true;
+						System.exit(NORMAL);
+					}
+				case JOptionPane.NO_OPTION:
+					System.exit(NORMAL);
+				case JOptionPane.CANCEL_OPTION:;
+			    }
+			}
+		    
+			
+			
 		}
 		else if (ADD_COMMAND.equals(command)) {
             //Add button clicked
@@ -276,6 +332,16 @@ public class MorphMatrix extends JFrame implements ActionListener {
             //Clear button clicked.
             treePanel.expand();
         }
+		else if(e.getSource() == ref1Button){
+			JFileChooser ref_chooser=new JFileChooser();
+			if (m_currentDir == null ){ref_chooser.setCurrentDirectory(new File("."));}
+			else{ref_chooser.setCurrentDirectory(m_currentDir);}
+			int result=ref_chooser.showOpenDialog(main_desktop);
+		    m_currentDir=ref_chooser.getCurrentDirectory();
+		    if (result == JFileChooser.APPROVE_OPTION ){
+		    	System.out.println(ref_chooser.getSelectedFile().getName());
+			}
+		}
 		else if (e.getSource() == saveAttributes){
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)
 			treePanel.tree.getLastSelectedPathComponent();
@@ -361,7 +427,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 //	and will make a new Morph matrix
 	public void newMorphMatrixFrame(boolean aNewFrame) {
 		jifNewMorphMatrixFrame = new JInternalFrame(
-				"Make Morph Matrix",true,true,true,true);
+				"Make Fault Tree",true,true,true,true);
 		jifNewMorphMatrixFrame.setBounds(0,0,750,400);
 		jifNewMorphMatrixFrame.setDefaultCloseOperation(HIDE_ON_CLOSE);
 
@@ -403,53 +469,46 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		descriptionTextField = new JTextArea(" ",4,20);
 		descriptionTextField.setLineWrap(true);
 		descriptionTextField.addKeyListener(akeyListener);
+		
 		//Reference 1
-		ButtonGroup group= new ButtonGroup();
-		ref=new JRadioButton("Hyperlink");
-		ref1Label=new JLabel("Reference: ");
+		
+		//ref1Label=new JLabel("<HTML><A HREF=URL>Reference</A>: </HTML>");
+		JTextField ref1TextField=new JTextField(15);// have to make it Global
+		
+		// Probability
+		probLabel=new JLabel("Probability:");
+		JTextField probTextField=new JTextField(10);// have to make it Global
 
-		JRadioButton bk=new  JRadioButton("Video/Audio");
-		
-		bk.setSelected(true);
-		group.add(ref);
-		group.add(bk);
-		
-		//Reference 2
-		ButtonGroup group2= new ButtonGroup();
-		ref2=new JRadioButton("Hyperlink");
-		ref2Label=new JLabel("Reference: ");
-		
-		
-		JRadioButton VideoA=new  JRadioButton("Video/Audio");
-		VideoA.setSelected(true);
-		group2.add(ref2);
-		group2.add(VideoA);
-
-		ActionListener RadioButtonListener=new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				if(ref.isSelected()){
-					ref1Label.setText("<HTML><A HREF=URL>Reference</A>: </HTML>");
-				}else{
-					ref1Label.setText("Reference: ");
-				}
-				if(ref2.isSelected()){
-					ref2Label.setText("<HTML><A HREF=URL>Reference</A>: </HTML>");
-				}else{
-					ref2Label.setText("Reference: ");
-				}
-					
-			}
-		};
-		ref.addActionListener(RadioButtonListener);
-		bk.addActionListener(RadioButtonListener);
-		ref2.addActionListener(RadioButtonListener);
-		VideoA.addActionListener(RadioButtonListener);
 		//Cost
+		costLabel=new JLabel("Cost:");
+		JTextField costTextField=new JTextField(10);// have to make it Global
+
+		ref1Button = new JButton("<HTML><A HREF=URL>Reference</A>: </HTML>");
+		ref1Button.setOpaque(false);
+		ref1Button.setMargin(new Insets(0, 0, 0, 0));
+
+				
+		ref1Button.addActionListener(this);
+		
+	
+
+		
+		
+//		DELETE
+
+//		ButtonGroup group= new ButtonGroup();
+//		ref2=new JRadioButton("Hyperlink");
+//		JRadioButton VideoA=new  JRadioButton("file");
+//		ref2Label=new JLabel("Reference: ");
+//		JRadioButton VideoA=new  JRadioButton("file");
+//		VideoA.setSelected(true);
+//		bk.addActionListener(RadioButtonListener);
+//		VideoA.addActionListener(RadioButtonListener);
 		
 		
 	
-		JTextField ref1TextField=new JTextField(15);// have to make it Global
-		JTextField ref2TextField=new JTextField(15);
+		
+		
 		
 //		this is where all the features are added
 		innerRightPanel.add(nameLabel, ParagraphLayout.NEW_PARAGRAPH);
@@ -461,14 +520,19 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		innerRightPanel.add(descriptionTextLabel, ParagraphLayout.NEW_PARAGRAPH_TOP);
 		JScrollPane scrollPane = new JScrollPane(descriptionTextField);
 		innerRightPanel.add(scrollPane);
-		innerRightPanel.add(ref1Label,ParagraphLayout.NEW_PARAGRAPH);
-		innerRightPanel.add(ref);
-		innerRightPanel.add(bk);
+		
+		innerRightPanel.add(probLabel,ParagraphLayout.NEW_PARAGRAPH);
+		innerRightPanel.add(probTextField);
+		
+		innerRightPanel.add(costLabel,ParagraphLayout.NEW_PARAGRAPH);
+		innerRightPanel.add(costTextField);
+		
+		innerRightPanel.add(ref1Button,ParagraphLayout.NEW_PARAGRAPH);
+		//innerRightPanel.add(ref); change with URL
+		//innerRightPanel.add(bk);  change with FILE
 		innerRightPanel.add(ref1TextField,ParagraphLayout.NEW_LINE);
-		innerRightPanel.add(ref2Label,ParagraphLayout.NEW_PARAGRAPH);
-		innerRightPanel.add(ref2);
-		innerRightPanel.add(VideoA);
-		innerRightPanel.add(ref2TextField,ParagraphLayout.NEW_LINE);
+		
+
 		rightMainPanel.add(innerRightPanel,BorderLayout.NORTH);
 		rightMainPanel.add(middleRightPanel,BorderLayout.CENTER);
 
@@ -485,7 +549,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		saveAttributes.setVisible(false);
 		middleRightPanel.add(saveAttributes);
 
-		createCompatMatrix = new JButton("Create Compatibility Matrix ");
+		createCompatMatrix = new JButton("Manage Action Items ");
 		createCompatMatrix.addActionListener(this);
 
 		rightButtonBar.add(addActionItem);
@@ -1670,13 +1734,11 @@ class AboutBox extends JDialog {
 		p.add(lbl);
 		getContentPane().add(p, BorderLayout.WEST);
 
-		String message = "Open Systems\n" +
-				"\n" +
-				"Root Cause and Corrective Action Tool \n"+
-			" Part of Open Systems(c) Toolkit\nWriten by:\n"+
-			"Payman Touliat\n"+
-			"If you are interested in the source code\n" +
-			"contact me at payman@touliat.com";
+		String message = "Open Systems\n\n" +
+				"Root Cause and Corrective Action Tool\n"+
+				"Part of Open Systems(c) Toolkit\n\n"+
+				"Please visit us:\n    www.opensystems.io";
+		//TO BE DONE: <HTML><A HREF=\"www.open-systems.co\">www.opensystems.io</A>\n";
 		JTextArea txt = new JTextArea(message);
 		txt.setBorder(new EmptyBorder(5, 10, 5, 10));
 		txt.setFont(new Font("Helvetica", Font.BOLD, 12));
