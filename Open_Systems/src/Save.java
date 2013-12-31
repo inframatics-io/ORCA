@@ -118,7 +118,12 @@ public class Save {
 							"<Name>" + xmlFilter(nodeIn.getName()) + "</Name>"+
 							"<ID>" + nodeIn.getId()+"</ID>" +
 							"<TRL>"+ nodeIn.getTRL_Number()+"</TRL>"+
-							"<Description>"+ xmlFilter(nodeIn.getdesctiptionText()) + "</Description>";
+							"<Description>"+ xmlFilter(nodeIn.getdesctiptionText()) + "</Description>"+
+							"<Probability>"+ nodeIn.getProbability()+ "</Probability>"+
+							"<Difficulty>"+ nodeIn.getDifficulty()+ "</Difficulty>"+
+							"<Cost>"+ nodeIn.getCost()+ "</Cost>"+
+							"<Reference>"+ xmlFilter(nodeIn.getReferenceURL()) + "</Reference>";
+							
 							//+"<Parent-ID>"+nodeIn.getParentId()+"</Parent-ID>";
 			p.println(value);
 		}
@@ -127,7 +132,11 @@ public class Save {
 							"<Name>"+xmlFilter(nodeIn.getName()) + "</Name>" +
 							"<ID>"+nodeIn.getId() +"</ID>" +
 							"<TRL>"+nodeIn.getTRL_Number()+"</TRL>" +
-							"<Description>"+ xmlFilter(nodeIn.getdesctiptionText()) + "</Description>";
+							"<Description>"+ xmlFilter(nodeIn.getdesctiptionText()) + "</Description>"+
+							"<Probability>"+ nodeIn.getProbability()+ "</Probability>"+
+							"<Difficulty>"+ nodeIn.getDifficulty()+ "</Difficulty>"+
+							"<Cost>"+ nodeIn.getCost()+ "</Cost>"+
+							"<Reference>"+ xmlFilter(nodeIn.ref_URL) + "</Reference>";
 			p.println(value);
 		}
 		else if (command == "<Attribute>"){
@@ -136,6 +145,10 @@ public class Save {
 							"<ID>"+nodeIn.getId()+"</ID>"+
 							"<TRL>"+nodeIn.getTRL_Number()+"</TRL>" +  
 							"<Description>"+ xmlFilter(nodeIn.getdesctiptionText())+"</Description>" +
+							"<Probability>"+ nodeIn.getProbability()+ "</Probability>"+
+							"<Difficulty>"+ nodeIn.getDifficulty()+ "</Difficulty>"+
+							"<Cost>"+ nodeIn.getCost()+ "</Cost>"+
+							"<Reference>"+ xmlFilter(nodeIn.ref_URL) + "</Reference>"+
 							"<Selected>"+nodeIn.myCheckBox.isSelected()+"</Selected>";
 			p.println(value);
   			p.println("   <Incompatible>"+DataObjectVectorToString(nodeIn.disallowVector)+"</Incompatible>"+"</Attribute>");

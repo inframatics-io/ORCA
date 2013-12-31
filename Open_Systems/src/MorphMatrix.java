@@ -103,12 +103,18 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	protected JButton createCompatMatrix, addActionItem,
 			  makeMorphMatrix,saveAttributes,backToMain,
 			  backToCompatibility,resetCompatibility,ref1Button;
-	protected JTextField nameTextField, trlTextField;
+	protected JTextField nameTextField, trlTextField, ref1TextField;
 	protected JTextArea descriptionTextField,infoTextField;
 	protected JTable compatMatrix, morphMatrix;
+
+	protected JRadioButton probability_lowRadioButton,probability_midRadioButton, probability_highRadioButton,
+						cost_lowRadioButton, cost_midRadioButton, cost_highRadioButton, 
+						difficulty_lowRadioButton, difficulty_midRadioButton, difficulty_highRadioButton;
 	protected int maxNumberOfAttributes;
-
-
+	protected String node_probability;
+	protected String node_difficulty;
+	protected String node_cost;
+	
 	protected String errorMsg = "";
 	protected JList allowList, disallowList;
 	protected DataObject draggingListObject;
@@ -132,14 +138,6 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	private boolean isFileSaved=false;
 	protected boolean ableToSave = false;
 	protected boolean reToMorphMatrix = false;
-	
-	
-	//protected JRadioButton ref=new JRadioButton("Hyperlink");//remove late
-	protected JLabel probLabel, costLabel;//remove later
-	//protected JRadioButton ref2=new JRadioButton("Hyperlink");//remove late
-	//protected JLabel ref2Label;//remove later 
-	
-
 	
 
 	ActionListener checkBoxListener = new ActionListener(){
@@ -339,7 +337,11 @@ public class MorphMatrix extends JFrame implements ActionListener {
 			int result=ref_chooser.showOpenDialog(main_desktop);
 		    m_currentDir=ref_chooser.getCurrentDirectory();
 		    if (result == JFileChooser.APPROVE_OPTION ){
-		    	System.out.println(ref_chooser.getSelectedFile().getName());
+		    	//System.out.println(ref_chooser.getSelectedFile().getName());
+		    	ref1TextField.setText(ref_chooser.getCurrentDirectory()+ "\\" +
+		    			ref_chooser.getSelectedFile().getName());
+		    	saveAttributes.setVisible(true);
+		    	isAttributeSaved = false;
 			}
 		}
 		else if (e.getSource() == saveAttributes){
@@ -473,43 +475,74 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		//Reference 1
 		
 		//ref1Label=new JLabel("<HTML><A HREF=URL>Reference</A>: </HTML>");
-		JTextField ref1TextField=new JTextField(15);// have to make it Global
+		ref1TextField=new JTextField(15);// have to make it Global
 		
 		// Probability
-		probLabel=new JLabel("Probability:");
-		JTextField probTextField=new JTextField(10);// have to make it Global
-
+		JLabel probLabel=new JLabel("Probability:");
 		//Cost
-		costLabel=new JLabel("Cost:");
-		JTextField costTextField=new JTextField(10);// have to make it Global
+		JLabel costLabel=new JLabel("Cost:");
+		//difficulty
+		JLabel difficultyLabel=new JLabel("Difficulty:");
 
 		ref1Button = new JButton("<HTML><A HREF=URL>Reference</A>: </HTML>");
 		ref1Button.setOpaque(false);
 		ref1Button.setMargin(new Insets(0, 0, 0, 0));
 
-				
 		ref1Button.addActionListener(this);
-		
-	
 
-		
-		
-//		DELETE
+		ButtonGroup Probability_group= new ButtonGroup();
+		probability_lowRadioButton  =new JRadioButton("Low");
+		probability_midRadioButton  =new JRadioButton("Mid");
+		probability_highRadioButton =new JRadioButton("High");
+		Probability_group.add(probability_lowRadioButton);
+		Probability_group.add(probability_midRadioButton);
+		Probability_group.add(probability_highRadioButton);
+		probability_lowRadioButton.setSelected(true);
+		node_probability="low";
 
-//		ButtonGroup group= new ButtonGroup();
-//		ref2=new JRadioButton("Hyperlink");
-//		JRadioButton VideoA=new  JRadioButton("file");
-//		ref2Label=new JLabel("Reference: ");
-//		JRadioButton VideoA=new  JRadioButton("file");
-//		VideoA.setSelected(true);
-//		bk.addActionListener(RadioButtonListener);
-//		VideoA.addActionListener(RadioButtonListener);
+		ButtonGroup cost_group= new ButtonGroup();
+		cost_lowRadioButton  =new JRadioButton("Low");
+		cost_midRadioButton  =new JRadioButton("Mid");
+		cost_highRadioButton =new JRadioButton("High");
+		cost_group.add(cost_lowRadioButton);
+		cost_group.add(cost_midRadioButton);
+		cost_group.add(cost_highRadioButton);
+		cost_lowRadioButton.setSelected(true);
+		node_cost="low";
 		
-		
+		ButtonGroup difficulty_group= new ButtonGroup();
+		difficulty_lowRadioButton  =new JRadioButton("Low");
+		difficulty_midRadioButton  =new JRadioButton("Mid");
+		difficulty_highRadioButton =new JRadioButton("High");
+		difficulty_group.add(difficulty_lowRadioButton);
+		difficulty_group.add(difficulty_midRadioButton);
+		difficulty_group.add(difficulty_highRadioButton);
+		difficulty_lowRadioButton.setSelected(true);
+		node_difficulty="low";
+		ActionListener RadioButtonListener=new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				if (probability_lowRadioButton.isSelected()) node_probability = "low";
+				else if (probability_midRadioButton.isSelected()) node_probability = "mid";
+				else if (probability_lowRadioButton.isSelected()) node_probability = "high";
+				else if (difficulty_lowRadioButton.isSelected()) node_difficulty = "low";
+				else if (difficulty_midRadioButton.isSelected()) node_difficulty = "mid";
+				else if (difficulty_highRadioButton.isSelected()) node_difficulty = "high";
+				else if (cost_lowRadioButton.isSelected()) node_cost = "low";
+				else if (cost_midRadioButton.isSelected()) node_cost = "mid";
+				else if (cost_highRadioButton.isSelected()) node_cost = "high";
+				isAttributeSaved=false;
+			}
+		};
+		probability_lowRadioButton.addActionListener(RadioButtonListener);
+		probability_midRadioButton.addActionListener(RadioButtonListener);
+		probability_highRadioButton.addActionListener(RadioButtonListener);
+		difficulty_lowRadioButton.addActionListener(RadioButtonListener);
+		difficulty_midRadioButton.addActionListener(RadioButtonListener);
+		difficulty_highRadioButton.addActionListener(RadioButtonListener);
+		cost_lowRadioButton.addActionListener(RadioButtonListener);
+		cost_midRadioButton.addActionListener(RadioButtonListener);
+		cost_highRadioButton.addActionListener(RadioButtonListener);
 	
-		
-		
-		
 //		this is where all the features are added
 		innerRightPanel.add(nameLabel, ParagraphLayout.NEW_PARAGRAPH);
 		innerRightPanel.add(nameTextField);
@@ -522,14 +555,22 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		innerRightPanel.add(scrollPane);
 		
 		innerRightPanel.add(probLabel,ParagraphLayout.NEW_PARAGRAPH);
-		innerRightPanel.add(probTextField);
+		innerRightPanel.add(probability_lowRadioButton);
+		innerRightPanel.add(probability_midRadioButton);
+		innerRightPanel.add(probability_highRadioButton);
+		
+		innerRightPanel.add(difficultyLabel,ParagraphLayout.NEW_PARAGRAPH);
+		innerRightPanel.add(difficulty_lowRadioButton);
+		innerRightPanel.add(difficulty_midRadioButton);
+		innerRightPanel.add(difficulty_highRadioButton);
 		
 		innerRightPanel.add(costLabel,ParagraphLayout.NEW_PARAGRAPH);
-		innerRightPanel.add(costTextField);
+		innerRightPanel.add(cost_lowRadioButton);
+		innerRightPanel.add(cost_midRadioButton);
+		innerRightPanel.add(cost_highRadioButton);
 		
 		innerRightPanel.add(ref1Button,ParagraphLayout.NEW_PARAGRAPH);
-		//innerRightPanel.add(ref); change with URL
-		//innerRightPanel.add(bk);  change with FILE
+	
 		innerRightPanel.add(ref1TextField,ParagraphLayout.NEW_LINE);
 		
 
@@ -1033,10 +1074,14 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		DataObject nodeInfo = (DataObject)sNode.getUserObject();
 		String newtrl = trlTextField.getText();
 		String newDesc = descriptionTextField.getText();
+		String ref1 = ref1TextField.getText();
+		
+		// change the test to make sure it is action items
+		// change trl to action item
 		int INTtrl;
 		try{
 		    INTtrl=Integer.parseInt(newtrl);
-		    if (INTtrl > 10 || INTtrl < 0)
+		    if (INTtrl > 10 || INTtrl < 0) 
 		        JOptionPane.showMessageDialog(jifNewMorphMatrixFrame,
 	            " Please Enter A Numeric Value Between 0 and 10");
 		    else {
@@ -1044,6 +1089,11 @@ public class MorphMatrix extends JFrame implements ActionListener {
 					nodeInfo.setTRL_Numver(INTtrl);
 					nodeInfo.setdesctiptionText(newDesc);
 					nodeInfo.setName(newName);
+					nodeInfo.setReferenceURL(ref1);
+					nodeInfo.setProbability(node_probability);
+					nodeInfo.setDifficulty(node_difficulty);
+					nodeInfo.setCost(node_cost);
+					
 				}
 				else {
 					JOptionPane.showMessageDialog(null,"You have entered a Duplicate Node Name","Error!!"
@@ -1517,8 +1567,10 @@ public class MorphMatrix extends JFrame implements ActionListener {
     	  public void mouseReleased(MouseEvent e){}
     	  public void mouseExited(MouseEvent e){}
     }
-	class TreeMouseListener extends MouseInputAdapter {
-		public void mousePressed(MouseEvent evt){
+
+    class TreeMouseListener extends MouseInputAdapter {
+		// User clicked on the tree; Check if the information is saved
+    	public void mousePressed(MouseEvent evt){
 			if (jifNewMorphMatrixFrame.isSelected()){
 			    if (!isAttributeSaved){
 				    int answer = JOptionPane.showConfirmDialog(jifNewMorphMatrixFrame,"Do you want to save the changes?");
@@ -1534,10 +1586,11 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
 			    DefaultMutableTreeNode node =
 			    	(DefaultMutableTreeNode)treePanel.tree.getLastSelectedPathComponent();
-
+// TO DO delete and make sure you save the discription
 				if (node==null ||node.isRoot()) {
 				 	nameTextField.setVisible(false);
 				    trlTextField.setVisible(false);
+
 				    descriptionTextField.setVisible(false);
 				    return;
 				}
@@ -1554,12 +1607,18 @@ public class MorphMatrix extends JFrame implements ActionListener {
 					addActionItem.setEnabled(false);
 				}
 				nameTextField.setText(nodeInfo.getName());
-
+				// this is where the tree attributes gets updated
 				String trl = new String();
 				trl = ""+nodeInfo.getTRL_Number();
 				trlTextField.setText(trl);
 				descriptionTextField.setText(nodeInfo.getdesctiptionText());
-
+				ref1TextField.setText(nodeInfo.getReferenceURL());
+				switch (node_probability){
+				case "low":  probability_lowRadioButton.setSelected(true);
+				case "mid":  probability_midRadioButton.setSelected(true);
+				case "high": probability_highRadioButton.setSelected(true);
+				
+				}
 				//save the pointer to node for later
 				previousNode=node;
 			}

@@ -97,6 +97,9 @@ public class Open {
             String IDOfCategory   =returnFirstElement((String)v_category.elementAt(i),"ID");
             String TRLOfCategory  =returnFirstElement((String)v_category.elementAt(i),"TRL");
             String DescriptionOfCategory =returnFirstElement((String)v_category.elementAt(i),"Description");
+            String reference_URL =returnFirstElement((String)v_category.elementAt(i),"Reference");
+            
+            
 
             int intID=Integer.parseInt(IDOfCategory);
             m_treePanel.catigoryIdCounter=intID;
@@ -105,6 +108,7 @@ public class Open {
             
             nodeInfo =new DataObject(intID ,nameOfCategory,intTRL);
             nodeInfo.setDescription(xmlFilter(DescriptionOfCategory));
+            nodeInfo.setReferenceURL(reference_URL);
             c_category=m_treePanel.addObject(nodeInfo);
             Vector v_groups=xmlParser((String)v_category.elementAt(i),"Group");
             addGroups(v_groups);
@@ -125,6 +129,7 @@ public class Open {
             String IDOfGroup  =returnFirstElement((String)v_group.elementAt(i),"ID");
             String TRLOfGroup  =returnFirstElement((String)v_group.elementAt(i),"TRL");
             String DescriptionOfGroup =returnFirstElement((String)v_group.elementAt(i),"Description");
+            String reference_URL =returnFirstElement((String)v_group.elementAt(i),"Reference");
 
             int intID=Integer.parseInt(IDOfGroup);
             m_treePanel.groupIdCounter=intID;
@@ -133,6 +138,7 @@ public class Open {
             
             nodeInfo =new DataObject(intID ,nameOfGroup,intTRL);
             nodeInfo.setDescription(xmlFilter(DescriptionOfGroup));
+            nodeInfo.setReferenceURL(reference_URL);
             c_group=m_treePanel.addObject(c_category,nodeInfo);
             Vector v_attributes=xmlParser((String)v_group.elementAt(i),"Attribute");
             addAttributes(v_attributes);
@@ -153,6 +159,7 @@ public class Open {
             String IDOfAttribute          =returnFirstElement((String)v_attribute.elementAt(i),"ID");
             String TRLOfAttribute  		  =returnFirstElement((String)v_attribute.elementAt(i),"TRL");
             String DescriptionOfAttribute =returnFirstElement((String)v_attribute.elementAt(i),"Description");
+            String reference_URL =returnFirstElement((String)v_attribute.elementAt(i),"Reference");
             String str_selected       =returnFirstElement((String)v_attribute.elementAt(i),"Selected");
            
             int intID=Integer.parseInt(IDOfAttribute);
@@ -163,6 +170,7 @@ public class Open {
             nodeInfo =new DataObject(intID ,nameOfAttribute,intTRL);
             nodeInfo.myCheckBox.setSelected(selected.booleanValue());
             nodeInfo.setDescription(xmlFilter(DescriptionOfAttribute));
+            nodeInfo.setReferenceURL(reference_URL);
             String s_Incompatibility=returnFirstElement((String) v_attribute.elementAt(i),"Incompatible");
             doCompatibility(s_Incompatibility,nodeInfo);
            } catch (Exception e) {
