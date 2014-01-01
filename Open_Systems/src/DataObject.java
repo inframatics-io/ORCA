@@ -64,6 +64,20 @@ public class DataObject {
 		allowVector = new Vector();
 		disallowVector = new Vector();
 		vDescriptors=new Vector();
+		probability ="low"; 
+		difficulty="low"; 
+		cost="low";
+	}
+    public DataObject(int id, String name,int trl, String _probability, String _difficulty, String _cost){
+		m_id = id;
+		setName(name);
+		setTRL_Numver(trl);
+		allowVector = new Vector();
+		disallowVector = new Vector();
+		vDescriptors=new Vector();
+		probability = _probability;
+		difficulty= _difficulty;
+		cost= _cost;
 	}
     public DataObject(int id,String name,int trl,String type){
         new DataObject(id,name,trl);

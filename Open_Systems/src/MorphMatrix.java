@@ -43,6 +43,8 @@ import java.util.Hashtable;
 
 
 
+
+
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import javax.swing.JFileChooser;
@@ -107,9 +109,9 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	protected JTextArea descriptionTextField,infoTextField;
 	protected JTable compatMatrix, morphMatrix;
 
-	protected JRadioButton probability_lowRadioButton,probability_midRadioButton, probability_highRadioButton,
-						cost_lowRadioButton, cost_midRadioButton, cost_highRadioButton, 
-						difficulty_lowRadioButton, difficulty_midRadioButton, difficulty_highRadioButton;
+	protected JRadioButton lProbabilityRButton,mProbabilityRButton, hProbabilityRButton,
+						lCostRButton, mCostRButton, hCostRButton, 
+						lDifficultyRButton, mDifficultyRButton, hDifficultyRButton;
 	protected int maxNumberOfAttributes;
 	protected String node_probability;
 	protected String node_difficulty;
@@ -491,58 +493,61 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		ref1Button.addActionListener(this);
 
 		ButtonGroup Probability_group= new ButtonGroup();
-		probability_lowRadioButton  =new JRadioButton("Low");
-		probability_midRadioButton  =new JRadioButton("Mid");
-		probability_highRadioButton =new JRadioButton("High");
-		Probability_group.add(probability_lowRadioButton);
-		Probability_group.add(probability_midRadioButton);
-		Probability_group.add(probability_highRadioButton);
-		probability_lowRadioButton.setSelected(true);
+		lProbabilityRButton  =new JRadioButton("Low");
+		mProbabilityRButton  =new JRadioButton("Mid");
+		hProbabilityRButton =new JRadioButton("High");
+		Probability_group.add(lProbabilityRButton);
+		Probability_group.add(mProbabilityRButton);
+		Probability_group.add(hProbabilityRButton);
+		lProbabilityRButton.setSelected(true);
 		node_probability="low";
 
 		ButtonGroup cost_group= new ButtonGroup();
-		cost_lowRadioButton  =new JRadioButton("Low");
-		cost_midRadioButton  =new JRadioButton("Mid");
-		cost_highRadioButton =new JRadioButton("High");
-		cost_group.add(cost_lowRadioButton);
-		cost_group.add(cost_midRadioButton);
-		cost_group.add(cost_highRadioButton);
-		cost_lowRadioButton.setSelected(true);
+		lCostRButton  =new JRadioButton("Low");
+		mCostRButton  =new JRadioButton("Mid");
+		hCostRButton =new JRadioButton("High");
+		cost_group.add(lCostRButton);
+		cost_group.add(mCostRButton);
+		cost_group.add(hCostRButton);
+		lCostRButton.setSelected(true);
 		node_cost="low";
 		
 		ButtonGroup difficulty_group= new ButtonGroup();
-		difficulty_lowRadioButton  =new JRadioButton("Low");
-		difficulty_midRadioButton  =new JRadioButton("Mid");
-		difficulty_highRadioButton =new JRadioButton("High");
-		difficulty_group.add(difficulty_lowRadioButton);
-		difficulty_group.add(difficulty_midRadioButton);
-		difficulty_group.add(difficulty_highRadioButton);
-		difficulty_lowRadioButton.setSelected(true);
+		lDifficultyRButton  =new JRadioButton("Low");
+		mDifficultyRButton  =new JRadioButton("Mid");
+		hDifficultyRButton =new JRadioButton("High");
+		difficulty_group.add(lDifficultyRButton);
+		difficulty_group.add(mDifficultyRButton);
+		difficulty_group.add(hDifficultyRButton);
+		lDifficultyRButton.setSelected(true);
 		node_difficulty="low";
 		ActionListener RadioButtonListener=new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				if (probability_lowRadioButton.isSelected()) node_probability = "low";
-				else if (probability_midRadioButton.isSelected()) node_probability = "mid";
-				else if (probability_lowRadioButton.isSelected()) node_probability = "high";
-				else if (difficulty_lowRadioButton.isSelected()) node_difficulty = "low";
-				else if (difficulty_midRadioButton.isSelected()) node_difficulty = "mid";
-				else if (difficulty_highRadioButton.isSelected()) node_difficulty = "high";
-				else if (cost_lowRadioButton.isSelected()) node_cost = "low";
-				else if (cost_midRadioButton.isSelected()) node_cost = "mid";
-				else if (cost_highRadioButton.isSelected()) node_cost = "high";
+				if (lProbabilityRButton.isSelected()) node_probability = "low";
+				else if (mProbabilityRButton.isSelected()) node_probability = "mid";
+				else node_probability = "high";
+				
+				if (lDifficultyRButton.isSelected()) node_difficulty = "low";
+				else if (mDifficultyRButton.isSelected()) node_difficulty = "mid";
+				else node_difficulty = "high";
+				
+				if (lCostRButton.isSelected()) node_cost = "low";
+				else if (mCostRButton.isSelected()) node_cost = "mid";
+				else node_cost = "high";
+				
 				isAttributeSaved=false;
 				saveAttributes.setVisible(true);
 			}
 		};
-		probability_lowRadioButton.addActionListener(RadioButtonListener);
-		probability_midRadioButton.addActionListener(RadioButtonListener);
-		probability_highRadioButton.addActionListener(RadioButtonListener);
-		difficulty_lowRadioButton.addActionListener(RadioButtonListener);
-		difficulty_midRadioButton.addActionListener(RadioButtonListener);
-		difficulty_highRadioButton.addActionListener(RadioButtonListener);
-		cost_lowRadioButton.addActionListener(RadioButtonListener);
-		cost_midRadioButton.addActionListener(RadioButtonListener);
-		cost_highRadioButton.addActionListener(RadioButtonListener);
+		lProbabilityRButton.addActionListener(RadioButtonListener);
+		mProbabilityRButton.addActionListener(RadioButtonListener);
+		hProbabilityRButton.addActionListener(RadioButtonListener);
+		lDifficultyRButton.addActionListener(RadioButtonListener);
+		mDifficultyRButton.addActionListener(RadioButtonListener);
+		hDifficultyRButton.addActionListener(RadioButtonListener);
+		lCostRButton.addActionListener(RadioButtonListener);
+		mCostRButton.addActionListener(RadioButtonListener);
+		hCostRButton.addActionListener(RadioButtonListener);
 	
 //		this is where all the features are added
 		innerRightPanel.add(nameLabel, ParagraphLayout.NEW_PARAGRAPH);
@@ -556,19 +561,19 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		innerRightPanel.add(scrollPane);
 		
 		innerRightPanel.add(probLabel,ParagraphLayout.NEW_PARAGRAPH);
-		innerRightPanel.add(probability_lowRadioButton);
-		innerRightPanel.add(probability_midRadioButton);
-		innerRightPanel.add(probability_highRadioButton);
+		innerRightPanel.add(lProbabilityRButton);
+		innerRightPanel.add(mProbabilityRButton);
+		innerRightPanel.add(hProbabilityRButton);
 		
 		innerRightPanel.add(difficultyLabel,ParagraphLayout.NEW_PARAGRAPH);
-		innerRightPanel.add(difficulty_lowRadioButton);
-		innerRightPanel.add(difficulty_midRadioButton);
-		innerRightPanel.add(difficulty_highRadioButton);
+		innerRightPanel.add(lDifficultyRButton);
+		innerRightPanel.add(mDifficultyRButton);
+		innerRightPanel.add(hDifficultyRButton);
 		
 		innerRightPanel.add(costLabel,ParagraphLayout.NEW_PARAGRAPH);
-		innerRightPanel.add(cost_lowRadioButton);
-		innerRightPanel.add(cost_midRadioButton);
-		innerRightPanel.add(cost_highRadioButton);
+		innerRightPanel.add(lCostRButton);
+		innerRightPanel.add(mCostRButton);
+		innerRightPanel.add(hCostRButton);
 		
 		innerRightPanel.add(ref1Button,ParagraphLayout.NEW_PARAGRAPH);
 	
@@ -1094,7 +1099,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 					nodeInfo.setProbability(node_probability);
 					nodeInfo.setDifficulty(node_difficulty);
 					nodeInfo.setCost(node_cost);
-					
+
 				}
 				else {
 					JOptionPane.showMessageDialog(null,"You have entered a Duplicate Node Name","Error!!"
@@ -1614,13 +1619,22 @@ public class MorphMatrix extends JFrame implements ActionListener {
 				trlTextField.setText(trl);
 				descriptionTextField.setText(nodeInfo.getdesctiptionText());
 				ref1TextField.setText(nodeInfo.getReferenceURL());
-				switch (node_probability){
-				case "low":  probability_lowRadioButton.setSelected(true);
-				case "mid":  probability_midRadioButton.setSelected(true);
-				case "high": probability_highRadioButton.setSelected(true);
-				
-				
-				}
+				// setting the JRadioButton for Probability
+				if (nodeInfo.getProbability() == "low") lProbabilityRButton.setSelected(true);
+				else if(nodeInfo.getProbability()== "mid") mProbabilityRButton.setSelected(true);
+				else if (nodeInfo.getProbability()== "high") hProbabilityRButton.setSelected(true);
+				else System.out.println("Probability is not low, mid, or high: " +nodeInfo.getProbability());
+				// setting the JRadioButton for Difficulty
+				if (nodeInfo.getDifficulty() == "low") lDifficultyRButton.setSelected(true);
+				else if(nodeInfo.getDifficulty()== "mid") mDifficultyRButton.setSelected(true);
+				else if (nodeInfo.getDifficulty()== "high") hDifficultyRButton.setSelected(true);
+				else System.out.println("Difficulty is not low, mid, or high: " +nodeInfo.getDifficulty());
+				// setting the JRadioButton for Cost
+				if (nodeInfo.getCost()== "low") lCostRButton.setSelected(true);
+				else if(nodeInfo.getCost()== "mid") mCostRButton.setSelected(true);
+				else if (nodeInfo.getCost()== "high") hCostRButton.setSelected(true);
+				else System.out.println("Cost is not low mid, or high: " +nodeInfo.getCost());
+
 				//save the pointer to node for later
 				previousNode=node;
 			}
