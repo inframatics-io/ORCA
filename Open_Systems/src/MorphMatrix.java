@@ -531,6 +531,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 				else if (cost_midRadioButton.isSelected()) node_cost = "mid";
 				else if (cost_highRadioButton.isSelected()) node_cost = "high";
 				isAttributeSaved=false;
+				saveAttributes.setVisible(true);
 			}
 		};
 		probability_lowRadioButton.addActionListener(RadioButtonListener);
@@ -1617,6 +1618,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 				case "low":  probability_lowRadioButton.setSelected(true);
 				case "mid":  probability_midRadioButton.setSelected(true);
 				case "high": probability_highRadioButton.setSelected(true);
+				
 				
 				}
 				//save the pointer to node for later
