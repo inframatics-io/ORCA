@@ -824,6 +824,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		            maxNumberOfAttributes = attributCounter;
 		        }
 		    }
+		
 		JButton[] labelButtons = new JButton[maxNumberOfAttributes+3];   //end
 
 		for (int i = 0; i < labelButtons.length; i++){
@@ -911,20 +912,20 @@ public class MorphMatrix extends JFrame implements ActionListener {
 			}
 	    }
 	    rightBorder = new JPanel(new BorderLayout());
-	    possibleCombs = new JPanel(new BorderLayout());
-		possibleCombs.setBackground(Color.yellow);
-		possibleCombs.setBorder(new TitledBorder(new SoftBevelBorder(5),"# of Technologies"));
-		possibelCombsLabel = new JLabel();
-		updateComboFrame();
-		possibleCombs.add(possibelCombsLabel,BorderLayout.SOUTH);
-		possibleCombs.add(new JLabel("# of Possible Combinations"),BorderLayout.CENTER);
-		String nOfTech="<HTML><FONT SIZE=4>"+treePanel.processedOptionNodes.size()+"</FONT></HTML>";
-		possibleCombs.add(new JLabel(nOfTech),BorderLayout.NORTH);
-		
-		rightBorder.add(possibleCombs,BorderLayout.NORTH);
-		
-		updateSlideBarsFrame();
-//	    enableEvents(ComponentEvent.)
+//	    possibleCombs = new JPanel(new BorderLayout());
+//		possibleCombs.setBackground(Color.yellow);
+//		possibleCombs.setBorder(new TitledBorder(new SoftBevelBorder(5),"# of Technologies"));
+//		possibelCombsLabel = new JLabel();
+//		updateComboFrame();
+//		possibleCombs.add(possibelCombsLabel,BorderLayout.SOUTH);
+//		possibleCombs.add(new JLabel("# of Possible Combinations"),BorderLayout.CENTER);
+//		String nOfTech="<HTML><FONT SIZE=4>"+treePanel.processedOptionNodes.size()+"</FONT></HTML>";
+//		possibleCombs.add(new JLabel(nOfTech),BorderLayout.NORTH);
+//		
+//		rightBorder.add(possibleCombs,BorderLayout.NORTH);
+//		
+//		updateSlideBarsFrame();
+////	    enableEvents(ComponentEvent.)
 		JPanel lowerPanel =new JPanel(/*new ParagraphLayout()*/);
 		lowerPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"INFORMATION:"));
 		infoTextField = new JTextArea(" ",15,16);// make it dynamic
@@ -1082,8 +1083,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		String newDesc = descriptionTextField.getText();
 		String ref1 = ref1TextField.getText();
 		
-		// change the test to make sure it is action items
-		// change trl to action item
+		
 		int INTtrl;
 		try{
 		    INTtrl=Integer.parseInt(newtrl);
@@ -1113,45 +1113,9 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		}
 		return true;
 	}
-	public BigInteger calculatedPossibilities(){
-	  	DefaultMutableTreeNode  rootNode = new DefaultMutableTreeNode(treePanel.rootNode);
-		DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
-		treeModel = treePanel.treeModel;
+//	public BigInteger calculatedPossibilities(){
 
-		int categoriesCounter = 0;
-		int groupCounter =0;
-		int attributCounter = 0;
-		BigInteger combination = new BigInteger("1");
-
-
-		categoriesCounter = treeModel.getChildCount(treeModel.getRoot());
-
-	    for (int i=0;i< categoriesCounter;++i){
-			groupCounter = treeModel.getChildCount(treeModel.getChild(treeModel.getRoot(),i));
-
-			for(int j =0; j < groupCounter; j++){
-
-		   	  	attributCounter =  treeModel.getChildCount(treeModel.getChild((
-									treeModel.getChild(treeModel.getRoot(),i)),j));
-		   	    	int compatOptions=0;
-				for(int k = 0; k< attributCounter;k++){
-
-					DefaultMutableTreeNode nodeT = (DefaultMutableTreeNode) treeModel.getChild(treeModel.getChild(
-                    treeModel.getChild(treeModel.getRoot(),i),j),k);
-					DataObject nodeInfo= (DataObject)nodeT.getUserObject();
-					if (nodeInfo.myCheckBox.isEnabled()&&!nodeInfo.myCheckBox.isSelected()){
-						compatOptions++;
-					}
-  				}
-				if (compatOptions==0)
-					compatOptions=1;
-				combination = combination.multiply(BigInteger.valueOf(compatOptions));
-				//combination = combination * compatOptions;
-			}
-	    }
-	    
-	    return combination;
-	}
+//	}
 	public static void main(String[] args) {
 		new MorphMatrix();
 	}
@@ -1265,7 +1229,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
         }
         
         updateDynamicMorphFrame();
-        updateComboFrame();
+       // updateComboFrame();
     }
     public void updateDynamicMorphFrame(){
    	  	for( int i=0;i<treePanel.processedOptionNodes.size();++i){
@@ -1311,36 +1275,11 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	  	}
 
     }
-    public void updateComboFrame(){
-    	BigInteger poss=new BigInteger(calculatedPossibilities().toString());
-        //this part of code HAS to be revised extensively
-        BigInteger bigMillion    =new BigInteger("1000000");
-        BigInteger bigBillion    =new BigInteger("1000000000");
-        BigInteger bigTrillion   =new BigInteger("1000000000000");
-        BigInteger bigQuadrillion=new BigInteger("1000000000000000");
-        if (poss.compareTo(bigMillion)==-1){
-            possibelCombsLabel.setText("<HTML><P><FONT COLOR=#458B00 SIZE=4>"+poss.toString()+"</FONT></P></HTML>");
-        }else if(poss.compareTo(bigBillion)==-1){
-            
-            possibelCombsLabel.setText("<HTML><P><FONT COLOR=#38B0DE SIZE=4>"+(poss.divide(bigMillion)).toString()+" Million"+"</FONT></P></HTML>");
-        }else if(poss.compareTo(bigTrillion)==-1){
-            possibelCombsLabel.setText("<HTML><P><FONT COLOR=#A52A2A SIZE=4>"+(poss.divide(bigBillion)).toString()+" Billion"+"</FONT></P></HTML>");
-        }else if (poss.compareTo(bigQuadrillion)==-1){
-            possibelCombsLabel.setText("<HTML><P><FONT COLOR=#D41A1F SIZE=4>"+(poss.divide(bigTrillion)).toString()+" Trillion"+"</FONT></P></HTML>");   
-        }else{	
-         
-            String val=new String(poss.toString());
-            int len=val.length();
-			String htmlText = "<HTML><P><FONT COLOR=#A52A2A SIZE=4 >"+ val.charAt(0)+"."+val.substring(1,4)+" X 10 <SUP>"+len-- +"</SUP></FONT></P></HTML>";	
-			possibelCombsLabel.setText(htmlText);
-        }
+//    public void updateComboFrame(){
 
-
-		rightBorder.add(possibleCombs,BorderLayout.NORTH);
-        jifDynamicMorphMatrixFrame.repaint();
-    }
+//    }
     public void makeFilterFrame(){
-        jifNewFilterFrame = new JInternalFrame("Filters"
+        jifNewFilterFrame = new JInternalFrame("Action Item"
 	           ,false,true,false,false);
         
         jifNewFilterFrame.setBounds(200,100,450,320);/** Dimension **/
@@ -1350,184 +1289,23 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		JTabbedPane m_tab=new JTabbedPane();
 		JPanel tab1=new JPanel(new BorderLayout()); //First Tab [Add]
 		JPanel tab2=new JPanel(new BorderLayout()); //Second Tab [Edit]
-		JPanel rightPanel = new JPanel(new ParagraphLayout());
-		// creating new Name Field
-		JLabel jlName=new JLabel("Name");
-		JTextField jTextFieldName=new JTextField(5);
-		// creating JRadio Buttons for <New> and <From List>
-		JRadioButton jrbNew= new JRadioButton();
-		JRadioButton jrbFromList =new JRadioButton();
-		ButtonGroup group1= new ButtonGroup();
-		JLabel jlNew= new JLabel("New");
-		JLabel jlFromList= new JLabel("From List");
-		group1.add(jrbNew);
-		group1.add(jrbFromList);
-		// creating Radio Buttons for <Continuous> and <Discreate>
-		JPanel p2=new JPanel(new FlowLayout());
-		p2.setBorder(new TitledBorder(new EtchedBorder(),"Type:"));
-		JRadioButton jrbContinuous=new JRadioButton();
-		jrbContinuous.setSelected(true);
-		JRadioButton jrbDiscreate   =new JRadioButton();
-		ButtonGroup group2 =new ButtonGroup();
-		group2.add(jrbContinuous);
-		group2.add(jrbDiscreate);
-		JLabel jlContinuous=new JLabel("Continuous");
-		JLabel jlDiscreate =new JLabel("Discreate");
-		p2.add(jlContinuous);
-		p2.add(jrbContinuous);
-		p2.add(jlDiscreate);
-		p2.add(jrbDiscreate);
-		// creating the exclude frame
-		JPanel p3=new JPanel(new FlowLayout());
-		p3.setBorder(new TitledBorder(new EtchedBorder(),"Exclude:"));
-		JLabel jlG=new JLabel(">");
-		JLabel jlL=new JLabel("<");
-		JLabel jlE=new JLabel("=");
-		JCheckBox jcbE=new JCheckBox();
-		jcbE.setSelected(false);
-		JRadioButton jrbG=new JRadioButton();
-		JRadioButton jrbL=new JRadioButton();
-		jrbL.setSelected(true);
-		ButtonGroup group3=new ButtonGroup();
-		group3.add(jrbG);
-		group3.add(jrbL);
-		p3.add(jlG);
-		p3.add(jrbG);
-		p3.add(jlL);
-		p3.add(jrbL);
-		p3.add(jlE);
-		p3.add(jcbE);
-		//Creating the ComboBox
-		final JComboBox filterComboBox=new JComboBox(globalVectorOfFilters);
-		filterComboBox.setPrototypeDisplayValue(new String("XXXXXX"));
-		filterComboBox.setEditable(true);
-
-		
-		
-		JLabel filterValueLabel = new JLabel("Value ");
-		final JTextField filterValueTextField = new JTextField(3);
-//		Min Max
-		JLabel minLabel =new JLabel("Min");
-		final JTextField minTextField= new JTextField(3);
-		JLabel maxLabel =new JLabel("Max");
-		final JTextField maxTextField= new JTextField(3);
-		ActionListener CBlt=new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				int indexSelectedFilter=filterComboBox.getSelectedIndex();
-				if(indexSelectedFilter<0){// new Filter 
-					maxTextField.setText("");
-					minTextField.setText("");
-					maxTextField.setVisible(true);
-					minTextField.setVisible(true);
-					filterValueTextField.setText("");
-				}else{
-					Filter infoFilter=(Filter)filterComboBox.getSelectedItem();
-					maxTextField.setVisible(false);
-					minTextField.setVisible(false);
-				}
-					
-			}
-		};
-		filterComboBox.addActionListener(CBlt);
-		
-
-		
-		
-		JPanel filterButtonBar= new JPanel(new FlowLayout());
+		final JButton cancelFilter= new JButton("Cancel");
 		final JButton okayFilter= new JButton("OK");
-		final sliderChangeListener mySliderListener=new sliderChangeListener();
+
 		ActionListener lst=new ActionListener(){
 		    public void actionPerformed(ActionEvent e){
-		        if(e.getSource()==okayFilter){
-		        	int indexSelectedFilter=filterComboBox.getSelectedIndex();
-		        	if(indexSelectedFilter<0){// new Filter 
-		        		String Name=(String)filterComboBox.getSelectedItem();
-			            String minS =minTextField.getText();
-			            String maxS =maxTextField.getText();
-			            String valS =filterValueTextField.getText();
-			            try{
-			                int IntMin=Integer.parseInt(minS);
-			                int IntMax=Integer.parseInt(maxS);
-			                int IntVal=Integer.parseInt(valS);
-			                //int IntDiv=(IntMax-IntMin)/10;
-			                int spacingSize=(IntMax-IntMin)/10;
-			                Filter aNewFilter=new Filter(newFilterSuffix++,Name,IntMin,IntMax);
-							if(spacingSize<1){
-			                    Hashtable labels =new Hashtable();
-				                
-				                for (float q=IntMin;q<=IntMax;q+=0.2){
-				                	labels.put(new Integer((int)(q*(IntMax-IntMin))),new JLabel(""+q,JLabel.CENTER));
-				                }
-				                aNewFilter.mySlider.setLabelTable(labels);
-			                }
-							aNewFilter.mySlider.setMajorTickSpacing(spacingSize);
+		        if(e.getSource()==okayFilter){}
 
-							aNewFilter.mySlider.addChangeListener(mySliderListener);
-//							adding the new Filter to Globa List of Filters
-							globalVectorOfFilters.add(aNewFilter); 
-							//adding the new Filter to the DataObject
-				            DefaultMutableTreeNode node =
-						    	(DefaultMutableTreeNode)treePanel.tree.getLastSelectedPathComponent();
-				            DataObject nodeInfo=(DataObject)node.getUserObject();
-				            if (nodeInfo !=null && nodeInfo.getType().equals(nodeInfo.ATTRIBUTE)){
-				            	if(aNewFilter.checkValue(IntVal)){
-				            		nodeInfo.vDescriptors.add(new Descriptor(aNewFilter.getName(),IntVal));
-				            	}
-				            	
-				            }else{
-				            	System.out.println("Selected Node in not a Attributes.");
-				            }
-			            }catch(NumberFormatException nfex){
-			    		    JOptionPane.showMessageDialog(jifNewMorphMatrixFrame,
-				            " lATER."+nfex);
-			            }
-			            // creating the JcheckBox For the Menu
-						JCheckBoxMenuItem newFilter= new JCheckBoxMenuItem(Name);
-			            newFilter.addActionListener(checkBoxListener);
-			            vCheckBoxFilters.add(newFilter);
-			            menuFilter.add(newFilter);
-			            
-					}else{
-						//add the filter to the node
-					}
-		        }
-		    jifNewFilterFrame.dispose();
-		    }
-		};
-		JButton cancelFilter= new JButton("Cancel");
-		
-		
+		        jifNewFilterFrame.dispose();
+		    	}
+		    };
+		    
 		okayFilter.addActionListener(lst);
 		cancelFilter.addActionListener(lst);
+		JPanel filterButtonBar= new JPanel(new FlowLayout());
 		filterButtonBar.add(okayFilter);
 		filterButtonBar.add(cancelFilter);
 		
-		JPanel filterPanel= new JPanel(new ParagraphLayout());
-		
-		// Adding everything to the filterPanel
-		filterPanel.add(jlNew,ParagraphLayout.NEW_LINE);
-		filterPanel.add(jrbNew);
-		filterPanel.add(jlName,ParagraphLayout.NEW_LINE);
-		filterPanel.add(jTextFieldName);
-		filterPanel.add(p2,ParagraphLayout.NEW_LINE);
-		filterPanel.add(p3,ParagraphLayout.NEW_LINE);
-		filterPanel.add(filterValueLabel,ParagraphLayout.NEW_LINE);
-		filterPanel.add(filterValueTextField);
-		filterPanel.add(minLabel);
-		filterPanel.add(minTextField);
-		filterPanel.add(maxLabel);
-		filterPanel.add(maxTextField);
-		// Adding to RightPanel
-		rightPanel.add(jlFromList,ParagraphLayout.NEW_LINE);
-		rightPanel.add(jrbFromList);
-		rightPanel.add(filterComboBox,ParagraphLayout.NEW_LINE);
-		
-//		JPanel filterPreviewPanel=new JPanel(/*new ParagraphLayout()*/);
-//		filterPreviewPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"Preview:"));
-//		filterPreviewPanel.setPreferredSize(new Dimension(250,90));
-
-		tab1.add(filterPanel,BorderLayout.LINE_START);
-		tab1.add(rightPanel,BorderLayout.AFTER_LINE_ENDS);
 		
 		m_tab.addTab("Add",tab1);
 		m_tab.addTab("Edit",tab2);
@@ -1544,7 +1322,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
     	  public void itemStateChanged(ItemEvent ie) {
  
     		updateDynamicMorphFrame();
-    		updateComboFrame();
+    		//updateComboFrame();
     	  }
 
     	  public void mouseEntered(MouseEvent evt){
