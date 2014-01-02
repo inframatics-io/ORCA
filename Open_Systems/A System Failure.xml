@@ -1,33 +1,33 @@
 <Root><Root-Name>A System Failure.xml</Root-Name>
- <Category><Name> Excessive Load</Name><ID>1001</ID><TRL>2</TRL><Description></Description>
-  <Group><Name>Excessive Static Load</Name><ID>2001</ID><TRL>2</TRL><Description></Description>
-   <Attribute><Name>High Preload</Name><ID>3001</ID><TRL>2</TRL><Description></Description><Selected>false</Selected>
+ <Category><Name> Excessive Load</Name><ID>1001</ID><TRL>2</TRL><Description></Description><Reference>C:\Users\Payman\git\openTools\Open_Systems\.project</Reference>
+  <Group><Name>Excessive Static Load</Name><ID>2001</ID><TRL>2</TRL><Description></Description><Reference></Reference>
+   <Attribute><Name>High Preload</Name><ID>3001</ID><TRL>2</TRL><Description></Description><Reference></Reference><Selected>false</Selected>
    <Incompatible></Incompatible></Attribute>
-   <Attribute><Name>NewNode4</Name><ID>3002</ID><TRL>2</TRL><Description>null</Description><Selected>false</Selected>
-   <Incompatible></Incompatible></Attribute>
-  </Group>
-  <Group><Name>Excessive Dynamic Load</Name><ID>2002</ID><TRL>2</TRL><Description></Description>
-   <Attribute><Name>Excessive Vibraiton</Name><ID>3005</ID><TRL>2</TRL><Description></Description><Selected>false</Selected>
+   <Attribute><Name>NewNode4</Name><ID>3002</ID><TRL>2</TRL><Description>null</Description><Reference></Reference><Selected>false</Selected>
    <Incompatible></Incompatible></Attribute>
   </Group>
-  <Group><Name>Fatigue</Name><ID>2003</ID><TRL>2</TRL><Description></Description>
-   <Attribute><Name>Unbalanced Components</Name><ID>3006</ID><TRL>2</TRL><Description></Description><Selected>false</Selected>
+  <Group><Name>Excessive Dynamic Load</Name><ID>2002</ID><TRL>2</TRL><Description></Description><Reference></Reference>
+   <Attribute><Name>Excessive Vibraiton</Name><ID>3005</ID><TRL>2</TRL><Description></Description><Reference></Reference><Selected>false</Selected>
    <Incompatible></Incompatible></Attribute>
-   <Attribute><Name>Missing Components</Name><ID>3007</ID><TRL>2</TRL><Description></Description><Selected>false</Selected>
+  </Group>
+  <Group><Name>Fatigue</Name><ID>2003</ID><TRL>2</TRL><Description></Description><Reference></Reference>
+   <Attribute><Name>Unbalanced Components</Name><ID>3006</ID><TRL>2</TRL><Description></Description><Reference></Reference><Selected>false</Selected>
    <Incompatible></Incompatible></Attribute>
-   <Attribute><Name>Miss Assembly</Name><ID>3008</ID><TRL>2</TRL><Description></Description><Selected>false</Selected>
+   <Attribute><Name>Missing Components</Name><ID>3007</ID><TRL>2</TRL><Description></Description><Reference></Reference><Selected>false</Selected>
+   <Incompatible></Incompatible></Attribute>
+   <Attribute><Name>Miss Assembly</Name><ID>3008</ID><TRL>2</TRL><Description></Description><Reference></Reference><Selected>false</Selected>
    <Incompatible></Incompatible></Attribute>
   </Group>
  </Category>
- <Category><Name>System not Strong Enough</Name><ID>1002</ID><TRL>2</TRL><Description></Description>
-  <Group><Name>Material Properties not to Spec</Name><ID>2004</ID><TRL>2</TRL><Description></Description>
+ <Category><Name>System not Strong Enough</Name><ID>1002</ID><TRL>2</TRL><Description></Description><Reference></Reference>
+  <Group><Name>Material Properties not to Spec</Name><ID>2004</ID><TRL>2</TRL><Description></Description><Reference></Reference>
   </Group>
-  <Group><Name>Dimensionally not to spec</Name><ID>2005</ID><TRL>2</TRL><Description></Description>
+  <Group><Name>Dimensionally not to spec</Name><ID>2005</ID><TRL>2</TRL><Description></Description><Reference></Reference>
   </Group>
-  <Group><Name>Dimension not controlled</Name><ID>2006</ID><TRL>2</TRL><Description></Description>
+  <Group><Name>Dimension not controlled</Name><ID>2006</ID><TRL>2</TRL><Description></Description><Reference></Reference>
   </Group>
-  <Group><Name>Reduction in Material Propertiles</Name><ID>2007</ID><TRL>2</TRL><Description>Reduction in material properties due to temperature</Description>
-   <Attribute><Name>Overcurrent</Name><ID>3004</ID><TRL>2</TRL><Description></Description><Selected>false</Selected>
+  <Group><Name>Reduction in Material Propertiles</Name><ID>2007</ID><TRL>2</TRL><Description>Reduction in material properties due to temperature</Description><Reference></Reference>
+   <Attribute><Name>Overcurrent</Name><ID>3004</ID><TRL>2</TRL><Description></Description><Reference></Reference><Selected>false</Selected>
    <Incompatible></Incompatible></Attribute>
   </Group>
  </Category>

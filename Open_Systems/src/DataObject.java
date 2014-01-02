@@ -47,9 +47,9 @@ public class DataObject {
 	
     private int m_id;
     private int p_id;
-	protected String m_Name;
-    private String nodeType;
-    private int TRL_Number;
+	protected String m_Name, ref_URL, probability, difficulty, cost;
+	private String nodeType;
+    private int TRL_Number; // change this with a list of action items
     protected String descriptionText;
     protected Vector allowVector;
     protected Vector disallowVector;
@@ -64,6 +64,20 @@ public class DataObject {
 		allowVector = new Vector();
 		disallowVector = new Vector();
 		vDescriptors=new Vector();
+		probability ="low"; 
+		difficulty="low"; 
+		cost="low";
+	}
+    public DataObject(int id, String name,int trl, String _probability, String _difficulty, String _cost){
+		m_id = id;
+		setName(name);
+		setTRL_Numver(trl);
+		allowVector = new Vector();
+		disallowVector = new Vector();
+		vDescriptors=new Vector();
+		probability = _probability;
+		difficulty= _difficulty;
+		cost= _cost;
 	}
     public DataObject(int id,String name,int trl,String type){
         new DataObject(id,name,trl);
@@ -94,6 +108,16 @@ public class DataObject {
 	public void setTRL_Numver(int trl){TRL_Number=trl;}
 	public void setdesctiptionText(String desc){descriptionText=desc;}
 	public String getdesctiptionText(){return descriptionText;}
+	public void setReferenceURL(String rf_url){ref_URL=rf_url;}
+	public String getReferenceURL(){return ref_URL;}
+	public void setProbability(String p){probability=p;}
+	public String getProbability(){return probability;}
+	public void setDifficulty(String dif){difficulty=dif;}
+	public String getDifficulty(){return difficulty;}
+	public void setCost(String c){cost=c;}
+	public String getCost(){return cost;}
+
+	
 	
 	public Vector getallowVector(){return allowVector;}
 	public Vector getdisallowVector(){return disallowVector;}
