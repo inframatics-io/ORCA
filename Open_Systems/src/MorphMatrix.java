@@ -36,8 +36,14 @@ import java.awt.event.ItemListener;
 import java.math.BigInteger;
 import java.util.Vector;
 import java.io.File;
+import java.util.Enumeration;
 //import java.net.*;
 import java.util.Hashtable;
+
+
+
+
+
 
 
 
@@ -63,6 +69,7 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreeModel;
 
 import layouts.*;
 
@@ -809,108 +816,80 @@ public class MorphMatrix extends JFrame implements ActionListener {
         spLeft.add(leftScrollPane, BorderLayout.CENTER);
 
 		DefaultMutableTreeNode  rootNode = new DefaultMutableTreeNode(treePanel.rootNode);
+		
 		DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
 		treeModel = treePanel.treeModel;
-
-		int categoriesCounter = 0;
-		int groupCounter =0;
-		int attributCounter = 0;
-		categoriesCounter = treeModel.getChildCount(treeModel.getRoot());
-		for (int i=0;i< categoriesCounter;++i){
-		    groupCounter = treeModel.getChildCount(treeModel.getChild(treeModel.getRoot(),i));
-		    for(int j =0; j < groupCounter; j++){
-		        attributCounter =  treeModel.getChildCount(treeModel.getChild((treeModel.getChild(treeModel.getRoot(),i)),j));
-		        if (attributCounter > maxNumberOfAttributes)
-		            maxNumberOfAttributes = attributCounter;
-		        }
-		    }
 		
-		JButton[] labelButtons = new JButton[maxNumberOfAttributes+3];   //end
+		
+		int numDummyLabel =0;
 
-		for (int i = 0; i < labelButtons.length; i++){
-			if (i < 2){
-				labelButtons[i] = new JButton("");
-				labelButtons[i].setPreferredSize(buttonDim);
-				labelButtons[i].setBorderPainted(false);
-				labelButtons[i].setBackground(dynamicMorphColors[0]);
-				if (i == 0){
-					leftPanel.add(labelButtons[i], ParagraphLayout.NEW_PARAGRAPH);
-				}
-				else if (i >0){
-					leftPanel.add(labelButtons[i]);
-				}
-			}
-			else if (i > 2){
+//		DefaultMutableTreeNode nodeT = (DefaultMutableTreeNode) treeModel.getRoot();
+//		DataObject nodeInfo=(DataObject) nodeT.getUserObject();
+		
+		printAllNodes(treeModel,treeModel.getRoot(),numDummyLabel,leftPanel);
+		
+		
 
-				String htmlText = "<HTML><P><FONT COLOR=\"#FFFF00\" "+
-				"SIZE=\"4\" FACE=\"TimesRoman\">Option "+ (i-2) + "</FONT> </P></HTML>"	;
-				labelButtons[i] = new JButton(htmlText);
-				labelButtons[i].setEnabled(false);
-				labelButtons[i].setPreferredSize(buttonDim);
-				labelButtons[i].setBackground(dynamicMorphColors[4]);
-				leftPanel.add(labelButtons[i]);
-			}
-		}
 
       
-      categoriesCounter = 0;
-      groupCounter =0;
-      attributCounter = 0;   
-
-		categoriesCounter = treeModel.getChildCount(treeModel.getRoot());
-	    JButton[] categoryButton = new JButton[categoriesCounter];
-	    cbItemListener myCB = new cbItemListener();  
-
-	    for (int i=0;i< categoriesCounter;++i){
-            DefaultMutableTreeNode nodeT = (DefaultMutableTreeNode) treeModel.getChild(treeModel.getRoot(),i);
-            DataObject nodeInfo=(DataObject) nodeT.getUserObject();
-            categoryButton[i] = new JButton (nodeInfo.toString());
-            categoryButton[i].setEnabled(true);
-            categoryButton[i].addMouseListener(myCB);  
-            categoryButton[i].setBackground(dynamicMorphColors[1]);
-            categoryButton[i].setPreferredSize(buttonDim);
-            leftPanel.add(categoryButton[i], ParagraphLayout.NEW_PARAGRAPH);
-			groupCounter = treeModel.getChildCount(treeModel.getChild(treeModel.getRoot(),i));
-	        JButton[] groupButton = new JButton[groupCounter];
-	        int total=groupCounter;
-
-			for(int j =0; j < groupCounter; j++){
-
-		        nodeT = (DefaultMutableTreeNode) treeModel.getChild((treeModel.getChild(treeModel.getRoot(),i)),j);
-		        nodeInfo= (DataObject) nodeT.getUserObject();
-		        groupButton[j] = new JButton (nodeInfo.toString());
-		        groupButton[j].setBackground(dynamicMorphColors[2]);
-		        groupButton[j].setPreferredSize(buttonDim);
-		        groupButton[j].addMouseListener(myCB); 
-		        leftPanel.add(groupButton[j]);
-		        total--;
-		   	  	attributCounter =  treeModel.getChildCount(treeModel.getChild((
-									treeModel.getChild(treeModel.getRoot(),i)),j));
-				for(int k = 0; k< attributCounter;k++){
-
-					nodeT = (DefaultMutableTreeNode) treeModel.getChild(treeModel.getChild(
-                    treeModel.getChild(treeModel.getRoot(),i),j),k);
-					nodeInfo= (DataObject)nodeT.getUserObject();
-
-					nodeInfo.myCheckBox.setPreferredSize(buttonDim);
-					nodeInfo.myCheckBox.addItemListener(myCB);  
-					nodeInfo.myCheckBox.addMouseListener(myCB); 
-					leftPanel.add(nodeInfo.myCheckBox);
-					// by not restting the color  of the JCheckBox we
-					// can retain the status of Dyamic Morph Matrix
-  				}
-				if (total>=1){
-					JButton sameCategory = new JButton("");
-					sameCategory.setEnabled(false);
-					sameCategory.setBackground(dynamicMorphColors[0]);
-					sameCategory.setPreferredSize(buttonDim);
-					sameCategory.setBorderPainted(false);
-					leftPanel.add(sameCategory, ParagraphLayout.NEW_PARAGRAPH);
-				}
-				else
-				break;
-			}
-	    }
+//      categoriesCounter = 0;
+//      groupCounter =0;
+//      attributCounter = 0;   
+//
+//		categoriesCounter = treeModel.getChildCount(treeModel.getRoot());
+//	    JButton[] categoryButton = new JButton[categoriesCounter];
+//	    cbItemListener myCB = new cbItemListener();  
+//
+//	    for (int i=0;i< categoriesCounter;++i){
+//            DefaultMutableTreeNode nodeT = (DefaultMutableTreeNode) treeModel.getChild(treeModel.getRoot(),i);
+//            DataObject nodeInfo=(DataObject) nodeT.getUserObject();
+//            categoryButton[i] = new JButton (nodeInfo.toString());
+//            categoryButton[i].setEnabled(true);
+//            categoryButton[i].addMouseListener(myCB);  
+//            categoryButton[i].setBackground(dynamicMorphColors[1]);
+//            categoryButton[i].setPreferredSize(buttonDim);
+//            leftPanel.add(categoryButton[i], ParagraphLayout.NEW_PARAGRAPH);
+//			groupCounter = treeModel.getChildCount(treeModel.getChild(treeModel.getRoot(),i));
+//	        JButton[] groupButton = new JButton[groupCounter];
+//	        int total=groupCounter;
+//
+//			for(int j =0; j < groupCounter; j++){
+//
+//		        nodeT = (DefaultMutableTreeNode) treeModel.getChild((treeModel.getChild(treeModel.getRoot(),i)),j);
+//		        nodeInfo= (DataObject) nodeT.getUserObject();
+//		        groupButton[j] = new JButton (nodeInfo.toString());
+//		        groupButton[j].setBackground(dynamicMorphColors[2]);
+//		        groupButton[j].setPreferredSize(buttonDim);
+//		        groupButton[j].addMouseListener(myCB); 
+//		        leftPanel.add(groupButton[j]);
+//		        total--;
+//		   	  	attributCounter =  treeModel.getChildCount(treeModel.getChild((
+//									treeModel.getChild(treeModel.getRoot(),i)),j));
+//				for(int k = 0; k< attributCounter;k++){
+//
+//					nodeT = (DefaultMutableTreeNode) treeModel.getChild(treeModel.getChild(
+//                    treeModel.getChild(treeModel.getRoot(),i),j),k);
+//					nodeInfo= (DataObject)nodeT.getUserObject();
+//
+//					nodeInfo.myCheckBox.setPreferredSize(buttonDim);
+//					nodeInfo.myCheckBox.addItemListener(myCB);  
+//					nodeInfo.myCheckBox.addMouseListener(myCB); 
+//					leftPanel.add(nodeInfo.myCheckBox);
+//					// by not restting the color  of the JCheckBox we
+//					// can retain the status of Dyamic Morph Matrix
+//  				}
+//				if (total>=1){
+//					JButton sameCategory = new JButton("");
+//					sameCategory.setEnabled(false);
+//					sameCategory.setBackground(dynamicMorphColors[0]);
+//					sameCategory.setPreferredSize(buttonDim);
+//					sameCategory.setBorderPainted(false);
+//					leftPanel.add(sameCategory, ParagraphLayout.NEW_PARAGRAPH);
+//				}
+//				else
+//				break;
+//			}
+//	    }
 	    rightBorder = new JPanel(new BorderLayout());
 //	    possibleCombs = new JPanel(new BorderLayout());
 //		possibleCombs.setBackground(Color.yellow);
@@ -941,6 +920,11 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		updateDynamicMorphFrame(); // this line should be removed latter
 								   // For sure
 		jifDynamicMorphMatrixFrame.setVisible(true);
+		
+		// add RadioButtons to select low mid high probability
+		// and other stuff such as difficulty and cost
+		// also selectors for table view (default), 
+		// fish-bone view, plot view and  maybe list view
 	}
 //	this function makes the MenuBar for main_desktop
 	public void makeMenu() {
@@ -1248,9 +1232,15 @@ public class MorphMatrix extends JFrame implements ActionListener {
         
 	  	if(!vFiltersVector.isEmpty()){
 	  	    for (int j=0; j<vFiltersVector.size();++j){
-	  		  	Vector HoldList= (Vector)vFiltersVector.elementAt(j);
+	  		  	Vector HoldList= (Vector)vFiltersVector.elementAt(j);    	//DefaultMutableTreeNode  nodeT = new DefaultMutableTreeNode(node);
+	  	    	
+	  	    	//DataObject nodeInfo=(DataObject) nodeT.getUserObject();
+	  	    	//System.out.println(nodeInfo.getName());
 	  		  	if(HoldList!= null){
-	  		        for(int i=0; i<HoldList.size();++i){
+	  		        for(int i=0; i<HoldList.size();++i){    	//DefaultMutableTreeNode  nodeT = new DefaultMutableTreeNode(node);
+	  		      	
+	  		      	//DataObject nodeInfo=(DataObject) nodeT.getUserObject();
+	  		      	//System.out.println(nodeInfo.getName());
 	  		            DataObject nodeInfo=(DataObject)HoldList.get(i);
 	  		            if(nodeInfo.myCheckBox.isSelected()){// later if we be able to make a fram that containes the list of these nodes and alowing the user to select which node to pass the filter
 	  		                int answer = JOptionPane.showConfirmDialog(jifDynamicMorphMatrixFrame,nodeInfo.getName()+
@@ -1276,8 +1266,34 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
     }
 //    public void updateComboFrame(){
-
 //    }
+    private void printAllNodes(DefaultTreeModel model, Object node, int indent, JPanel leftPanel){
+    	JButton indentionSpace = new JButton("");
+		indentionSpace.setEnabled(false);
+		indentionSpace.setBackground(dynamicMorphColors[0]);
+		indentionSpace.setBorderPainted(false);
+		leftPanel.add(indentionSpace);
+    	leftPanel.add(indentionSpace,ParagraphLayout.NEW_PARAGRAPH);
+    	for(int i=1; i<indent;++i){
+    		
+    		indentionSpace = new JButton("");
+    		indentionSpace.setEnabled(false);
+    		indentionSpace.setBackground(dynamicMorphColors[0]);
+    		indentionSpace.setPreferredSize(buttonDim);
+    		indentionSpace.setBorderPainted(false);
+			leftPanel.add(indentionSpace);  
+    	}
+    	
+    	//DefaultMutableTreeNode  nodeT = new DefaultMutableTreeNode(node);
+    	//DataObject nodeInfo=(DataObject) nodeT.getUserObject();
+    	//System.out.println(nodeInfo.getName());
+
+    	leftPanel.add(new JButton (node.toString()));
+//    	System.out.println(space + node.toString());
+    	for (int i=0; i<model.getChildCount(node);i++){
+    		printAllNodes(model, model.getChild(node, i),indent + 1,leftPanel);
+    	}
+    }
     public void makeFilterFrame(){
         jifNewFilterFrame = new JInternalFrame("Action Item"
 	           ,false,true,false,false);
