@@ -110,6 +110,9 @@ public class Open {
             nodeInfo =new DataObject(intID ,nameOfCategory,intTRL);
             nodeInfo.setDescription(xmlFilter(DescriptionOfCategory));
             nodeInfo.setReferenceURL(reference_URL);
+            nodeInfo.setProbability(returnFirstElement((String)v_category.elementAt(i),"Probability"));
+            nodeInfo.setDifficulty(returnFirstElement((String)v_category.elementAt(i),"Difficulty"));
+            nodeInfo.setCost(returnFirstElement((String)v_category.elementAt(i),"Cost"));
             
             c_category=m_treePanel.addObject(nodeInfo);
             Vector v_groups=xmlParser((String)v_category.elementAt(i),"Group");
@@ -141,6 +144,9 @@ public class Open {
             nodeInfo =new DataObject(intID ,nameOfGroup,intTRL);
             nodeInfo.setDescription(xmlFilter(DescriptionOfGroup));
             nodeInfo.setReferenceURL(reference_URL);
+            nodeInfo.setProbability(returnFirstElement((String)v_group.elementAt(i),"Probability"));
+            nodeInfo.setDifficulty(returnFirstElement((String)v_group.elementAt(i),"Difficulty"));
+            nodeInfo.setCost(returnFirstElement((String)v_group.elementAt(i),"Cost"));
             c_group=m_treePanel.addObject(c_category,nodeInfo);
             Vector v_attributes=xmlParser((String)v_group.elementAt(i),"Attribute");
             addAttributes(v_attributes);

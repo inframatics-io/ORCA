@@ -99,7 +99,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
     protected JDesktopPane main_desktop;
 	private JInternalFrame jifMakeCompatMatrixFrame;
 	private JInternalFrame jifNewMorphMatrixFrame;
-	private JInternalFrame jifDynamicMorphMatrixFrame,jifNewFilterFrame;
+	private JInternalFrame jifDynamicFaultMatrixFrame,jifNewFilterFrame;
 	private JSplitPane ptrSpLeft;
 	
 
@@ -151,9 +151,9 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
 	ActionListener checkBoxListener = new ActionListener(){
 	    public void actionPerformed(ActionEvent e){
-	        if(jifDynamicMorphMatrixFrame!= null &&jifDynamicMorphMatrixFrame.isVisible()){
-	            jifDynamicMorphMatrixFrame.dispose();
-	            makeDynamicMorphMatrix();
+	        if(jifDynamicFaultMatrixFrame!= null &&jifDynamicFaultMatrixFrame.isVisible()){
+	            jifDynamicFaultMatrixFrame.dispose();
+	            makeDynamicFaultMatrix();
 	            infoTextField.setText("Please click on the new Filter to apply the setting");
 	        }
 	    }
@@ -425,11 +425,11 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		}
 		else if (e.getSource() == makeMorphMatrix){
 		    	jifMakeCompatMatrixFrame.setVisible(false);	
-		    	makeDynamicMorphMatrix();
+		    	makeDynamicFaultMatrix();
 
 		}
 		else if (e.getSource() == backToCompatibility){
-		    	jifDynamicMorphMatrixFrame.dispose();
+		    	jifDynamicFaultMatrixFrame.dispose();
 		    	jifMakeCompatMatrixFrame.setVisible(true);
 		    	reToMorphMatrix=true;
 		}
@@ -763,15 +763,15 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		main_desktop.add(jifMakeCompatMatrixFrame);
 		jifMakeCompatMatrixFrame.show();
 	}
-// this functions makes the dynamic morphmatrix frame
-//	we have to change the name from makeDynamicMorphMatrix to makeFaultTree
-	public void makeDynamicMorphMatrix(){
+// this functions makes the dynamic fault matrix frame
 
-		jifDynamicMorphMatrixFrame = new JInternalFrame(
-				"Dynamic MorphMatrix",true,true,true,true);
-		jifDynamicMorphMatrixFrame.setSize(main_desktop.getSize());
-		jifDynamicMorphMatrixFrame.setLayout(new BorderLayout());
-		jifDynamicMorphMatrixFrame.setBackground(Color.white);
+	public void makeDynamicFaultMatrix(){
+
+		jifDynamicFaultMatrixFrame = new JInternalFrame(
+				"Dynamic FaultMatrix",true,true,true,true);
+		jifDynamicFaultMatrixFrame.setSize(main_desktop.getSize());
+		jifDynamicFaultMatrixFrame.setLayout(new BorderLayout());
+		jifDynamicFaultMatrixFrame.setBackground(Color.white);
 
 		JSplitPane spLeft = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		spLeft.setDividerSize(8);
@@ -789,7 +789,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
 		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,spLeft,spRight);
 		sp.setDividerSize(8);
-		sp.setDividerLocation(jifDynamicMorphMatrixFrame.getWidth()-200);
+		sp.setDividerLocation(jifDynamicFaultMatrixFrame.getWidth()-200);
 		sp.setResizeWeight(0.5);
 		sp.setContinuousLayout(true);
 		sp.setOneTouchExpandable(true);
@@ -805,9 +805,9 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		JTextArea txtTitle = new JTextArea(treePanel.rootNode.toString());
 		txtTitle.setFont(textFont);
 		txtTitle.setEditable(false);
-		txtTitle.setBackground(jifDynamicMorphMatrixFrame.getBackground());
+		txtTitle.setBackground(jifDynamicFaultMatrixFrame.getBackground());
 		topBorder.add(txtTitle);
-		jifDynamicMorphMatrixFrame.add(topBorder, BorderLayout.NORTH);
+		jifDynamicFaultMatrixFrame.add(topBorder, BorderLayout.NORTH);
 
         JPanel leftPanel = new JPanel(new ParagraphLayout());
         JScrollPane leftScrollPane = new JScrollPane(leftPanel);
@@ -825,7 +825,10 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
 //		DefaultMutableTreeNode nodeT = (DefaultMutableTreeNode) treeModel.getRoot();
 //		DataObject nodeInfo=(DataObject) nodeT.getUserObject();
-		
+		for(int i=0; i<treePanel.processedOptionNodes.size();++i){
+            DataObject nodeInfo= (DataObject)treePanel.processedOptionNodes.get(i);
+            System.out.println(nodeInfo.getName());
+		}
 		printAllNodes(treeModel,treeModel.getRoot(),numDummyLabel,leftPanel);
 		
 		
@@ -914,12 +917,12 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		lowerPanel.add(scrollPane/*,ParagraphLayout.NEW_PARAGRAPH*/);
 		rightBorder.add(lowerPanel,BorderLayout.SOUTH);
 	    spRight.add(rightBorder,BorderLayout.NORTH);
-		jifDynamicMorphMatrixFrame.add(buttonPanel, BorderLayout.SOUTH);
-		jifDynamicMorphMatrixFrame.add(sp, BorderLayout.CENTER);
-		main_desktop.add(jifDynamicMorphMatrixFrame);
+		jifDynamicFaultMatrixFrame.add(buttonPanel, BorderLayout.SOUTH);
+		jifDynamicFaultMatrixFrame.add(sp, BorderLayout.CENTER);
+		main_desktop.add(jifDynamicFaultMatrixFrame);
 		updateDynamicMorphFrame(); // this line should be removed latter
 								   // For sure
-		jifDynamicMorphMatrixFrame.setVisible(true);
+		jifDynamicFaultMatrixFrame.setVisible(true);
 		
 		// add RadioButtons to select low mid high probability
 		// and other stuff such as difficulty and cost
@@ -961,7 +964,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		menuItemSave.addActionListener(this);
 		
 		menuItemExit = new JMenuItem("Exit");
-		menuItemExit.setMnemonic(KeyEvent.VK_E);
+		menuItemExit.setMnemonic(KeyEvent.VK_X);
 		menuItemExit.setToolTipText("Exit OpenTool");
 		menuFile.add(menuItemExit);
 		menuItemExit.addActionListener(this);
@@ -1022,7 +1025,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		}
 	    rightBorder.add(filterScrollPane,BorderLayout.CENTER);
 	    rightBorder.repaint();
-	    jifDynamicMorphMatrixFrame.repaint();
+	    jifDynamicFaultMatrixFrame.repaint();
 	}
 	public void initializeCompatibility(Vector sentAttributes,Vector oldAttributes){
 		for(int i=0;i< sentAttributes.size();++i){
@@ -1243,7 +1246,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	  		      	//System.out.println(nodeInfo.getName());
 	  		            DataObject nodeInfo=(DataObject)HoldList.get(i);
 	  		            if(nodeInfo.myCheckBox.isSelected()){// later if we be able to make a fram that containes the list of these nodes and alowing the user to select which node to pass the filter
-	  		                int answer = JOptionPane.showConfirmDialog(jifDynamicMorphMatrixFrame,nodeInfo.getName()+
+	  		                int answer = JOptionPane.showConfirmDialog(jifDynamicFaultMatrixFrame,nodeInfo.getName()+
 	  		                        ", selected by the user does not pass through the TRL filter.\n" +
 	  		                		"Do you wan to by pass the filter? ");
 	  					    if (answer == JOptionPane.YES_OPTION) {
@@ -1274,7 +1277,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		indentionSpace.setBorderPainted(false);
 		leftPanel.add(indentionSpace);
     	leftPanel.add(indentionSpace,ParagraphLayout.NEW_PARAGRAPH);
-    	for(int i=1; i<indent;++i){
+    	for(int i=0; i<indent;++i){
     		
     		indentionSpace = new JButton("");
     		indentionSpace.setEnabled(false);
@@ -1287,7 +1290,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
     	//DefaultMutableTreeNode  nodeT = new DefaultMutableTreeNode(node);
     	//DataObject nodeInfo=(DataObject) nodeT.getUserObject();
     	//System.out.println(nodeInfo.getName());
-
+    	
     	leftPanel.add(new JButton (node.toString()));
 //    	System.out.println(space + node.toString());
     	for (int i=0; i<model.getChildCount(node);i++){
@@ -1414,19 +1417,19 @@ public class MorphMatrix extends JFrame implements ActionListener {
 				descriptionTextField.setText(nodeInfo.getdesctiptionText());
 				ref1TextField.setText(nodeInfo.getReferenceURL());
 				// setting the JRadioButton for Probability
-				if (nodeInfo.getProbability() == "low") lProbabilityRButton.setSelected(true);
-				else if(nodeInfo.getProbability()== "mid") mProbabilityRButton.setSelected(true);
-				else if (nodeInfo.getProbability()== "high") hProbabilityRButton.setSelected(true);
+				if (nodeInfo.getProbability().contains("low")) lProbabilityRButton.setSelected(true);
+				else if(nodeInfo.getProbability().contains("mid")) mProbabilityRButton.setSelected(true);
+				else if (nodeInfo.getProbability().contains("high")) hProbabilityRButton.setSelected(true);
 				else System.out.println("Probability is not low, mid, or high: " +nodeInfo.getProbability());
 				// setting the JRadioButton for Difficulty
-				if (nodeInfo.getDifficulty() == "low") lDifficultyRButton.setSelected(true);
-				else if(nodeInfo.getDifficulty()== "mid") mDifficultyRButton.setSelected(true);
-				else if (nodeInfo.getDifficulty()== "high") hDifficultyRButton.setSelected(true);
+				if (nodeInfo.getDifficulty().contains("low")) lDifficultyRButton.setSelected(true);
+				else if(nodeInfo.getDifficulty().contains("mid")) mDifficultyRButton.setSelected(true);
+				else if (nodeInfo.getDifficulty().contains("high")) hDifficultyRButton.setSelected(true);
 				else System.out.println("Difficulty is not low, mid, or high: " +nodeInfo.getDifficulty());
 				// setting the JRadioButton for Cost
-				if (nodeInfo.getCost()== "low") lCostRButton.setSelected(true);
-				else if(nodeInfo.getCost()== "mid") mCostRButton.setSelected(true);
-				else if (nodeInfo.getCost()== "high") hCostRButton.setSelected(true);
+				if (nodeInfo.getCost().contains("low")) lCostRButton.setSelected(true);
+				else if(nodeInfo.getCost().contains("mid")) mCostRButton.setSelected(true);
+				else if (nodeInfo.getCost().contains("high")) hCostRButton.setSelected(true);
 				else System.out.println("Cost is not low mid, or high: " +nodeInfo.getCost());
 
 				//save the pointer to node for later
@@ -1595,7 +1598,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 class AboutBox extends JDialog {
 	public AboutBox(Frame owner) {
 		super(owner, "About", true);
-		JLabel lbl = new JLabel(new ImageIcon("images/OS_logo.png"));
+		JLabel lbl = new JLabel(new ImageIcon("images/opensys.png"));
 		JPanel p = new JPanel();
 		Border b1 = new BevelBorder(BevelBorder.LOWERED);
 		Border b2 = new EmptyBorder(5, 5, 5, 5);
