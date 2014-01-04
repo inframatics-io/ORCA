@@ -20,6 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  *
  */
+package io.opensystems.rcca;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -184,7 +185,7 @@ public class Open {
             nodeInfo.setCost(returnFirstElement((String)v_attribute.elementAt(i),"Cost"));
             
             String s_Incompatibility=returnFirstElement((String) v_attribute.elementAt(i),"Incompatible");
-            doCompatibility(s_Incompatibility,nodeInfo);
+            linkActionItems(s_Incompatibility,nodeInfo);
            } catch (Exception e) {
 	            // TODO Auto-generated catch block
 	            e.printStackTrace();
@@ -193,31 +194,31 @@ public class Open {
         }           
     }
     // delte doCompatibility
-    public void doCompatibility(String s_Incompatibility,DataObject nodeInfo){
-    	try{
-	    	Vector v_Incompatibility=xmlParser(s_Incompatibility,"Name");
-	    	for(int i=0;i<m_treePanel.newOPTIONNodesAdded.size();++i){    
-    			DataObject nodeTemp=(DataObject)m_treePanel.newOPTIONNodesAdded.get(i);
-    			boolean found=false;
-    			for(int j=0;j<v_Incompatibility.size();++j){
-    	    	    String nameOfAIncompNode=(String)v_Incompatibility.get(j);
-    	    	    if(nameOfAIncompNode.equals(nodeTemp.getName())){	
-            			found=true;
-            			break;
-            		}    
-    			}
-    			if(found){
-        			nodeInfo.disallowVector.add(nodeTemp);
-        			nodeTemp.disallowVector.add(nodeInfo);
-    			}else{
-    			    nodeInfo.allowVector.add(nodeTemp);        
-			        nodeTemp.allowVector.add(nodeInfo);
-    			}
-        	}
-	        m_treePanel.addObject(c_group,nodeInfo);
-    	}catch (Exception e){
-    		System.out.println(e);
-    	}
+    public void linkActionItems(String s_Incompatibility,DataObject nodeInfo){
+//    	try{
+//	    	Vector v_Incompatibility=xmlParser(s_Incompatibility,"Name");
+//	    	for(int i=0;i<m_treePanel.newOPTIONNodesAdded.size();++i){    
+//    			DataObject nodeTemp=(DataObject)m_treePanel.newOPTIONNodesAdded.get(i);
+//    			boolean found=false;
+//    			for(int j=0;j<v_Incompatibility.size();++j){
+//    	    	    String nameOfAIncompNode=(String)v_Incompatibility.get(j);
+//    	    	    if(nameOfAIncompNode.equals(nodeTemp.getName())){	
+//            			found=true;
+//            			break;
+//            		}    
+//    			}
+//    			if(found){
+//        			nodeInfo.disallowVector.add(nodeTemp);
+//        			nodeTemp.disallowVector.add(nodeInfo);
+//    			}else{
+//    			    nodeInfo.allowVector.add(nodeTemp);        
+//			        nodeTemp.allowVector.add(nodeInfo);
+//    			}
+//        	}
+//	        m_treePanel.addObject(c_group,nodeInfo);
+//    	}catch (Exception e){
+//    		System.out.println(e);
+//    	}
     }
 	private Vector xmlParser(String xml,String attribute) throws Exception
 	{

@@ -20,8 +20,9 @@
  * DEALINGS IN THE SOFTWARE.
  *
  */
+package io.opensystems.rcca;
 import java.awt.*;
-import java.awt.dnd.*;
+//import java.awt.dnd.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -33,24 +34,12 @@ import java.awt.event.WindowListener;
 import java.awt.event.KeyListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.math.BigInteger;
+//import java.math.BigInteger;
 import java.util.Vector;
 import java.io.File;
-import java.util.Enumeration;
+//import java.util.Enumeration;
 //import java.net.*;
-import java.util.Hashtable;
-
-
-
-
-
-
-
-
-
-
-
-
+//import java.util.Hashtable;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import javax.swing.JFileChooser;
@@ -81,11 +70,7 @@ import layouts.*;
  * 		     
  */
 
-/**
- * @author Payman
- *
- */
-public class MorphMatrix extends JFrame implements ActionListener {
+public class RootCause extends JFrame implements ActionListener {
 
     protected File m_currentDir;
 	private int newNodeSuffix = 1;
@@ -129,7 +114,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	protected String node_cost;
 	
 	protected String errorMsg = "";
-	protected JList allowList, disallowList;
+//	protected JList allowList, disallowList;
 	protected DataObject draggingListObject;
 //	protected Vector vCheckBoxFilters, vFiltersVector=new Vector();//later we need to move this inizaization to 
 	protected Vector globalVectorOfActions=new Vector();  
@@ -163,7 +148,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	    }
 	};
 
-	public MorphMatrix(){
+	public RootCause(){
 		super("Open System Tool");
 		setBounds(0,0,1000,700);
 
@@ -265,7 +250,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 			
 		}
 		else if (e.getSource() == menuHelpAbout){
-			AboutBox dlg = new AboutBox(MorphMatrix.this);
+			AboutBox dlg = new AboutBox(RootCause.this);
 			dlg.setVisible(true);
 		}
 		else if(e.getSource() == menuItemExit){
@@ -384,7 +369,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 			    isAttributeSaved=true;
 			    saveAttributes.setVisible(false);
 			}
-		    initializeCompatibility(treePanel.getNewOPTIONNodes(),treePanel.processedOptionNodes);
+		    //initializeCompatibility(treePanel.getNewOPTIONNodes(),treePanel.processedOptionNodes);
 		    treePanel.resetNewOPIONNodes();
 		    jifNewMorphMatrixFrame.setVisible(false);
 			makeActionItemsFrame();
@@ -756,6 +741,8 @@ public class MorphMatrix extends JFrame implements ActionListener {
 //		bottomRightSP.setPreferredSize(new Dimension(300,350));// make this size dynamic
 //      this is the table for the action items 
 		
+	
+		
 		String[] columnNames = {"Ation #",
                 "Owner",
                 "Description",
@@ -802,8 +789,8 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		main_desktop.add(jifmakeActionItemsFrame);
 		jifmakeActionItemsFrame.show();
 	}
+	
 // this functions makes the dynamic fault matrix frame
-
 	public void makeDynamicFaultMatrix(){
 
 		jifDynamicFaultMatrixFrame = new JInternalFrame(
@@ -1068,36 +1055,36 @@ public class MorphMatrix extends JFrame implements ActionListener {
 //	    rightBorder.repaint();
 //	    jifDynamicFaultMatrixFrame.repaint();
 //	}
-	public void initializeCompatibility(Vector sentAttributes,Vector oldAttributes){
-		for(int i=0;i< sentAttributes.size();++i){
-	    	DataObject currentOption = (DataObject)sentAttributes.get(i);
-			for(int j=i+1; j< sentAttributes.size();++j){
-				DataObject nodeInfo = (DataObject) sentAttributes.get(j);
-				if (nodeInfo.getParentId()==currentOption.getParentId()){
-					nodeInfo.adddisallowVector(currentOption);
-					currentOption.adddisallowVector(nodeInfo);
-				}else{
-					nodeInfo.addAllowVector(currentOption);
-					currentOption.addAllowVector(nodeInfo);
-				}
-			}
-	    }
-		if (oldAttributes !=null && !oldAttributes.isEmpty()){
-			for(int i=0;i< sentAttributes.size();++i){
-				DataObject currentOption = (DataObject)sentAttributes.get(i);
-				for(int j=0; j< oldAttributes.size();++j){
-					DataObject nodeInfo = (DataObject)oldAttributes.get(j);
-					if (nodeInfo.getParentId()==currentOption.getParentId()){
-						nodeInfo.adddisallowVector(currentOption);
-						currentOption.adddisallowVector(nodeInfo);
-					}else{
-						nodeInfo.addAllowVector(currentOption);
-						currentOption.addAllowVector(nodeInfo);
-					}
-				}
-		    }
-		}
-	}
+//	public void initializeCompatibility(Vector sentAttributes,Vector oldAttributes){
+//		for(int i=0;i< sentAttributes.size();++i){
+//	    	DataObject currentOption = (DataObject)sentAttributes.get(i);
+//			for(int j=i+1; j< sentAttributes.size();++j){
+//				DataObject nodeInfo = (DataObject) sentAttributes.get(j);
+//				if (nodeInfo.getParentId()==currentOption.getParentId()){
+//					nodeInfo.adddisallowVector(currentOption);
+//					currentOption.adddisallowVector(nodeInfo);
+//				}else{
+//					nodeInfo.addAllowVector(currentOption);
+//					currentOption.addAllowVector(nodeInfo);
+//				}
+//			}
+//	    }
+//		if (oldAttributes !=null && !oldAttributes.isEmpty()){
+//			for(int i=0;i< sentAttributes.size();++i){
+//				DataObject currentOption = (DataObject)sentAttributes.get(i);
+//				for(int j=0; j< oldAttributes.size();++j){
+//					DataObject nodeInfo = (DataObject)oldAttributes.get(j);
+//					if (nodeInfo.getParentId()==currentOption.getParentId()){
+//						nodeInfo.adddisallowVector(currentOption);
+//						currentOption.adddisallowVector(nodeInfo);
+//					}else{
+//						nodeInfo.addAllowVector(currentOption);
+//						currentOption.addAllowVector(nodeInfo);
+//					}
+//				}
+//		    }
+//		}
+//	}
 	public boolean saveInputsToNode(DefaultMutableTreeNode sNode){
 		String name = new String(((DataObject)sNode.getUserObject()).getName());
 		String newName=nameTextField.getText();
@@ -1146,7 +1133,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
 //	}
 	public static void main(String[] args) {
-		new MorphMatrix();
+		new RootCause();
 	}
 	public boolean search(String name, int sentID){
 		boolean rValue = true;
@@ -1261,19 +1248,19 @@ public class MorphMatrix extends JFrame implements ActionListener {
 //       // updateComboFrame();
 //    }
     public void updateDynamicMorphFrame(){
-   	  	for( int i=0;i<treePanel.processedOptionNodes.size();++i){
-	  		((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.setBackground(dynamicMorphColors[3]);
-	  		((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.setEnabled(true);
-	  	}
-	  	for( int i=0;i<treePanel.processedOptionNodes.size();++i){
-	  		if (((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.isSelected()){
-	  			DataObject nodeInfo=(DataObject)treePanel.processedOptionNodes.get(i);
-	  			for(int j=0;j<nodeInfo.disallowVector.size();++j){
-	  				((DataObject)nodeInfo.disallowVector.get(j)).myCheckBox.setBackground(dynamicMorphColors[5]);
-    	  			((DataObject)nodeInfo.disallowVector.get(j)).myCheckBox.setEnabled(false);
-    	  		}
-			}
-	  	}
+//   	  	for( int i=0;i<treePanel.processedOptionNodes.size();++i){
+//	  		((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.setBackground(dynamicMorphColors[3]);
+//	  		((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.setEnabled(true);
+//	  	}
+//	  	for( int i=0;i<treePanel.processedOptionNodes.size();++i){
+//	  		if (((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.isSelected()){
+//	  			DataObject nodeInfo=(DataObject)treePanel.processedOptionNodes.get(i);
+//	  			for(int j=0;j<nodeInfo.disallowVector.size();++j){
+//	  				((DataObject)nodeInfo.disallowVector.get(j)).myCheckBox.setBackground(dynamicMorphColors[5]);
+//    	  			((DataObject)nodeInfo.disallowVector.get(j)).myCheckBox.setEnabled(false);
+//    	  		}
+//			}
+//	  	}
         
 //	  	if(!vFiltersVector.isEmpty()){
 //	  	    for (int j=0; j<vFiltersVector.size();++j){
@@ -1488,18 +1475,18 @@ public class MorphMatrix extends JFrame implements ActionListener {
 				DataObject nodeInfo = (DataObject)node.getUserObject();
 				// the code only allows for attributes to be 
 				// compatibile or incompatible
-				if(nodeInfo.getType().equals(nodeInfo.ATTRIBUTE)){
-				    allowList.setVisible(true);
-				    disallowList.setVisible(true);
-				    Vector data = nodeInfo.allowVector;
-				    allowList.setListData(nodeInfo.allowVector);
-				    disallowList.setBackground(Color.white);
-				    disallowList.setListData(nodeInfo.disallowVector);
-				}else{
-				    allowList.setVisible(false);
-				    disallowList.setVisible(false);
-				    
-				}
+//				if(nodeInfo.getType().equals(nodeInfo.ATTRIBUTE)){
+//				    allowList.setVisible(true);
+//				    disallowList.setVisible(true);
+//				    Vector data = nodeInfo.allowVector;
+//				    allowList.setListData(nodeInfo.allowVector);
+//				    disallowList.setBackground(Color.white);
+//				    disallowList.setListData(nodeInfo.disallowVector);
+//				}else{
+//				    allowList.setVisible(false);
+//				    disallowList.setVisible(false);
+//				    
+//				}
 			}
 
 		}

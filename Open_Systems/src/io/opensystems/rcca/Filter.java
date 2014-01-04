@@ -26,7 +26,7 @@
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-
+package io.opensystems.rcca;
 import javax.swing.BorderFactory;
 import javax.swing.JSlider;
 /**

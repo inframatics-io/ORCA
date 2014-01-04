@@ -20,7 +20,9 @@
  * DEALINGS IN THE SOFTWARE.
  *
  */
+package io.opensystems.rcca;
 import java.util.Vector;
+
 import javax.swing.*;
 
 /*
@@ -32,8 +34,8 @@ import javax.swing.*;
 
 /**
  * 
- * @author's Daniel R. Zentner
- * 		     Payman Toulyiat
+ * @author's Payman Touliat
+ * 		     
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
@@ -43,7 +45,6 @@ public class DataObject {
 	public String GROUP     = "GROUP";
 	public String ATTRIBUTE = "ATTRIBUTE";
 	public JCheckBox myCheckBox;
-	public Vector blockedBy;
 	
     private int m_id;
     private int p_id;
@@ -51,8 +52,9 @@ public class DataObject {
 	private String nodeType;
     private int TRL_Number; // change this with a list of action items
     protected String descriptionText;
-    protected Vector allowVector;
-    protected Vector disallowVector;
+    protected Vector<Integer> myActionIDs;
+    //    protected Vector allowVector;
+//    protected Vector disallowVector;
     //protected Vector vDescriptors;
     
 	
@@ -61,8 +63,8 @@ public class DataObject {
 		m_id = id;
 		setName(name);
 		setTRL_Numver(trl);
-		allowVector = new Vector();
-		disallowVector = new Vector();
+//		allowVector = new Vector();
+//		disallowVector = new Vector();
 		//vDescriptors=new Vector();
 		probability ="low"; 
 		difficulty="low"; 
@@ -72,9 +74,10 @@ public class DataObject {
 		m_id = id;
 		setName(name);
 		setTRL_Numver(trl);
-		allowVector = new Vector();
-		disallowVector = new Vector();
+//		allowVector = new Vector();
+//		disallowVector = new Vector();
 		//vDescriptors=new Vector();
+		
 		probability = _probability;
 		difficulty= _difficulty;
 		cost= _cost;
@@ -118,39 +121,35 @@ public class DataObject {
 	public String getCost(){return cost;}
 
 	
-	
-	public Vector getallowVector(){return allowVector;}
-	public Vector getdisallowVector(){return disallowVector;}
-	
-	
-	public void addAllowVector(DataObject newD){
-		allowVector.add(newD);
+	public void linkActionItem(int actionID){
+		myActionIDs.add((Integer)actionID);
 	}
 	
-	public void adddisallowVector(DataObject newD){
-		disallowVector.add(newD);	
-	}
 	
-	public void addAllAllowVectors(Vector vIn){
-		if (vIn.size() == 0){
-			allowVector.removeAllElements();
-		}
-		else{
-			for (int i = 0; i < vIn.size(); i++){
-				allowVector.add(vIn.get(i));
-			}
-		}
-	}
-	public void addAllDisallowVectors(Vector vIn){
-		if (vIn.size() == 0){
-			disallowVector.removeAllElements();
-		}
-		else{
-			for (int i = 0; i < vIn.size(); i++){
-				disallowVector.add(vIn.get(i));
-			}
-		}
-	}
+//	public void adddisallowVector(DataObject newD){
+//		disallowVector.add(newD);	
+//	}
+	
+//	public void addAllAllowVectors(Vector vIn){
+//		if (vIn.size() == 0){
+//			allowVector.removeAllElements();
+//		}
+//		else{
+//			for (int i = 0; i < vIn.size(); i++){
+//				allowVector.add(vIn.get(i));
+//			}
+//		}
+//	}
+//	public void addAllDisallowVectors(Vector<ActionItems> vIn){
+//		if (vIn.size() == 0){
+//			disallowVector.removeAllElements();
+//		}
+//		else{
+//			for (int i = 0; i < vIn.size(); i++){
+//				disallowVector.add(vIn.get(i));
+//			}
+//		}
+//	}
 	
 	public void copy(DataObject dataIn){
 		m_id = dataIn.getId();
