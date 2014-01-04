@@ -53,7 +53,7 @@ public class DataObject {
     protected String descriptionText;
     protected Vector allowVector;
     protected Vector disallowVector;
-    protected Vector vDescriptors;
+    //protected Vector vDescriptors;
     
 	
 
@@ -63,7 +63,7 @@ public class DataObject {
 		setTRL_Numver(trl);
 		allowVector = new Vector();
 		disallowVector = new Vector();
-		vDescriptors=new Vector();
+		//vDescriptors=new Vector();
 		probability ="low"; 
 		difficulty="low"; 
 		cost="low";
@@ -74,7 +74,7 @@ public class DataObject {
 		setTRL_Numver(trl);
 		allowVector = new Vector();
 		disallowVector = new Vector();
-		vDescriptors=new Vector();
+		//vDescriptors=new Vector();
 		probability = _probability;
 		difficulty= _difficulty;
 		cost= _cost;
