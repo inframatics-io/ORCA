@@ -29,10 +29,12 @@ public class Save {
 	protected File m_currentDir;
 	protected File m_currentFile;
 	protected PrintStream p; // declare a print stream object
+	public String error;
 	
 	public Save(DefaultTreeModel treeModelIn, JTree treeIN, File fChoosen){
 		treeModel = treeModelIn;
 		tree = treeIN;
+		error ="";
 		if(fChoosen.getName().toLowerCase().endsWith(".xml"))
 			m_currentFile=fChoosen;
 		else{
@@ -59,6 +61,7 @@ public class Save {
   		}
 		catch (Exception e){
                 System.err.println ("Error writing to file");
+                error="Error writing to file";
         }
 	}
 	private void printNodeStructure(){

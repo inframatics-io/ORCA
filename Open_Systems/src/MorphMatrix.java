@@ -105,9 +105,9 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
 	protected JMenuBar menuBar;
 	protected JMenu menuFile, menuView, menuTools, menuFilter, menuHelp;
-	protected JMenuItem menuItemOpen, menuItemClose, menuItemNew, menuItemEdit, menuItemSave,
-			  menuItemExit, menuViewCove, menuViewDesktop, menuToolsTopsis, menuHelpAbout;
-	protected JCheckBoxMenuItem menuTrlFilter;
+	protected JMenuItem menuItemOpen, menuItemClose, menuItemNew, menuItemExport, menuItemSave,
+			  menuItemExit, menuViewProjector, menuViewDesktop, menuToolsTopsis, menuHelpAbout;
+	protected JCheckBoxMenuItem menuActinItems;
 	
 	protected JButton createCompatMatrix, addActionItem,
 			  makeMorphMatrix,saveAttributes,backToMain,
@@ -144,7 +144,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	Dimension buttonDim;
 	Font textFont;
 	private boolean isAttributeSaved=true;
-	private boolean isFileSaved=false;
+	private boolean isFileSaved=true; // true=YES; false=NO; 
 	protected boolean ableToSave = false;
 	protected boolean reToMorphMatrix = false;
 	
@@ -209,9 +209,10 @@ public class MorphMatrix extends JFrame implements ActionListener {
 			if (rootName != null /* && rootName.length() >0 */ ){
 				treePanel = new DynamicTree(rootName,textFont);
 				newMorphMatrixFrame(true);
+				isFileSaved = false;
 			}			
 		}else if (e.getSource() == menuViewDesktop){
-		}else if (e.getSource() == menuItemEdit){
+		}else if (e.getSource() == menuItemExport){
 			if (true){
 				jifNewMorphMatrixFrame.setVisible(true);
 			}
@@ -235,6 +236,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 				m_currentDir=m_chooser.getCurrentDirectory();
 				File m_currentFile= m_chooser.getSelectedFile();
 				Save saveFile = new Save(treePanel.treeModel, treePanel.tree,m_currentFile);
+				if (saveFile.error.isEmpty()) isFileSaved=true;
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		}else if (e.getSource() == menuItemOpen){
@@ -295,10 +297,15 @@ public class MorphMatrix extends JFrame implements ActionListener {
 					System.exit(NORMAL);
 				case JOptionPane.CANCEL_OPTION:;
 			    }
+			}else{
+				int answer =JOptionPane.showConfirmDialog(jifNewMorphMatrixFrame, "Are you sure you want to quit?", "Exit?", JOptionPane.YES_NO_OPTION);
+				switch (answer){
+			    case JOptionPane.YES_OPTION:
+			    	System.exit(NORMAL);
+			    case JOptionPane.NO_OPTION:;
+				}
 			}
 		    
-			
-			
 		}
 		else if (ADD_COMMAND.equals(command)) {
             //Add button clicked
@@ -951,14 +958,16 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		menuItemNew.addActionListener(this);
 		menuFile.add(menuItemNew);
 		menuItemOpen = new JMenuItem("Open");
+		menuItemOpen.setToolTipText("Open XML only");
 		menuFile.add(menuItemOpen);
 		menuItemOpen.addActionListener(this);
 		menuItemClose = new JMenuItem("Close");
 		menuFile.add(menuItemClose);
 		menuItemClose.addActionListener(this);
-		menuItemEdit = new JMenuItem("Edit");
-		menuFile.add(menuItemEdit);
-		menuItemEdit.addActionListener(this);
+		menuItemExport = new JMenuItem("Export"); // will use Apache POI to export to Excel
+		menuItemExport.setToolTipText("Export to Excel");
+		menuFile.add(menuItemExport);
+		menuItemExport.addActionListener(this);
 		menuItemSave = new JMenuItem("Save");
 		menuFile.add(menuItemSave);
 		menuItemSave.addActionListener(this);
@@ -970,14 +979,14 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		menuItemExit.addActionListener(this);
 
 //		where the views submenu's are created
-		menuViewCove = new JMenuItem("Cove");
-		menuViewCove.addActionListener(this);
+		menuViewProjector = new JMenuItem("Projector");
+		menuViewProjector.addActionListener(this);
 
 		menuViewDesktop = new JMenuItem("Desktop");
 		menuViewDesktop.addActionListener(this);
 
 		menuView.add(menuViewDesktop);
-		menuView.add(menuViewCove);
+		menuView.add(menuViewProjector);
 
 //		where the tools submenu's are created
 		menuToolsTopsis = new JMenuItem("TOPSIS");
@@ -993,12 +1002,12 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		globalVectorOfFilters.insertElementAt(trlFilter,0);
 		
 		// adding the a filter to the Filter Menu as a checkBox
-		menuTrlFilter =new JCheckBoxMenuItem(trlFilter.getName());
-		menuTrlFilter.setSelected(true);
-		menuTrlFilter.addActionListener(checkBoxListener);
+		menuActinItems =new JCheckBoxMenuItem(trlFilter.getName());
+		menuActinItems.setSelected(true);
+		menuActinItems.addActionListener(checkBoxListener);
 		vCheckBoxFilters= new Vector();
-		vCheckBoxFilters.add(menuTrlFilter);
-		menuFilter.add(menuTrlFilter);
+		vCheckBoxFilters.add(menuActinItems);
+		menuFilter.add(menuActinItems);
 		
 //		where the Help submenu's are created
 		menuHelpAbout = new JMenuItem("About");
@@ -1086,6 +1095,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 					nodeInfo.setProbability(node_probability);
 					nodeInfo.setDifficulty(node_difficulty);
 					nodeInfo.setCost(node_cost);
+					isFileSaved = false;
 
 				}
 				else {
