@@ -34,9 +34,13 @@ import java.awt.event.WindowListener;
 import java.awt.event.KeyListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+
+//import java.time.*
 //import java.math.BigInteger;
 import java.util.Vector;
 import java.io.File;
+
+
 //import java.util.Enumeration;
 //import java.net.*;
 //import java.util.Hashtable;
@@ -56,6 +60,7 @@ import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.ChangeEvent;
+import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeModel;
@@ -114,10 +119,10 @@ public class RootCause extends JFrame implements ActionListener {
 	protected String node_cost;
 	
 	protected String errorMsg = "";
-//	protected JList allowList, disallowList;
+//	protected JList allowList, disallowList;GregorianCalendar(year + 1900, month, date)
 	protected DataObject draggingListObject;
-//	protected Vector vCheckBoxFilters, vFiltersVector=new Vector();//later we need to move this inizaization to 
-	protected Vector globalVectorOfActions=new Vector();  
+//	protected Vector vCheckBoxFilters, vFiltersVector=new Vector();//later we need to move this initialization to 
+	protected ActionItems actionList; 
 	//private JLabel possibelCombsLabel;
 	JPanel possibleCombs;
 	JPanel rightBorder;
@@ -679,7 +684,7 @@ public class RootCause extends JFrame implements ActionListener {
 		jifNewMorphMatrixFrame.setVisible(true);
 
 	}
-// this function creates the compatiblity matrix
+// this function creates the Action Item and (maybe Team) management panel
 	public void makeActionItemsFrame(){
 
 	    jifmakeActionItemsFrame = new JInternalFrame(
@@ -725,46 +730,121 @@ public class RootCause extends JFrame implements ActionListener {
 		sp.setContinuousLayout(true);
 		sp.setOneTouchExpandable(true);
 
-////		this is where the lists are created and where they are added to
-////		the listener and the scroll pane
-//		myDropTargetListener DnD = new myDropTargetListener();
-//		allowList = new JList();
-//		disallowList = new JList();
-//		allowList.setDragEnabled(true);
-//		allowList.setDropTarget(new DropTarget(this,DnD));
-//		//disallowList.
-//		disallowList.setDragEnabled(true);
-//		disallowList.setDropTarget(new DropTarget(this,DnD));
-//		JScrollPane topRightSP= new JScrollPane(allowList);
-//		topRightSP.setPreferredSize(new Dimension(300,350));// make this dynamic
-//		JScrollPane bottomRightSP= new JScrollPane(disallowList);
-//		bottomRightSP.setPreferredSize(new Dimension(300,350));// make this size dynamic
-//      this is the table for the action items 
+		actionList = new ActionItems(newActionItemID,10);
 		
-	
-		
-		String[] columnNames = {"Ation #",
-                "Owner",
-                "Description",
-                "Assigned on",
-                "Date Due",
-                "Completed",
-                "Status"};
+		actionList.add("Team", "Form the Team", "2014/1/31", "2014/1/31", "2014/1/20", Task.UNCOMPLETE);
+		actionList.add("Team", "Develop the Meeting Schedule Ground Rules", "2014/1/21", "2014/1/31", "2014/1/31");
+		actionList.add("Team", "Develop and Use An Action Item List", "2014/1/22");
+		actionList.add("Team", "Develop the Root Cause Tree", "2014/1/23");
+		actionList.add("Team", "Develop a Critical Path Schedule", "2014/1/24");
+		actionList.add("Team", "Conduct the Event Investigation", "2014/1/25");
+		actionList.add("Team", "Establish the Root Causes", "2014/1/26");
+		actionList.add("Team", "Determine the Corrective Actions", "2014/1/27");
+		actionList.add("Team", "DEstablish and Implement the Closure Plan", "2014/1/28");
+		actionList.add("Team", "Final Out Brief", "2014/1/29");
 
-		Object[][] data = {
-				{"1", "Team","Form the Team","1/1/14", "2/1/14","","on Track"},
-				{"2", "Team","Develop the Meeting Schedule Ground Rules","1/1/14", "2/1/14","","on Track"},
-				{"3", "Team","Develop and Use An Action Item List","1/1/14", "2/1/14","","on Track"},
-				{"4", "Team","Develop the Root Cause Tree","1/1/14", "2/1/14","","on Track"},
-				{"5", "Team","Develop a Critical Path Schedule","1/1/14", "2/1/14","","on Track"},
-				{"6", "Team","Conduct the Event Investigation","1/1/14", "2/1/14","","on Track"},
-				{"7", "Team","Establish the Root Causes","1/1/14", "2/1/14","","on Track"},
-				{"8", "Team","Determine the Corrective Actions","1/1/14", "2/1/14","","on Track"},
-				{"9", "Team","Establish and Implement the Closure Plan","1/1/14", "2/1/14","","on Track"},
-				{"10", "Team","Final Out Brief","1/1/14", "2/1/14","","on Track"},
-		};
-		JTable actionItemsTable = new JTable(data,columnNames);
+		
+		String[] columnNames = {"#",
+				"Owner",
+				"Description",
+				"Assigned",
+				"Date Due",
+				"Completed",
+		"Status"};
+
+		Object[][] data = new Object[actionList.size()][7]; 
+		for (int i=0; i<actionList.size(); ++i){
+			data[i][0]=actionList.elementAt(i).getID();
+			data[i][1]=actionList.elementAt(i).getOwner();
+			data[i][2]=actionList.elementAt(i).getDescription();
+			data[i][3]=actionList.elementAt(i).getStartDate();
+			data[i][4]=actionList.elementAt(i).getDueDate();
+			data[i][5]=actionList.elementAt(i).getEndDate();
+			data[i][6]= (actionList.elementAt(i).getStatus()==1)? new Boolean(true): new Boolean(false);
+		}
+
+//		class actionTableModel extends AbstractTableModel {
+//
+//
+//			private String[] columnNames = {"#",
+//					"Owner",
+//					"Description",
+//					"Assigned",
+//					"Date Due",
+//					"Completed",
+//			"Status"};
+//
+//			private Object[][] data = new Object[actionList.size()][7]; 
+//			for (int i=0; i<actionList.size(); ++i){
+//				data[i][0]=actionList.elementAt(i).getID();
+//				data[i][1]=actionList.elementAt(i).getOwner();
+//				data[i][2]=actionList.elementAt(i).getDescription();
+//				data[i][3]=actionList.elementAt(i).getStartDate();
+//				data[i][4]=actionList.elementAt(i).getDueDate();
+//				data[i][5]=actionList.elementAt(i).getEndDate();
+//				data[i][6]= (actionList.elementAt(i).getStatus()==1)? new Boolean(true): new Boolean(false);
+//			}
+//
+//			public int getColumnCount() {
+//				return columnNames.length;
+//			}
+//
+//			public int getRowCount() {
+//				return data.length;
+//			}
+//
+//			public String getColumnName(int col) {
+//				return columnNames[col];
+//			}
+//
+//			public Object getValueAt(int row, int col) {
+//				return data[row][col];
+//			}
+//
+//			/*
+//			 * JTable uses this method to determine the default renderer/
+//			 * editor for each cell.  If we didn't implement this method,
+//			 * then the last column would contain text ("true"/"false"),
+//			 * rather than a check box.
+//			 */
+//			public Class getColumnClass(int c) {
+//				return getValueAt(0, c).getClass();
+//			}
+//
+//			/*
+//			 * Don't need to implement this method unless your table's
+//			 * editable.
+//			 */
+//			public boolean isCellEditable(int row, int col) {
+//				//Note that the data/cell address is constant,
+//				//no matter where the cell appears onscreen.
+//				if (col < 2) {
+//					return false;
+//				} else {
+//					return true;
+//				}
+//			}
+//
+//			/*
+//			 * Don't need to implement this method unless your table's
+//			 * data can change.
+//			 */
+//			public void setValueAt(Object value, int row, int col) {
+//
+//				data[row][col] = value;
+//				fireTableCellUpdated(row, col);
+//			}
+//
+//
+//		}
+		    
+		JTable actionItemsTable = new JTable(data, columnNames);
+		actionItemsTable.setAutoCreateRowSorter(true);
 		actionItemsTable.setPreferredScrollableViewportSize(new Dimension(700, 200));
+		actionItemsTable.getColumnModel().getColumn(0).setPreferredWidth(20);	
+		actionItemsTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+		actionItemsTable.getColumnModel().getColumn(2).setPreferredWidth(300);
+		
 		JScrollPane topRightSP= new JScrollPane(actionItemsTable);
 
 //		this is the top right panel which has All the Action Items is created
@@ -1663,7 +1743,7 @@ class AboutBox extends JDialog {
 		p.add(txt);
 
 		getContentPane().add(p, BorderLayout.CENTER);
-
+		 
 		final JButton btOK = new JButton("OK");
 		ActionListener lst = new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -1691,4 +1771,5 @@ class AboutBox extends JDialog {
 		setResizable(false);
 		setLocationRelativeTo(owner);
 	}
+
 }
