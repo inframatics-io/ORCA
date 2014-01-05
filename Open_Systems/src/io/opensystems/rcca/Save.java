@@ -1,3 +1,4 @@
+package io.opensystems.rcca;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.io.File;
@@ -17,22 +18,24 @@ import javax.swing.tree.DefaultTreeModel;
 
 /**
  * 
- * @author Daniel R. Zentner
- * 		   Payman S. Touliat
+ * @author Payman S. Touliat
+ * 		   
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class Save {
 	private DefaultTreeModel treeModel;
-	private JTree tree;
+//	private JTree tree;
 	protected File m_currentDir;
 	protected File m_currentFile;
 	protected PrintStream p; // declare a print stream object
+	public String error;
 	
 	public Save(DefaultTreeModel treeModelIn, JTree treeIN, File fChoosen){
 		treeModel = treeModelIn;
-		tree = treeIN;
+		//tree = treeIN;
+		error ="";
 		if(fChoosen.getName().toLowerCase().endsWith(".xml"))
 			m_currentFile=fChoosen;
 		else{
@@ -59,6 +62,7 @@ public class Save {
   		}
 		catch (Exception e){
                 System.err.println ("Error writing to file");
+                error="Error writing to file";
         }
 	}
 	private void printNodeStructure(){
@@ -68,7 +72,7 @@ public class Save {
 		
 		//triple for loop, saves each value of the tree into 
 		//there respective Vector structure 
-		DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) treeModel.getRoot();
+		//DefaultMutableTreeNode rootNode = (DefaultMutableTreeNode) treeModel.getRoot();
 		categoriesCounter = treeModel.getChildCount(treeModel.getRoot());
 		 		
 		
@@ -151,15 +155,15 @@ public class Save {
 							"<Reference>"+ xmlFilter(nodeIn.ref_URL) + "</Reference>"+
 							"<Selected>"+nodeIn.myCheckBox.isSelected()+"</Selected>";
 			p.println(value);
-  			p.println("   <Incompatible>"+DataObjectVectorToString(nodeIn.disallowVector)+"</Incompatible>"+"</Attribute>");
+  			p.println("   <Incompatible>"+DataObjectVectorToString(nodeIn.myActionIDs)+"</Incompatible>"+"</Attribute>");
 			
 			}
 	}
 
-	private String DataObjectVectorToString(Vector vIn){
+	private String DataObjectVectorToString(Vector<Integer> vIn){
 		String value = new String("");
 		for (int i = 0; i < vIn.size(); i++){
-			value += "<Name>"+xmlFilter(((DataObject)vIn.elementAt(i)).getName())+"</Name>";
+			value += "<ActionID>"+xmlFilter(vIn.elementAt(i).toString())+"</ActionID>";
 		}
 		
 		return value;

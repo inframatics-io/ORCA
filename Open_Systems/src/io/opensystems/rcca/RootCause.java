@@ -20,8 +20,9 @@
  * DEALINGS IN THE SOFTWARE.
  *
  */
+package io.opensystems.rcca;
 import java.awt.*;
-import java.awt.dnd.*;
+//import java.awt.dnd.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -33,24 +34,12 @@ import java.awt.event.WindowListener;
 import java.awt.event.KeyListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-import java.math.BigInteger;
+//import java.math.BigInteger;
 import java.util.Vector;
 import java.io.File;
-import java.util.Enumeration;
+//import java.util.Enumeration;
 //import java.net.*;
-import java.util.Hashtable;
-
-
-
-
-
-
-
-
-
-
-
-
+//import java.util.Hashtable;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import javax.swing.JFileChooser;
@@ -77,15 +66,15 @@ import layouts.*;
 
 
 /**
- * @author's Daniel R. Zentner
- * 		     Payman S. Touliat
+ * @author's Payman S. Touliat
+ * 		     
  */
 
-public class MorphMatrix extends JFrame implements ActionListener {
+public class RootCause extends JFrame implements ActionListener {
 
     protected File m_currentDir;
 	private int newNodeSuffix = 1;
-    private int newFilterSuffix=1;
+    private int newActionItemID=1;
     
 
     private static String ADD_COMMAND = "add";
@@ -97,21 +86,21 @@ public class MorphMatrix extends JFrame implements ActionListener {
     private DynamicTree treePanel;
 
     protected JDesktopPane main_desktop;
-	private JInternalFrame jifMakeCompatMatrixFrame;
+	private JInternalFrame jifmakeActionItemsFrame;
 	private JInternalFrame jifNewMorphMatrixFrame;
 	private JInternalFrame jifDynamicFaultMatrixFrame,jifNewFilterFrame;
 	private JSplitPane ptrSpLeft;
 	
 
 	protected JMenuBar menuBar;
-	protected JMenu menuFile, menuView, menuTools, menuFilter, menuHelp;
-	protected JMenuItem menuItemOpen, menuItemClose, menuItemNew, menuItemEdit, menuItemSave,
-			  menuItemExit, menuViewCove, menuViewDesktop, menuToolsTopsis, menuHelpAbout;
-	protected JCheckBoxMenuItem menuTrlFilter;
+	protected JMenu menuFile, menuView, menuTools, menuActionItems, menuHelp;
+	protected JMenuItem menuItemOpen, menuItemClose, menuItemNew, menuItemExport, menuItemSave,
+			  menuItemExit, menuViewProjector, menuViewDesktop, menuToolsTopsis, menuHelpAbout;
+	protected JCheckBoxMenuItem menuActinItems;
 	
 	protected JButton createCompatMatrix, addActionItem,
-			  makeMorphMatrix,saveAttributes,backToMain,
-			  backToCompatibility,resetCompatibility,ref1Button;
+			  makeFishbone,saveAttributes,backToMain,
+			  backToCompatibility,resetActionItems,ref1Button;
 	protected JTextField nameTextField, trlTextField, ref1TextField;
 	protected JTextArea descriptionTextField,infoTextField;
 	protected JTable compatMatrix, morphMatrix;
@@ -125,11 +114,11 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	protected String node_cost;
 	
 	protected String errorMsg = "";
-	protected JList allowList, disallowList;
+//	protected JList allowList, disallowList;
 	protected DataObject draggingListObject;
-	protected Vector vCheckBoxFilters, vFiltersVector=new Vector();//later we need to move this inizaization to 
-	protected Vector globalVectorOfFilters=new Vector();  
-	private JLabel possibelCombsLabel;
+//	protected Vector vCheckBoxFilters, vFiltersVector=new Vector();//later we need to move this inizaization to 
+	protected Vector globalVectorOfActions=new Vector();  
+	//private JLabel possibelCombsLabel;
 	JPanel possibleCombs;
 	JPanel rightBorder;
 	Color[] dynamicMorphColors;
@@ -144,7 +133,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	Dimension buttonDim;
 	Font textFont;
 	private boolean isAttributeSaved=true;
-	private boolean isFileSaved=false;
+	private boolean isFileSaved=true; // true=YES; false=NO; 
 	protected boolean ableToSave = false;
 	protected boolean reToMorphMatrix = false;
 	
@@ -159,7 +148,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	    }
 	};
 
-	public MorphMatrix(){
+	public RootCause(){
 		super("Open System Tool");
 		setBounds(0,0,1000,700);
 
@@ -209,9 +198,10 @@ public class MorphMatrix extends JFrame implements ActionListener {
 			if (rootName != null /* && rootName.length() >0 */ ){
 				treePanel = new DynamicTree(rootName,textFont);
 				newMorphMatrixFrame(true);
+				isFileSaved = false;
 			}			
 		}else if (e.getSource() == menuViewDesktop){
-		}else if (e.getSource() == menuItemEdit){
+		}else if (e.getSource() == menuItemExport){
 			if (true){
 				jifNewMorphMatrixFrame.setVisible(true);
 			}
@@ -235,6 +225,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 				m_currentDir=m_chooser.getCurrentDirectory();
 				File m_currentFile= m_chooser.getSelectedFile();
 				Save saveFile = new Save(treePanel.treeModel, treePanel.tree,m_currentFile);
+				if (saveFile.error.isEmpty()) isFileSaved=true;
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		}else if (e.getSource() == menuItemOpen){
@@ -259,7 +250,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 			
 		}
 		else if (e.getSource() == menuHelpAbout){
-			AboutBox dlg = new AboutBox(MorphMatrix.this);
+			AboutBox dlg = new AboutBox(RootCause.this);
 			dlg.setVisible(true);
 		}
 		else if(e.getSource() == menuItemExit){
@@ -295,10 +286,15 @@ public class MorphMatrix extends JFrame implements ActionListener {
 					System.exit(NORMAL);
 				case JOptionPane.CANCEL_OPTION:;
 			    }
+			}else{
+				int answer =JOptionPane.showConfirmDialog(jifNewMorphMatrixFrame, "Are you sure you want to quit?", "Exit?", JOptionPane.YES_NO_OPTION);
+				switch (answer){
+			    case JOptionPane.YES_OPTION:
+			    	System.exit(NORMAL);
+			    case JOptionPane.NO_OPTION:;
+				}
 			}
 		    
-			
-			
 		}
 		else if (ADD_COMMAND.equals(command)) {
             //Add button clicked
@@ -373,10 +369,10 @@ public class MorphMatrix extends JFrame implements ActionListener {
 			    isAttributeSaved=true;
 			    saveAttributes.setVisible(false);
 			}
-		    initializeCompatibility(treePanel.getNewOPTIONNodes(),treePanel.processedOptionNodes);
+		    //initializeCompatibility(treePanel.getNewOPTIONNodes(),treePanel.processedOptionNodes);
 		    treePanel.resetNewOPIONNodes();
 		    jifNewMorphMatrixFrame.setVisible(false);
-			makeCompatMatrixFrame();
+			makeActionItemsFrame();
 		}
 		else if (e.getSource() == addActionItem){
 		    // check to see if the data is saved
@@ -404,33 +400,34 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		    //{ jifNewFilterFrame.setVisible(true);}
 		   	    
 		}
-		else if (e.getSource() ==resetCompatibility){
-		    DataObject nodeInfo;
-		    for(int i=0; i<treePanel.processedOptionNodes.size();++i){
-		        nodeInfo= (DataObject) treePanel.processedOptionNodes.get(i);
-		        for (int j=0; j<nodeInfo.disallowVector.size();++j){
-		         nodeInfo.allowVector.add(nodeInfo.disallowVector.get(j));
-		         nodeInfo.disallowVector.clear();
-		        }
-		    }	        
+		else if (e.getSource() ==resetActionItems){ //Not sure what to do here
+//		    DataObject nodeInfo;
+//		    for(int i=0; i<treePanel.processedOptionNodes.size();++i){
+//		        nodeInfo= (DataObject) treePanel.processedOptionNodes.get(i);
+//		        for (int j=0; j<nodeInfo.disallowVector.size();++j){
+//		         nodeInfo.allowVector.add(nodeInfo.disallowVector.get(j));
+//		         nodeInfo.disallowVector.clear();
+//		        }
+//		    }	        
+		
 		}
 		else if (e.getSource() == backToMain){
 		    //problem!!
 			//latterAdded = new Vector();
 			//backToMorphTree = true;
 			// main Morph Matrix frame is visible
-			jifMakeCompatMatrixFrame.setVisible(false);
+			jifmakeActionItemsFrame.setVisible(false);
 			ptrSpLeft.add(treePanel,BorderLayout.CENTER);
 		    jifNewMorphMatrixFrame.setVisible(true);
 		}
-		else if (e.getSource() == makeMorphMatrix){
-		    	jifMakeCompatMatrixFrame.setVisible(false);	
+		else if (e.getSource() == makeFishbone){
+		    	jifmakeActionItemsFrame.setVisible(false);	
 		    	makeDynamicFaultMatrix();
 
 		}
 		else if (e.getSource() == backToCompatibility){
 		    	jifDynamicFaultMatrixFrame.dispose();
-		    	jifMakeCompatMatrixFrame.setVisible(true);
+		    	jifmakeActionItemsFrame.setVisible(true);
 		    	reToMorphMatrix=true;
 		}
 	}
@@ -471,7 +468,10 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
 //		Trl Field
 		// change all of trllable to Action Items
-		JLabel trlLabel = new JLabel("Action Items: ");
+		addActionItem = new JButton("<HTML> <A HREF=URL>Action Items:</A></HTML> ");
+		addActionItem.setOpaque(false);
+		addActionItem.setMargin(new Insets(0, 0, 0, 0));
+		addActionItem.addActionListener(this);
 		trlTextField = new JTextField(10);
 		trlTextField.addKeyListener(akeyListener);
 		
@@ -560,7 +560,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		innerRightPanel.add(nameLabel, ParagraphLayout.NEW_PARAGRAPH);
 		innerRightPanel.add(nameTextField);
 
-		innerRightPanel.add(trlLabel, ParagraphLayout.NEW_PARAGRAPH);
+		innerRightPanel.add(addActionItem, ParagraphLayout.NEW_PARAGRAPH);
 		innerRightPanel.add(trlTextField);
 
 		innerRightPanel.add(descriptionTextLabel, ParagraphLayout.NEW_PARAGRAPH_TOP);
@@ -593,9 +593,9 @@ public class MorphMatrix extends JFrame implements ActionListener {
 // 		This where the right button bar is made
 		JPanel rightButtonBar = new JPanel(new FlowLayout());
 		//button to add  Descriptor
-		addActionItem = new JButton("Add Action Item");
-		addActionItem.setEnabled(false);
-		addActionItem.addActionListener(this);
+//		addActionItem = new JButton("Add Action Item");
+//		addActionItem.setEnabled(false);
+//		addActionItem.addActionListener(this);
 
 		// Button to save the Attributes
 		saveAttributes = new JButton("Save Attributes");
@@ -606,7 +606,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		createCompatMatrix = new JButton("Manage Action Items ");
 		createCompatMatrix.addActionListener(this);
 
-		rightButtonBar.add(addActionItem);
+//		rightButtonBar.add(addActionItem);
 		rightButtonBar.add(createCompatMatrix);
 
 //		this section deals with the left side of the panned window
@@ -680,26 +680,26 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
 	}
 // this function creates the compatiblity matrix
-	public void makeCompatMatrixFrame(){
+	public void makeActionItemsFrame(){
 
-	    jifMakeCompatMatrixFrame = new JInternalFrame(
+	    jifmakeActionItemsFrame = new JInternalFrame(
 	            treePanel.rootNode.toString()+": Make Compatibility Matrix",true,true,true,true);
-		jifMakeCompatMatrixFrame.setBounds(0,0,750,500);
-		jifMakeCompatMatrixFrame.setLayout(new BorderLayout());
-		jifMakeCompatMatrixFrame.setDefaultCloseOperation(HIDE_ON_CLOSE);
+		jifmakeActionItemsFrame.setBounds(0,0,980,500);
+		jifmakeActionItemsFrame.setLayout(new BorderLayout());
+		jifmakeActionItemsFrame.setDefaultCloseOperation(HIDE_ON_CLOSE);
 
 //		creation of the split panes
 //		left pane creation
 		JSplitPane spLeft = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		spLeft.setDividerSize(8);
-		spLeft.setDividerLocation(150);
+		spLeft.setDividerLocation(120);
 		spLeft.setContinuousLayout(true);
 		spLeft.setLayout(new BorderLayout());
 
 //		right pane creation
 		JSplitPane spRight = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
 		spRight.setDividerSize(8);
-		spRight.setDividerLocation(150);
+		spRight.setDividerLocation(120);
 		spRight.setContinuousLayout(true);
 		spRight.setLayout(new BorderLayout());
 
@@ -708,14 +708,14 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
 		backToMain = new JButton("<< Back");
 		backToMain.addActionListener(this);
-		resetCompatibility=new JButton ("Reset");
-		resetCompatibility.addActionListener(this);
-		makeMorphMatrix = new JButton("Next >>");
-		makeMorphMatrix.addActionListener(this);
+		resetActionItems=new JButton ("Reset");
+		resetActionItems.addActionListener(this);
+		makeFishbone = new JButton("Next >>");
+		makeFishbone.addActionListener(this);
 		bottomButtonBar.add(backToMain);
-		bottomButtonBar.add(resetCompatibility);
-		bottomButtonBar.add(makeMorphMatrix);
-		jifMakeCompatMatrixFrame.add(bottomButtonBar, BorderLayout.SOUTH);
+		bottomButtonBar.add(resetActionItems);
+		bottomButtonBar.add(makeFishbone);
+		jifmakeActionItemsFrame.add(bottomButtonBar, BorderLayout.SOUTH);
 
 //		main split pane creation
 		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,spLeft,spRight);
@@ -725,31 +725,57 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		sp.setContinuousLayout(true);
 		sp.setOneTouchExpandable(true);
 
-//		this is where the lists are created and where they are added to
-//		the listener and the scroll pane
-		myDropTargetListener DnD = new myDropTargetListener();
-		allowList = new JList();
-		disallowList = new JList();
-		allowList.setDragEnabled(true);
-		allowList.setDropTarget(new DropTarget(this,DnD));
-		//disallowList.
-		disallowList.setDragEnabled(true);
-		disallowList.setDropTarget(new DropTarget(this,DnD));
-		JScrollPane topRightSP= new JScrollPane(allowList);
-		topRightSP.setPreferredSize(new Dimension(300,350));// make this dynamic
-		JScrollPane bottomRightSP= new JScrollPane(disallowList);
-		bottomRightSP.setPreferredSize(new Dimension(300,350));// make this size dynamic
+////		this is where the lists are created and where they are added to
+////		the listener and the scroll pane
+//		myDropTargetListener DnD = new myDropTargetListener();
+//		allowList = new JList();
+//		disallowList = new JList();
+//		allowList.setDragEnabled(true);
+//		allowList.setDropTarget(new DropTarget(this,DnD));
+//		//disallowList.
+//		disallowList.setDragEnabled(true);
+//		disallowList.setDropTarget(new DropTarget(this,DnD));
+//		JScrollPane topRightSP= new JScrollPane(allowList);
+//		topRightSP.setPreferredSize(new Dimension(300,350));// make this dynamic
+//		JScrollPane bottomRightSP= new JScrollPane(disallowList);
+//		bottomRightSP.setPreferredSize(new Dimension(300,350));// make this size dynamic
+//      this is the table for the action items 
 		
+	
+		
+		String[] columnNames = {"Ation #",
+                "Owner",
+                "Description",
+                "Assigned on",
+                "Date Due",
+                "Completed",
+                "Status"};
 
-//		this is the top right panel which has the compatible jlist object in it
+		Object[][] data = {
+				{"1", "Team","Form the Team","1/1/14", "2/1/14","","on Track"},
+				{"2", "Team","Develop the Meeting Schedule Ground Rules","1/1/14", "2/1/14","","on Track"},
+				{"3", "Team","Develop and Use An Action Item List","1/1/14", "2/1/14","","on Track"},
+				{"4", "Team","Develop the Root Cause Tree","1/1/14", "2/1/14","","on Track"},
+				{"5", "Team","Develop a Critical Path Schedule","1/1/14", "2/1/14","","on Track"},
+				{"6", "Team","Conduct the Event Investigation","1/1/14", "2/1/14","","on Track"},
+				{"7", "Team","Establish the Root Causes","1/1/14", "2/1/14","","on Track"},
+				{"8", "Team","Determine the Corrective Actions","1/1/14", "2/1/14","","on Track"},
+				{"9", "Team","Establish and Implement the Closure Plan","1/1/14", "2/1/14","","on Track"},
+				{"10", "Team","Final Out Brief","1/1/14", "2/1/14","","on Track"},
+		};
+		JTable actionItemsTable = new JTable(data,columnNames);
+		actionItemsTable.setPreferredScrollableViewportSize(new Dimension(700, 200));
+		JScrollPane topRightSP= new JScrollPane(actionItemsTable);
+
+//		this is the top right panel which has All the Action Items is created
 		JPanel topRightPanel = new JPanel(new ParagraphLayout());
-		topRightPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"COMPATIBLE"));
+		topRightPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"ACTION ITEMS"));
 		topRightPanel.add(topRightSP,ParagraphLayout.NEW_PARAGRAPH);
 
-//		this is the bottom right panel which has the incompatible jlist object in it
+//		this is the bottom right panel which has the Team Members
 		JPanel bottomRightPanel = new JPanel(new ParagraphLayout());
-		bottomRightPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"INCOMPATIBLE"));
-		bottomRightPanel.add(bottomRightSP,ParagraphLayout.NEW_PARAGRAPH);
+		bottomRightPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"Team Members"));
+		//bottomRightPanel.add(bottomRightSP,ParagraphLayout.NEW_PARAGRAPH);
 
 //		adding components to the right split panel
 		spRight.add(topRightPanel,BorderLayout.NORTH);
@@ -759,12 +785,12 @@ public class MorphMatrix extends JFrame implements ActionListener {
 //		adding the treePanel and Button Bar to the left Panel
 		spLeft.add(treePanel,BorderLayout.CENTER);
 
-		jifMakeCompatMatrixFrame.add(sp, BorderLayout.CENTER);
-		main_desktop.add(jifMakeCompatMatrixFrame);
-		jifMakeCompatMatrixFrame.show();
+		jifmakeActionItemsFrame.add(sp, BorderLayout.CENTER);
+		main_desktop.add(jifmakeActionItemsFrame);
+		jifmakeActionItemsFrame.show();
 	}
+	
 // this functions makes the dynamic fault matrix frame
-
 	public void makeDynamicFaultMatrix(){
 
 		jifDynamicFaultMatrixFrame = new JInternalFrame(
@@ -825,10 +851,10 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
 //		DefaultMutableTreeNode nodeT = (DefaultMutableTreeNode) treeModel.getRoot();
 //		DataObject nodeInfo=(DataObject) nodeT.getUserObject();
-		for(int i=0; i<treePanel.processedOptionNodes.size();++i){
-            DataObject nodeInfo= (DataObject)treePanel.processedOptionNodes.get(i);
-            System.out.println(nodeInfo.getName());
-		}
+//		for(int i=0; i<treePanel.processedOptionNodes.size();++i){
+//            DataObject nodeInfo= (DataObject)treePanel.processedOptionNodes.get(i);
+//            System.out.println(nodeInfo.getName());
+//		}
 		printAllNodes(treeModel,treeModel.getRoot(),numDummyLabel,leftPanel);
 		
 		
@@ -940,8 +966,8 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		menuBar.add(menuView);
 		menuTools = new JMenu("Tools");
 		menuBar.add(menuTools);
-		menuFilter = new JMenu("Action Items");
-		menuBar.add(menuFilter);
+		menuActionItems = new JMenu("Action Items");
+		menuBar.add(menuActionItems);
 		menuHelp = new JMenu("Help");
 		menuHelp.setMnemonic(KeyEvent.VK_H);
 		menuBar.add(menuHelp);
@@ -951,14 +977,16 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		menuItemNew.addActionListener(this);
 		menuFile.add(menuItemNew);
 		menuItemOpen = new JMenuItem("Open");
+		menuItemOpen.setToolTipText("Open XML only");
 		menuFile.add(menuItemOpen);
 		menuItemOpen.addActionListener(this);
 		menuItemClose = new JMenuItem("Close");
 		menuFile.add(menuItemClose);
 		menuItemClose.addActionListener(this);
-		menuItemEdit = new JMenuItem("Edit");
-		menuFile.add(menuItemEdit);
-		menuItemEdit.addActionListener(this);
+		menuItemExport = new JMenuItem("Export"); // will use Apache POI to export to Excel
+		menuItemExport.setToolTipText("Export to Excel");
+		menuFile.add(menuItemExport);
+		menuItemExport.addActionListener(this);
 		menuItemSave = new JMenuItem("Save");
 		menuFile.add(menuItemSave);
 		menuItemSave.addActionListener(this);
@@ -970,35 +998,35 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		menuItemExit.addActionListener(this);
 
 //		where the views submenu's are created
-		menuViewCove = new JMenuItem("Cove");
-		menuViewCove.addActionListener(this);
+		menuViewProjector = new JMenuItem("Projector");
+		menuViewProjector.addActionListener(this);
 
 		menuViewDesktop = new JMenuItem("Desktop");
 		menuViewDesktop.addActionListener(this);
 
 		menuView.add(menuViewDesktop);
-		menuView.add(menuViewCove);
+		menuView.add(menuViewProjector);
 
 //		where the tools submenu's are created
 		menuToolsTopsis = new JMenuItem("TOPSIS");
 		menuToolsTopsis.addActionListener(this);
 		menuTools.add(menuToolsTopsis);
 
-//      where the DEFULT submenu items for Filter are created
-		Filter trlFilter=new Filter(newFilterSuffix++,"Min TRL",1,9);
+//      where the default submenu items for Action Item are created
+//		Filter trlFilter=new Filter(newFilterSuffix++,"Min TRL",1,9);
 		
-		trlFilter.mySlider.setMajorTickSpacing(1);
-		sliderChangeListener mySliderListener=new sliderChangeListener();
-		trlFilter.mySlider.addChangeListener(mySliderListener);
-		globalVectorOfFilters.insertElementAt(trlFilter,0);
+//		trlFilter.mySlider.setMajorTickSpacing(1);
+//		sliderChangeListener mySliderListener=new sliderChangeListener();
+//		trlFilter.mySlider.addChangeListener(mySliderListener);
+//		globalVectorOfFilters.insertElementAt(trlFilter,0);
 		
-		// adding the a filter to the Filter Menu as a checkBox
-		menuTrlFilter =new JCheckBoxMenuItem(trlFilter.getName());
-		menuTrlFilter.setSelected(true);
-		menuTrlFilter.addActionListener(checkBoxListener);
-		vCheckBoxFilters= new Vector();
-		vCheckBoxFilters.add(menuTrlFilter);
-		menuFilter.add(menuTrlFilter);
+		// adding the a filter to the Action Items Menu as a checkBox
+		menuActinItems =new JCheckBoxMenuItem("Completed");
+		menuActinItems.setSelected(true);
+		menuActinItems.addActionListener(checkBoxListener);
+//		vCheckBoxFilters= new Vector();
+//		vCheckBoxFilters.add(menuActinItems);
+		menuActionItems.add(menuActinItems);
 		
 //		where the Help submenu's are created
 		menuHelpAbout = new JMenuItem("About");
@@ -1010,53 +1038,53 @@ public class MorphMatrix extends JFrame implements ActionListener {
 	//the user if there is a category that does not have any groups associated
 	//with it.
 // either makeDataVectors or initialize
-	public void updateSlideBarsFrame(){
-
-	    //	  Sliders are created to work as a filter
-		JPanel filterPane= new JPanel(new ParagraphLayout());
-		JScrollPane filterScrollPane =new JScrollPane(filterPane);
-	    filterScrollPane.setPreferredSize(new Dimension(100,465));
-	    
-	    
-	    for (int i=0; i<vCheckBoxFilters.size();++i){
-			if(((JCheckBoxMenuItem)vCheckBoxFilters.get(i)).isSelected()){
-				filterPane.add(((Filter)globalVectorOfFilters.get(i)).mySlider,ParagraphLayout.NEW_PARAGRAPH);
-			}
-		}
-	    rightBorder.add(filterScrollPane,BorderLayout.CENTER);
-	    rightBorder.repaint();
-	    jifDynamicFaultMatrixFrame.repaint();
-	}
-	public void initializeCompatibility(Vector sentAttributes,Vector oldAttributes){
-		for(int i=0;i< sentAttributes.size();++i){
-	    	DataObject currentOption = (DataObject)sentAttributes.get(i);
-			for(int j=i+1; j< sentAttributes.size();++j){
-				DataObject nodeInfo = (DataObject) sentAttributes.get(j);
-				if (nodeInfo.getParentId()==currentOption.getParentId()){
-					nodeInfo.adddisallowVector(currentOption);
-					currentOption.adddisallowVector(nodeInfo);
-				}else{
-					nodeInfo.addAllowVector(currentOption);
-					currentOption.addAllowVector(nodeInfo);
-				}
-			}
-	    }
-		if (oldAttributes !=null && !oldAttributes.isEmpty()){
-			for(int i=0;i< sentAttributes.size();++i){
-				DataObject currentOption = (DataObject)sentAttributes.get(i);
-				for(int j=0; j< oldAttributes.size();++j){
-					DataObject nodeInfo = (DataObject)oldAttributes.get(j);
-					if (nodeInfo.getParentId()==currentOption.getParentId()){
-						nodeInfo.adddisallowVector(currentOption);
-						currentOption.adddisallowVector(nodeInfo);
-					}else{
-						nodeInfo.addAllowVector(currentOption);
-						currentOption.addAllowVector(nodeInfo);
-					}
-				}
-		    }
-		}
-	}
+//	public void updateSlideBarsFrame(){
+//
+//	    //	  Sliders are created to work as a filter
+//		JPanel filterPane= new JPanel(new ParagraphLayout());
+//		JScrollPane filterScrollPane =new JScrollPane(filterPane);
+//	    filterScrollPane.setPreferredSize(new Dimension(100,465));
+//	    
+//	    
+//	    for (int i=0; i<vCheckBoxFilters.size();++i){
+//			if(((JCheckBoxMenuItem)vCheckBoxFilters.get(i)).isSelected()){
+//				filterPane.add(((Filter)globalVectorOfActions.get(i)).mySlider,ParagraphLayout.NEW_PARAGRAPH);
+//			}
+//		}
+//	    rightBorder.add(filterScrollPane,BorderLayout.CENTER);
+//	    rightBorder.repaint();
+//	    jifDynamicFaultMatrixFrame.repaint();
+//	}
+//	public void initializeCompatibility(Vector sentAttributes,Vector oldAttributes){
+//		for(int i=0;i< sentAttributes.size();++i){
+//	    	DataObject currentOption = (DataObject)sentAttributes.get(i);
+//			for(int j=i+1; j< sentAttributes.size();++j){
+//				DataObject nodeInfo = (DataObject) sentAttributes.get(j);
+//				if (nodeInfo.getParentId()==currentOption.getParentId()){
+//					nodeInfo.adddisallowVector(currentOption);
+//					currentOption.adddisallowVector(nodeInfo);
+//				}else{
+//					nodeInfo.addAllowVector(currentOption);
+//					currentOption.addAllowVector(nodeInfo);
+//				}
+//			}
+//	    }
+//		if (oldAttributes !=null && !oldAttributes.isEmpty()){
+//			for(int i=0;i< sentAttributes.size();++i){
+//				DataObject currentOption = (DataObject)sentAttributes.get(i);
+//				for(int j=0; j< oldAttributes.size();++j){
+//					DataObject nodeInfo = (DataObject)oldAttributes.get(j);
+//					if (nodeInfo.getParentId()==currentOption.getParentId()){
+//						nodeInfo.adddisallowVector(currentOption);
+//						currentOption.adddisallowVector(nodeInfo);
+//					}else{
+//						nodeInfo.addAllowVector(currentOption);
+//						currentOption.addAllowVector(nodeInfo);
+//					}
+//				}
+//		    }
+//		}
+//	}
 	public boolean saveInputsToNode(DefaultMutableTreeNode sNode){
 		String name = new String(((DataObject)sNode.getUserObject()).getName());
 		String newName=nameTextField.getText();
@@ -1086,6 +1114,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 					nodeInfo.setProbability(node_probability);
 					nodeInfo.setDifficulty(node_difficulty);
 					nodeInfo.setCost(node_cost);
+					isFileSaved = false;
 
 				}
 				else {
@@ -1104,7 +1133,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
 //	}
 	public static void main(String[] args) {
-		new MorphMatrix();
+		new RootCause();
 	}
 	public boolean search(String name, int sentID){
 		boolean rValue = true;
@@ -1181,91 +1210,91 @@ public class MorphMatrix extends JFrame implements ActionListener {
         }   
         return null;
     }
-	public void applyFilter(int filterValue,String filterName,int filterNumber){
-		Vector vOfFilteredNodes= new Vector();
-		if(filterName.equals("Min TRL")){
-            for(int i=0; i<treePanel.processedOptionNodes.size();++i){
-                DataObject nodeInfo= (DataObject)treePanel.processedOptionNodes.get(i);
-                if(nodeInfo.getTRL_Number()< filterValue){
-                    vOfFilteredNodes.add(nodeInfo);
-                }
-            }
-        }else{
-        	  for(int i=0; i<treePanel.processedOptionNodes.size();++i){
-                DataObject nodeInfo= (DataObject)treePanel.processedOptionNodes.get(i);
-                //checking to see if the nodes has this filter
-                for(int j=0;j<nodeInfo.vDescriptors.size();++j){
-                	Descriptor aDescriptor=(Descriptor)nodeInfo.vDescriptors.get(j);
-                	if (aDescriptor.getName().equals(filterName)){
-                		// now evaluate the filter
-                		if(aDescriptor.getValue()>filterValue){
-                			vOfFilteredNodes.add(nodeInfo);
-                		}
-                	}
-                }
-            }
-        }
-		// since we will be adding and re evalute some of these Filter
-		// we need to use add or set fucntion
-        if (vFiltersVector !=null){
-            if(filterNumber> vFiltersVector.size()){
-                vFiltersVector.add(vOfFilteredNodes);
-            }else{
-                vFiltersVector.set(filterNumber-1,vOfFilteredNodes);   
-            }
-        }
-        
-        updateDynamicMorphFrame();
-       // updateComboFrame();
-    }
+//	public void applyFilter(int filterValue,String filterName,int filterNumber){
+//		Vector vOfFilteredNodes= new Vector();
+//		if(filterName.equals("Min TRL")){
+//            for(int i=0; i<treePanel.processedOptionNodes.size();++i){
+//                DataObject nodeInfo= (DataObject)treePanel.processedOptionNodes.get(i);
+//                if(nodeInfo.getTRL_Number()< filterValue){
+//                    vOfFilteredNodes.add(nodeInfo);
+//                }
+//            }
+//        }else{
+//        	  for(int i=0; i<treePanel.processedOptionNodes.size();++i){
+//                DataObject nodeInfo= (DataObject)treePanel.processedOptionNodes.get(i);
+//                //checking to see if the nodes has this filter
+//                for(int j=0;j<nodeInfo.vDescriptors.size();++j){
+//                	Descriptor aDescriptor=(Descriptor)nodeInfo.vDescriptors.get(j);
+//                	if (aDescriptor.getName().equals(filterName)){
+//                		// now evaluate the filter
+//                		if(aDescriptor.getValue()>filterValue){
+//                			vOfFilteredNodes.add(nodeInfo);
+//                		}
+//                	}
+//                }
+//            }
+//        }
+//		// since we will be adding and re evalute some of these Filter
+//		// we need to use add or set fucntion
+//        if (vFiltersVector !=null){
+//            if(filterNumber> vFiltersVector.size()){
+//                vFiltersVector.add(vOfFilteredNodes);
+//            }else{
+//                vFiltersVector.set(filterNumber-1,vOfFilteredNodes);   
+//            }
+//        }
+//        
+//        updateDynamicMorphFrame();
+//       // updateComboFrame();
+//    }
     public void updateDynamicMorphFrame(){
-   	  	for( int i=0;i<treePanel.processedOptionNodes.size();++i){
-	  		((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.setBackground(dynamicMorphColors[3]);
-	  		((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.setEnabled(true);
-	  	}
-	  	for( int i=0;i<treePanel.processedOptionNodes.size();++i){
-	  		if (((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.isSelected()){
-	  			DataObject nodeInfo=(DataObject)treePanel.processedOptionNodes.get(i);
-	  			for(int j=0;j<nodeInfo.disallowVector.size();++j){
-	  				((DataObject)nodeInfo.disallowVector.get(j)).myCheckBox.setBackground(dynamicMorphColors[5]);
-    	  			((DataObject)nodeInfo.disallowVector.get(j)).myCheckBox.setEnabled(false);
-    	  		}
-			}
-	  	}
+//   	  	for( int i=0;i<treePanel.processedOptionNodes.size();++i){
+//	  		((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.setBackground(dynamicMorphColors[3]);
+//	  		((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.setEnabled(true);
+//	  	}
+//	  	for( int i=0;i<treePanel.processedOptionNodes.size();++i){
+//	  		if (((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.isSelected()){
+//	  			DataObject nodeInfo=(DataObject)treePanel.processedOptionNodes.get(i);
+//	  			for(int j=0;j<nodeInfo.disallowVector.size();++j){
+//	  				((DataObject)nodeInfo.disallowVector.get(j)).myCheckBox.setBackground(dynamicMorphColors[5]);
+//    	  			((DataObject)nodeInfo.disallowVector.get(j)).myCheckBox.setEnabled(false);
+//    	  		}
+//			}
+//	  	}
         
-	  	if(!vFiltersVector.isEmpty()){
-	  	    for (int j=0; j<vFiltersVector.size();++j){
-	  		  	Vector HoldList= (Vector)vFiltersVector.elementAt(j);    	//DefaultMutableTreeNode  nodeT = new DefaultMutableTreeNode(node);
-	  	    	
-	  	    	//DataObject nodeInfo=(DataObject) nodeT.getUserObject();
-	  	    	//System.out.println(nodeInfo.getName());
-	  		  	if(HoldList!= null){
-	  		        for(int i=0; i<HoldList.size();++i){    	//DefaultMutableTreeNode  nodeT = new DefaultMutableTreeNode(node);
-	  		      	
-	  		      	//DataObject nodeInfo=(DataObject) nodeT.getUserObject();
-	  		      	//System.out.println(nodeInfo.getName());
-	  		            DataObject nodeInfo=(DataObject)HoldList.get(i);
-	  		            if(nodeInfo.myCheckBox.isSelected()){// later if we be able to make a fram that containes the list of these nodes and alowing the user to select which node to pass the filter
-	  		                int answer = JOptionPane.showConfirmDialog(jifDynamicFaultMatrixFrame,nodeInfo.getName()+
-	  		                        ", selected by the user does not pass through the TRL filter.\n" +
-	  		                		"Do you wan to by pass the filter? ");
-	  					    if (answer == JOptionPane.YES_OPTION) {
-	  					    		HoldList.remove(nodeInfo);
-	  					    		continue;
-	  					    } else if (answer == JOptionPane.NO_OPTION) {
-	  					        	nodeInfo.myCheckBox.setSelected(false);
-	  					        	updateDynamicMorphFrame();
-	  					        	break;
-	  					    } else if (answer == JOptionPane.CANCEL_OPTION){
-	  					        
-	  					    }
-	  		            }
-	  		            nodeInfo.myCheckBox.setEnabled(false);
-	  		            nodeInfo.myCheckBox.setBackground(dynamicMorphColors[6]);
-	  		        }// end of iner for loop    
-	  	        }
-	  	    }// end of for loop
-	  	}
+//	  	if(!vFiltersVector.isEmpty()){
+//	  	    for (int j=0; j<vFiltersVector.size();++j){
+//	  		  	Vector HoldList= (Vector)vFiltersVector.elementAt(j);    	//DefaultMutableTreeNode  nodeT = new DefaultMutableTreeNode(node);
+//	  	    	
+//	  	    	//DataObject nodeInfo=(DataObject) nodeT.getUserObject();
+//	  	    	//System.out.println(nodeInfo.getName());
+//	  		  	if(HoldList!= null){
+//	  		        for(int i=0; i<HoldList.size();++i){    	//DefaultMutableTreeNode  nodeT = new DefaultMutableTreeNode(node);
+//	  		      	
+//	  		      	//DataObject nodeInfo=(DataObject) nodeT.getUserObject();
+//	  		      	//System.out.println(nodeInfo.getName());
+//	  		            DataObject nodeInfo=(DataObject)HoldList.get(i);
+//	  		            if(nodeInfo.myCheckBox.isSelected()){// later if we be able to make a fram that containes the list of these nodes and alowing the user to select which node to pass the filter
+//	  		                int answer = JOptionPane.showConfirmDialog(jifDynamicFaultMatrixFrame,nodeInfo.getName()+
+//	  		                        ", selected by the user does not pass through the TRL filter.\n" +
+//	  		                		"Do you wan to by pass the filter? ");
+//	  					    if (answer == JOptionPane.YES_OPTION) {
+//	  					    		HoldList.remove(nodeInfo);
+//	  					    		continue;
+//	  					    } else if (answer == JOptionPane.NO_OPTION) {
+//	  					        	nodeInfo.myCheckBox.setSelected(false);
+//	  					        	updateDynamicMorphFrame();
+//	  					        	break;
+//	  					    } else if (answer == JOptionPane.CANCEL_OPTION){
+//	  					        
+//	  					    }
+//	  		            }
+//	  		            nodeInfo.myCheckBox.setEnabled(false);
+//	  		            nodeInfo.myCheckBox.setBackground(dynamicMorphColors[6]);
+//	  		        }// end of inner loop    
+//	  	        }
+//	  	    }// end of loop
+//	  	}
 
     }
 //    public void updateComboFrame(){
@@ -1337,6 +1366,8 @@ public class MorphMatrix extends JFrame implements ActionListener {
 		main_desktop.add(jifNewFilterFrame);
 		jifNewFilterFrame.setVisible(true);
     }
+    // cbItemListenre is a checkbox listener. It is used in the DynamicFaultMatrix frame
+    // to create a quick info is a user clicks on a Root cause.
     class  cbItemListener extends MouseMotionAdapter implements ItemListener, MouseInputListener {
     	  public void itemStateChanged(ItemEvent ie) {
  
@@ -1404,11 +1435,11 @@ public class MorphMatrix extends JFrame implements ActionListener {
 
 				DataObject nodeInfo = (DataObject)node.getUserObject();
 
-				if(nodeInfo.getType().equals(nodeInfo.ATTRIBUTE)){
-					addActionItem.setEnabled(true);
-				}else{
-					addActionItem.setEnabled(false);
-				}
+//				if(nodeInfo.getType().equals(nodeInfo.ATTRIBUTE)){
+//					addActionItem.setEnabled(true);
+//				}else{
+//					addActionItem.setEnabled(false);
+//				}
 				nameTextField.setText(nodeInfo.getName());
 				// this is where the tree attributes gets updated
 				String trl = new String();
@@ -1435,7 +1466,7 @@ public class MorphMatrix extends JFrame implements ActionListener {
 				//save the pointer to node for later
 				previousNode=node;
 			}
-			else if (jifMakeCompatMatrixFrame.isSelected()){
+			else if (jifmakeActionItemsFrame.isSelected()){
 				DefaultMutableTreeNode node =
 					(DefaultMutableTreeNode)treePanel.tree.getLastSelectedPathComponent();
 				if (node==null ||node.isRoot()) {
@@ -1444,18 +1475,18 @@ public class MorphMatrix extends JFrame implements ActionListener {
 				DataObject nodeInfo = (DataObject)node.getUserObject();
 				// the code only allows for attributes to be 
 				// compatibile or incompatible
-				if(nodeInfo.getType().equals(nodeInfo.ATTRIBUTE)){
-				    allowList.setVisible(true);
-				    disallowList.setVisible(true);
-				    Vector data = nodeInfo.allowVector;
-				    allowList.setListData(nodeInfo.allowVector);
-				    disallowList.setBackground(Color.white);
-				    disallowList.setListData(nodeInfo.disallowVector);
-				}else{
-				    allowList.setVisible(false);
-				    disallowList.setVisible(false);
-				    
-				}
+//				if(nodeInfo.getType().equals(nodeInfo.ATTRIBUTE)){
+//				    allowList.setVisible(true);
+//				    disallowList.setVisible(true);
+//				    Vector data = nodeInfo.allowVector;
+//				    allowList.setListData(nodeInfo.allowVector);
+//				    disallowList.setBackground(Color.white);
+//				    disallowList.setListData(nodeInfo.disallowVector);
+//				}else{
+//				    allowList.setVisible(false);
+//				    disallowList.setVisible(false);
+//				    
+//				}
 			}
 
 		}
@@ -1482,93 +1513,93 @@ public class MorphMatrix extends JFrame implements ActionListener {
 			}
 		}
 	}
-	class myDropTargetListener implements DropTargetListener {
-
-		public void dragEnter(DropTargetDragEvent dtde) {
-			System.out.println("dragEnter");
-		}
-		public void dragOver(DropTargetDragEvent dtde) {
-
-		}
-		public void dropActionChanged(DropTargetDragEvent dtde) {
-			System.out.println("dropActionChanged");
-		}
-
-		public void dragExit(DropTargetEvent dte) {
-			System.out.println("dragExit");
-		}
-
-		public void drop(DropTargetDropEvent dtde) {
-
-			DropTargetContext data = dtde.getDropTargetContext();
-			DefaultMutableTreeNode node =
-		    	(DefaultMutableTreeNode)treePanel.tree.getLastSelectedPathComponent();
-			DataObject nodeInUse = (DataObject)node.getUserObject();
-			//and then we need to find the group it is associtated with at take it from that
-			//-fix the errors.
-			if (node != null){
-			    //data.
-				if (data.getComponent() == disallowList && data.getComponent() != allowList){
-				    DataObject value = (DataObject)allowList.getSelectedValue();
-					System.out.println("Allow To Disallow " + value.m_Name);
-					if(value.myCheckBox.isSelected()&&nodeInUse.myCheckBox.isSelected()){// rewite this message 
-				        JOptionPane.showInternalMessageDialog(jifMakeCompatMatrixFrame,"Both Technology are selcted.\n" +
-				        		"please make corrections by deselcting one of them","Compatibility Error",JOptionPane.INFORMATION_MESSAGE);
-
-					}else{
-						nodeInUse.disallowVector.add(value);
-						value.disallowVector.add(nodeInUse);
-						disallowList.setListData(nodeInUse.disallowVector);
-	
-	
-						nodeInUse.allowVector.removeElementAt(allowList.getSelectedIndex());
-						value.allowVector.remove(nodeInUse);
-						allowList.setListData(nodeInUse.allowVector);
-					}
-				}
-				else{
-					DataObject value = (DataObject)disallowList.getSelectedValue();
-					//System.out.println("DisAllow To allow");
-
-					nodeInUse.allowVector.add(value);
-					value.allowVector.add(nodeInUse);
-					allowList.setListData(nodeInUse.allowVector);
-
-
-					nodeInUse.disallowVector.removeElementAt(disallowList.getSelectedIndex());
-					value.disallowVector.remove(nodeInUse);
-					disallowList.setListData(nodeInUse.disallowVector);
-				}
-			}
-			updateDynamicMorphFrame();
-    		//updateComboFrame();
-		}
-
-	}
-	class sliderChangeListener implements ChangeListener{
-	    public void stateChanged(ChangeEvent e){
-	        JSlider source = (JSlider)e.getSource();	        
-	        if (!source.getValueIsAdjusting()) {
-	            infoTextField.setText("Filter Name:  '"+source.getName()+"' \n"+"Current Value: '"+source.getValue()+"'");
-	        	String nameOfSlider=source.getName();	
-	            Filter aFilter;
-	            int	   fN=-1;
-	        	for (int i=0;i<globalVectorOfFilters.size();++i){	
-	        		aFilter=(Filter)globalVectorOfFilters.get(i);
-	        		if(aFilter.getName().equals(nameOfSlider)){
-	        			fN=aFilter.FilterNumber;
-	        			break;
-	        		}
-	        	}
-	            int minTrl = (int)source.getValue();
-	            if(fN<0){
-	            	infoTextField.setText("Error: Filter could not be found!!");
-	            }else{
-	            	applyFilter(minTrl,nameOfSlider,fN);
-	            }
-	        } 
-	    }
-	}
+//	class myDropTargetListener implements DropTargetListener {
+//
+//		public void dragEnter(DropTargetDragEvent dtde) {
+//			System.out.println("dragEnter");
+//		}
+//		public void dragOver(DropTargetDragEvent dtde) {
+//
+//		}
+//		public void dropActionChanged(DropTargetDragEvent dtde) {
+//			System.out.println("dropActionChanged");
+//		}
+//
+//		public void dragExit(DropTargetEvent dte) {
+//			System.out.println("dragExit");
+//		}
+//
+//		public void drop(DropTargetDropEvent dtde) {
+//
+//			DropTargetContext data = dtde.getDropTargetContext();
+//			DefaultMutableTreeNode node =
+//		    	(DefaultMutableTreeNode)treePanel.tree.getLastSelectedPathComponent();
+//			DataObject nodeInUse = (DataObject)node.getUserObject();
+//			//and then we need to find the group it is associtated with at take it from that
+//			//-fix the errors.
+//			if (node != null){
+//			    //data.
+//				if (data.getComponent() == disallowList && data.getComponent() != allowList){
+//				    DataObject value = (DataObject)allowList.getSelectedValue();
+//					System.out.println("Allow To Disallow " + value.m_Name);
+//					if(value.myCheckBox.isSelected()&&nodeInUse.myCheckBox.isSelected()){// rewite this message 
+//				        JOptionPane.showInternalMessageDialog(jifmakeActionItemsFrame,"Both Technology are selcted.\n" +
+//				        		"please make corrections by deselcting one of them","Compatibility Error",JOptionPane.INFORMATION_MESSAGE);
+//
+//					}else{
+//						nodeInUse.disallowVector.add(value);
+//						value.disallowVector.add(nodeInUse);
+//						disallowList.setListData(nodeInUse.disallowVector);
+//	
+//	
+//						nodeInUse.allowVector.removeElementAt(allowList.getSelectedIndex());
+//						value.allowVector.remove(nodeInUse);
+//						allowList.setListData(nodeInUse.allowVector);
+//					}
+//				}
+//				else{
+//					DataObject value = (DataObject)disallowList.getSelectedValue();
+//					//System.out.println("DisAllow To allow");
+//
+//					nodeInUse.allowVector.add(value);
+//					value.allowVector.add(nodeInUse);
+//					allowList.setListData(nodeInUse.allowVector);
+//
+//
+//					nodeInUse.disallowVector.removeElementAt(disallowList.getSelectedIndex());
+//					value.disallowVector.remove(nodeInUse);
+//					disallowList.setListData(nodeInUse.disallowVector);
+//				}
+//			}
+//			updateDynamicMorphFrame();
+//    		//updateComboFrame();
+//		}
+//
+//	}
+//	class sliderChangeListener implements ChangeListener{
+//	    public void stateChanged(ChangeEvent e){
+//	        JSlider source = (JSlider)e.getSource();	        
+//	        if (!source.getValueIsAdjusting()) {
+//	            infoTextField.setText("Filter Name:  '"+source.getName()+"' \n"+"Current Value: '"+source.getValue()+"'");
+//	        	String nameOfSlider=source.getName();	
+//	            Filter aFilter;
+//	            int	   fN=-1;
+//	        	for (int i=0;i<globalVectorOfFilters.size();++i){	
+//	        		aFilter=(Filter)globalVectorOfFilters.get(i);
+//	        		if(aFilter.getName().equals(nameOfSlider)){
+//	        			fN=aFilter.FilterNumber;
+//	        			break;
+//	        		}
+//	        	}
+//	            int minTrl = (int)source.getValue();
+//	            if(fN<0){
+//	            	infoTextField.setText("Error: Filter could not be found!!");
+//	            }else{
+//	            	applyFilter(minTrl,nameOfSlider,fN);
+//	            }
+//	        } 
+//	    }
+//	}
 //	class myActionListener  implements ActionListener{
 //	    public void actionPerformed(ActionEvent evn){
 //	       

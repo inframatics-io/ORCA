@@ -24,7 +24,7 @@
  * This code is based on an example provided by Richard Stanford, 
  * a tutorial reader.
  */
-
+package io.opensystems.rcca;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
@@ -174,18 +174,18 @@ public class DynamicTree extends JPanel {
 	private void removeAttribute(DefaultMutableTreeNode currentNode){
 		DataObject nodeToBeRemoved=(DataObject) currentNode.getUserObject();
 		boolean rmStatus=newOPTIONNodesAdded.removeElement(nodeToBeRemoved);
-		if (rmStatus){// optiono was new so no need to go to compatibility list 
-			
-		}else{
-			rmStatus=processedOptionNodes.removeElement(nodeToBeRemoved);
-			for(int i=0;i<processedOptionNodes.size();++i){
-				DataObject nodeInfo =(DataObject)processedOptionNodes.get(i);
-				rmStatus=nodeInfo.allowVector.remove(nodeToBeRemoved);
-				if(!rmStatus){
-					rmStatus=nodeInfo.disallowVector.remove(nodeToBeRemoved);
-				}
-			}
-		}
+//		if (rmStatus){// optiono was new so no need to go to compatibility list 
+//			
+//		}else{
+//			rmStatus=processedOptionNodes.removeElement(nodeToBeRemoved);
+//			for(int i=0;i<processedOptionNodes.size();++i){
+//				DataObject nodeInfo =(DataObject)processedOptionNodes.get(i);
+//				rmStatus=nodeInfo.allowVector.remove(nodeToBeRemoved);
+//				if(!rmStatus){
+//					rmStatus=nodeInfo.disallowVector.remove(nodeToBeRemoved);
+//				}
+//			}
+//		}
 	}
     /** Add child to the currently selected node. */
     public DefaultMutableTreeNode addObject(DataObject child) {

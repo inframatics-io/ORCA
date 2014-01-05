@@ -21,43 +21,57 @@
  *
  */
 /*
- * Created on Jul 24, 2005
+ * Created on May 23, 2005
  *
  * TODO To change the template for this generated file go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-
+package io.opensystems.rcca;
+import javax.swing.BorderFactory;
+import javax.swing.JSlider;
 /**
- * @author Payman
+ * @author Payman Touliat
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
-public class Descriptor {
-	public boolean binary;
-	public boolean valueBinary;
-	public int valueContinues;
-	public String name;
-	
-	public Descriptor(String n,int val){
-		name=n;
-		valueContinues=val;
-	}
-	public Descriptor(String n,boolean val){
-		name=n;
-		valueBinary=val;
-	}
-	
-	
-	public String getName(){
-		return name;
-	}
-	public int getValue(){
-		return valueContinues;
-	}
-	public boolean getBoolean(){
-		return valueBinary;
-	}
-	
-	
+public class Filter {
+    
+    protected String filterName;
+    protected int FilterNumber;
+    protected int maxVal, minVal;
+    public JSlider mySlider;
+    
+    public Filter(int fN,String n,int min,int max){
+        filterName=n;
+        
+        if(max>min){
+        	maxVal=max;
+        	minVal=min;
+        	if(fN<1){
+        		System.out.println("Filter Number can't be less than 1");
+        	}else{
+        		FilterNumber=fN;
+        	}
+        	mySlider=new JSlider(JSlider.HORIZONTAL,min,max,min);
+        	mySlider.setName(n);
+        	mySlider.setBorder(BorderFactory.createTitledBorder(filterName));
+			mySlider.setPaintTicks(true);
+			mySlider.setPaintLabels( true );
+			mySlider.setPaintTrack( true );
+			mySlider.setSnapToTicks(false);
+        }else{
+        	System.out.println("problem with range. Please use a max > min.");
+        }
+    }
+    public String toString(){
+        return filterName;
+    }
+    public String getName(){
+        return filterName;
+    }
+    public boolean checkValue(int val){
+    	return (val>=minVal&&val<=maxVal);
+    }
+
 }
