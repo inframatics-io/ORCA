@@ -41,6 +41,7 @@ import java.util.Vector;
 import java.io.File;
 
 
+
 //import java.util.Enumeration;
 //import java.net.*;
 //import java.util.Hashtable;
@@ -56,6 +57,7 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
 import javax.swing.event.ChangeListener;
@@ -92,7 +94,7 @@ public class RootCause extends JFrame implements ActionListener {
 
     protected JDesktopPane main_desktop;
 	private JInternalFrame jifmakeActionItemsFrame;
-	private JInternalFrame jifNewMorphMatrixFrame;
+	private JInternalFrame jifNewRootCauseFrame;
 	private JInternalFrame jifDynamicFaultMatrixFrame,jifNewFilterFrame;
 	private JSplitPane ptrSpLeft;
 	
@@ -202,13 +204,13 @@ public class RootCause extends JFrame implements ActionListener {
 		   // To Be Done: check input throughly
 			if (rootName != null /* && rootName.length() >0 */ ){
 				treePanel = new DynamicTree(rootName,textFont);
-				newMorphMatrixFrame(true);
+				newRootCauseFrame(true);
 				isFileSaved = false;
 			}			
 		}else if (e.getSource() == menuViewDesktop){
 		}else if (e.getSource() == menuItemExport){
 			if (true){
-				jifNewMorphMatrixFrame.setVisible(true);
+				jifNewRootCauseFrame.setVisible(true);
 			}
 		}else if (e.getSource() == menuItemSave){
 			// able to Save makes sure that some window is open 
@@ -247,7 +249,7 @@ public class RootCause extends JFrame implements ActionListener {
 			    setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 				Open openFile = new Open(m_currentFile);
 				treePanel = new DynamicTree(openFile.rootName,textFont);
-				newMorphMatrixFrame(false);
+				newRootCauseFrame(false);
 				openFile.doXMLparse(treePanel);
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				ableToSave=true;
@@ -261,11 +263,11 @@ public class RootCause extends JFrame implements ActionListener {
 		else if(e.getSource() == menuItemExit){
 		    // check to see if the data is saved
 		    if (!isAttributeSaved || !isFileSaved){
-			    int answer =JOptionPane.showConfirmDialog(jifNewMorphMatrixFrame,"Do you want to save the changes?");
+			    int answer =JOptionPane.showConfirmDialog(jifNewRootCauseFrame,"Do you want to save the changes?");
 			    switch (answer){
 			    case JOptionPane.YES_OPTION:
 			    	boolean statusOfSaveDataToTree = saveInputsToNode(previousNode);
-					jifNewMorphMatrixFrame.repaint();
+					jifNewRootCauseFrame.repaint();
 					if (ableToSave){
 						setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
 						JFileChooser m_chooser=new JFileChooser();
@@ -292,7 +294,7 @@ public class RootCause extends JFrame implements ActionListener {
 				case JOptionPane.CANCEL_OPTION:;
 			    }
 			}else{
-				int answer =JOptionPane.showConfirmDialog(jifNewMorphMatrixFrame, "Are you sure you want to quit?", "Exit?", JOptionPane.YES_NO_OPTION);
+				int answer =JOptionPane.showConfirmDialog(jifNewRootCauseFrame, "Are you sure you want to quit?", "Exit?", JOptionPane.YES_NO_OPTION);
 				switch (answer){
 			    case JOptionPane.YES_OPTION:
 			    	System.exit(NORMAL);
@@ -358,16 +360,16 @@ public class RootCause extends JFrame implements ActionListener {
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)
 			treePanel.tree.getLastSelectedPathComponent();
 			boolean statusOfSaveDataToTree = saveInputsToNode(node);
-			jifNewMorphMatrixFrame.repaint();
+			jifNewRootCauseFrame.repaint();
 		}
 		else if (e.getSource() == createCompatMatrix){
 //		check to see if the data is saved
 		    if (!isAttributeSaved){
-			    int answer =JOptionPane.showConfirmDialog(jifNewMorphMatrixFrame,"Do you want to save the changes?");
+			    int answer =JOptionPane.showConfirmDialog(jifNewRootCauseFrame,"Do you want to save the changes?");
 			    if (answer == JOptionPane.YES_OPTION) {
 			        // User clicked YES.
 					boolean statusOfSaveDataToTree = saveInputsToNode(previousNode);
-					jifNewMorphMatrixFrame.repaint();
+					jifNewRootCauseFrame.repaint();
 			    } else if (answer == JOptionPane.NO_OPTION) {
 			        // User clicked NO.
 			    }
@@ -376,17 +378,17 @@ public class RootCause extends JFrame implements ActionListener {
 			}
 		    //initializeCompatibility(treePanel.getNewOPTIONNodes(),treePanel.processedOptionNodes);
 		    treePanel.resetNewOPIONNodes();
-		    jifNewMorphMatrixFrame.setVisible(false);
-			makeActionItemsFrame();
+		    jifNewRootCauseFrame.setVisible(false);
+			makeManageActionFrame();
 		}
 		else if (e.getSource() == addActionItem){
 		    // check to see if the data is saved
 		    if (!isAttributeSaved){
-			    int answer =JOptionPane.showConfirmDialog(jifNewMorphMatrixFrame,"Do you want to save the changes?");
+			    int answer =JOptionPane.showConfirmDialog(jifNewRootCauseFrame,"Do you want to save the changes?");
 			    switch (answer){
 			    case JOptionPane.YES_OPTION:
 			    	boolean statusOfSaveDataToTree = saveInputsToNode(previousNode);
-					jifNewMorphMatrixFrame.repaint();
+					jifNewRootCauseFrame.repaint();
 				case JOptionPane.NO_OPTION:;
 				case JOptionPane.CANCEL_OPTION:;
 			    }
@@ -399,7 +401,7 @@ public class RootCause extends JFrame implements ActionListener {
 		    // make a new frame to ask for inputs
 		    //if (newFilterSuffix==2)// Remember the Min TRL filter automatically was added 
 		    //{
-		    	makeFilterFrame();
+		    	makeAddActionFrame();
 		    //	}   // therefore the first filter that the user will add has a suffix of 2
 		    //else
 		    //{ jifNewFilterFrame.setVisible(true);}
@@ -423,7 +425,7 @@ public class RootCause extends JFrame implements ActionListener {
 			// main Morph Matrix frame is visible
 			jifmakeActionItemsFrame.setVisible(false);
 			ptrSpLeft.add(treePanel,BorderLayout.CENTER);
-		    jifNewMorphMatrixFrame.setVisible(true);
+		    jifNewRootCauseFrame.setVisible(true);
 		}
 		else if (e.getSource() == makeFishbone){
 		    	jifmakeActionItemsFrame.setVisible(false);	
@@ -437,13 +439,32 @@ public class RootCause extends JFrame implements ActionListener {
 		}
 	}
 //	this frame is created when the user selects File-New
-//	and will make a new Morph matrix
-	public void newMorphMatrixFrame(boolean aNewFrame) {
-		jifNewMorphMatrixFrame = new JInternalFrame(
+//	and will make a new Root Cause
+	public void newRootCauseFrame(boolean aNewFrame) {
+		jifNewRootCauseFrame = new JInternalFrame(
 				"Make Fault Tree",true,true,true,true);
-		jifNewMorphMatrixFrame.setBounds(0,0,750,400);
-		jifNewMorphMatrixFrame.setDefaultCloseOperation(HIDE_ON_CLOSE);
-
+		jifNewRootCauseFrame.setBounds(0,0,750,400);
+		jifNewRootCauseFrame.setDefaultCloseOperation(HIDE_ON_CLOSE);
+//------------------
+// NOT SURE WHERE TO PUT THIS
+// MAYBE WE SHOULD Delete IT		
+		if (aNewFrame){
+		actionList = new ActionItems(newActionItemID,10);
+		
+		actionList.add("Team", "Form the Team", "2014/1/31", "2014/1/31", "2014/1/20", Task.UNCOMPLETE);
+		actionList.add("Team", "Develop the Meeting Schedule Ground Rules", "2014/1/21", "2014/1/31", "2014/1/31");
+		actionList.add("Team", "Develop and Use An Action Item List", "2014/1/22");
+		actionList.add("Team", "Develop the Root Cause Tree", "2014/1/23");
+		actionList.add("Team", "Develop a Critical Path Schedule", "2014/1/24");
+		actionList.add("Team", "Conduct the Event Investigation", "2014/1/25");
+		actionList.add("Team", "Establish the Root Causes", "2014/1/26");
+		actionList.add("Team", "Determine the Corrective Actions", "2014/1/27");
+		actionList.add("Team", "DEstablish and Implement the Closure Plan", "2014/1/28");
+		actionList.add("Team", "Final Out Brief", "2014/1/29");
+		}
+//------------------------------
+		
+		
 
 		KeyListener akeyListener = new myKeyListener();
 
@@ -665,7 +686,7 @@ public class RootCause extends JFrame implements ActionListener {
 //		main split pane creation
 		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,spLeft,spRight);
 		sp.setDividerSize(8);
-		sp.setDividerLocation(jifNewMorphMatrixFrame.getWidth()/2);
+		sp.setDividerLocation(jifNewRootCauseFrame.getWidth()/2);
 		sp.setResizeWeight(0.5);
 		sp.setContinuousLayout(true);
 		sp.setOneTouchExpandable(true);
@@ -679,16 +700,16 @@ public class RootCause extends JFrame implements ActionListener {
 		spRight.add(rightButtonBar, BorderLayout.SOUTH);
 
 //		adding the panes and displaying the window
-		jifNewMorphMatrixFrame.add(sp, BorderLayout.CENTER);
-		main_desktop.add(jifNewMorphMatrixFrame);
-		jifNewMorphMatrixFrame.setVisible(true);
+		jifNewRootCauseFrame.add(sp, BorderLayout.CENTER);
+		main_desktop.add(jifNewRootCauseFrame);
+		jifNewRootCauseFrame.setVisible(true);
 
 	}
 // this function creates the Action Item and (maybe Team) management panel
-	public void makeActionItemsFrame(){
+	public void makeManageActionFrame(){
 
 	    jifmakeActionItemsFrame = new JInternalFrame(
-	            treePanel.rootNode.toString()+": Make Compatibility Matrix",true,true,true,true);
+	            treePanel.rootNode.toString()+": Manage Action Items",true,true,true,true);
 		jifmakeActionItemsFrame.setBounds(0,0,980,500);
 		jifmakeActionItemsFrame.setLayout(new BorderLayout());
 		jifmakeActionItemsFrame.setDefaultCloseOperation(HIDE_ON_CLOSE);
@@ -725,120 +746,14 @@ public class RootCause extends JFrame implements ActionListener {
 //		main split pane creation
 		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,spLeft,spRight);
 		sp.setDividerSize(8);
-		sp.setDividerLocation(jifNewMorphMatrixFrame.getWidth()/2);
+		sp.setDividerLocation(jifNewRootCauseFrame.getWidth()/2);
 		sp.setResizeWeight(0.5);
 		sp.setContinuousLayout(true);
 		sp.setOneTouchExpandable(true);
 
-		actionList = new ActionItems(newActionItemID,10);
-		
-		actionList.add("Team", "Form the Team", "2014/1/31", "2014/1/31", "2014/1/20", Task.UNCOMPLETE);
-		actionList.add("Team", "Develop the Meeting Schedule Ground Rules", "2014/1/21", "2014/1/31", "2014/1/31");
-		actionList.add("Team", "Develop and Use An Action Item List", "2014/1/22");
-		actionList.add("Team", "Develop the Root Cause Tree", "2014/1/23");
-		actionList.add("Team", "Develop a Critical Path Schedule", "2014/1/24");
-		actionList.add("Team", "Conduct the Event Investigation", "2014/1/25");
-		actionList.add("Team", "Establish the Root Causes", "2014/1/26");
-		actionList.add("Team", "Determine the Corrective Actions", "2014/1/27");
-		actionList.add("Team", "DEstablish and Implement the Closure Plan", "2014/1/28");
-		actionList.add("Team", "Final Out Brief", "2014/1/29");
-
-		
-		String[] columnNames = {"#",
-				"Owner",
-				"Description",
-				"Assigned",
-				"Date Due",
-				"Completed",
-		"Status"};
-
-		Object[][] data = new Object[actionList.size()][7]; 
-		for (int i=0; i<actionList.size(); ++i){
-			data[i][0]=actionList.elementAt(i).getID();
-			data[i][1]=actionList.elementAt(i).getOwner();
-			data[i][2]=actionList.elementAt(i).getDescription();
-			data[i][3]=actionList.elementAt(i).getStartDate();
-			data[i][4]=actionList.elementAt(i).getDueDate();
-			data[i][5]=actionList.elementAt(i).getEndDate();
-			data[i][6]= (actionList.elementAt(i).getStatus()==1)? new Boolean(true): new Boolean(false);
-		}
-
-//		class actionTableModel extends AbstractTableModel {
-//
-//
-//			private String[] columnNames = {"#",
-//					"Owner",
-//					"Description",
-//					"Assigned",
-//					"Date Due",
-//					"Completed",
-//			"Status"};
-//
-//			private Object[][] data = new Object[actionList.size()][7]; 
-//			for (int i=0; i<actionList.size(); ++i){
-//				data[i][0]=actionList.elementAt(i).getID();
-//				data[i][1]=actionList.elementAt(i).getOwner();
-//				data[i][2]=actionList.elementAt(i).getDescription();
-//				data[i][3]=actionList.elementAt(i).getStartDate();
-//				data[i][4]=actionList.elementAt(i).getDueDate();
-//				data[i][5]=actionList.elementAt(i).getEndDate();
-//				data[i][6]= (actionList.elementAt(i).getStatus()==1)? new Boolean(true): new Boolean(false);
-//			}
-//
-//			public int getColumnCount() {
-//				return columnNames.length;
-//			}
-//
-//			public int getRowCount() {
-//				return data.length;
-//			}
-//
-//			public String getColumnName(int col) {
-//				return columnNames[col];
-//			}
-//
-//			public Object getValueAt(int row, int col) {
-//				return data[row][col];
-//			}
-//
-//			/*
-//			 * JTable uses this method to determine the default renderer/
-//			 * editor for each cell.  If we didn't implement this method,
-//			 * then the last column would contain text ("true"/"false"),
-//			 * rather than a check box.
-//			 */
-//			public Class getColumnClass(int c) {
-//				return getValueAt(0, c).getClass();
-//			}
-//
-//			/*
-//			 * Don't need to implement this method unless your table's
-//			 * editable.
-//			 */
-//			public boolean isCellEditable(int row, int col) {
-//				//Note that the data/cell address is constant,
-//				//no matter where the cell appears onscreen.
-//				if (col < 2) {
-//					return false;
-//				} else {
-//					return true;
-//				}
-//			}
-//
-//			/*
-//			 * Don't need to implement this method unless your table's
-//			 * data can change.
-//			 */
-//			public void setValueAt(Object value, int row, int col) {
-//
-//				data[row][col] = value;
-//				fireTableCellUpdated(row, col);
-//			}
-//
-//
-//		}
-		    
-		JTable actionItemsTable = new JTable(data, columnNames);
+//		This is where the Action Item Table is created
+		final ActionTableModel aTableM = new ActionTableModel();
+		final JTable actionItemsTable = new JTable( aTableM); // maybe AtionTableModel should be global
 		actionItemsTable.setAutoCreateRowSorter(true);
 		actionItemsTable.setPreferredScrollableViewportSize(new Dimension(700, 200));
 		actionItemsTable.getColumnModel().getColumn(0).setPreferredWidth(20);	
@@ -846,7 +761,20 @@ public class RootCause extends JFrame implements ActionListener {
 		actionItemsTable.getColumnModel().getColumn(2).setPreferredWidth(300);
 		
 		JScrollPane topRightSP= new JScrollPane(actionItemsTable);
-
+		
+// 		Create a Delete Button for Action Items
+		JButton deleteActionButton = new JButton("Delete");
+		deleteActionButton.addActionListener( new ActionListener() {
+            public void actionPerformed(ActionEvent evt)
+            {
+                if (aTableM.getRowCount() > 0 && actionItemsTable.getSelectedRow() != -1 )
+                {
+                    aTableM.deleteRow(actionItemsTable.getSelectedRow());
+                }
+            }
+        });
+        
+		
 //		this is the top right panel which has All the Action Items is created
 		JPanel topRightPanel = new JPanel(new ParagraphLayout());
 		topRightPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"ACTION ITEMS"));
@@ -855,7 +783,7 @@ public class RootCause extends JFrame implements ActionListener {
 //		this is the bottom right panel which has the Team Members
 		JPanel bottomRightPanel = new JPanel(new ParagraphLayout());
 		bottomRightPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"Team Members"));
-		//bottomRightPanel.add(bottomRightSP,ParagraphLayout.NEW_PARAGRAPH);
+		bottomRightPanel.add(deleteActionButton,ParagraphLayout.NEW_PARAGRAPH);
 
 //		adding components to the right split panel
 		spRight.add(topRightPanel,BorderLayout.NORTH);
@@ -985,7 +913,7 @@ public class RootCause extends JFrame implements ActionListener {
 //					nodeInfo.myCheckBox.addMouseListener(myCB); 
 //					leftPanel.add(nodeInfo.myCheckBox);
 //					// by not restting the color  of the JCheckBox we
-//					// can retain the status of Dyamic Morph Matrix
+//					// can retain the status of Dyamic Root Cause
 //  				}
 //				if (total>=1){
 //					JButton sameCategory = new JButton("");
@@ -1168,7 +1096,7 @@ public class RootCause extends JFrame implements ActionListener {
 	public boolean saveInputsToNode(DefaultMutableTreeNode sNode){
 		String name = new String(((DataObject)sNode.getUserObject()).getName());
 		String newName=nameTextField.getText();
-		jifNewMorphMatrixFrame.repaint();
+		jifNewRootCauseFrame.repaint();
 		isAttributeSaved=true;
 		saveAttributes.setVisible(false);
 	    if (sNode == null || sNode.isRoot()) return false;
@@ -1183,7 +1111,7 @@ public class RootCause extends JFrame implements ActionListener {
 		try{
 		    INTtrl=Integer.parseInt(newtrl);
 		    if (INTtrl > 10 || INTtrl < 0) 
-		        JOptionPane.showMessageDialog(jifNewMorphMatrixFrame,
+		        JOptionPane.showMessageDialog(jifNewRootCauseFrame,
 	            " Please Enter A Numeric Value Between 0 and 10");
 		    else {
 		    	if (search(newName, ((DataObject)sNode.getUserObject()).getId())){
@@ -1204,7 +1132,7 @@ public class RootCause extends JFrame implements ActionListener {
 		    }
 		}
 		catch (NumberFormatException nfex){
-		    JOptionPane.showMessageDialog(jifNewMorphMatrixFrame,
+		    JOptionPane.showMessageDialog(jifNewRootCauseFrame,
 		            " Please Enter A Numeric Value For TRL.");
 		}
 		return true;
@@ -1406,11 +1334,11 @@ public class RootCause extends JFrame implements ActionListener {
     		printAllNodes(model, model.getChild(node, i),indent + 1,leftPanel);
     	}
     }
-    public void makeFilterFrame(){
+    public void makeAddActionFrame(){
         jifNewFilterFrame = new JInternalFrame("Action Item"
 	           ,false,true,false,false);
         
-        jifNewFilterFrame.setBounds(200,100,450,320);/** Dimension **/
+        jifNewFilterFrame.setBounds(200,100,750,320);/** Dimension **/
 		jifNewFilterFrame.setLayout(new BorderLayout());
 		jifNewFilterFrame.setDefaultCloseOperation(HIDE_ON_CLOSE);
 		jifNewFilterFrame.setBackground(Color.white);
@@ -1434,7 +1362,34 @@ public class RootCause extends JFrame implements ActionListener {
 		filterButtonBar.add(okayFilter);
 		filterButtonBar.add(cancelFilter);
 		
+// random add to make sure the list works ... DELETE LATER		
+		actionList.add("Payman", "add a add botton", "2014/2/1");
+		actionList.add("Payman", "to make select option", "2014/1/12");
+		actionList.add("Payman", "how about the design of frame 2","2014/1/1");
+		actionList.add("Payman", "and to remove aciton items","2014/1/1");
 		
+//		String slected="";
+//		class RowListener implements ListSelectionListener {
+//	        public void valueChanged(ListSelectionEvent event) {
+//	            if (event.getValueIsAdjusting()) {
+//	                return;
+//	            }
+//	            for (int c : table.getSelectedRows()) {
+//	                output.append(String.format(" %d", c));
+//	            }
+//	        }
+//	    }
+		// create the  
+		JTable actionItemsTable = new JTable( new ActionTableModel());
+		//actionItemsTable.setAutoCreateRowSorter(true);
+		//actionItemsTable.setPreferredScrollableViewportSize(new Dimension(700, 200));
+		actionItemsTable.getColumnModel().getColumn(0).setPreferredWidth(20);	
+		actionItemsTable.getColumnModel().getColumn(1).setPreferredWidth(40);
+		actionItemsTable.getColumnModel().getColumn(2).setPreferredWidth(300);
+	//	actionItemsTable.getSelectionModel().addListSelectionListener(new RowListener());
+		JScrollPane myTableSP= new JScrollPane(actionItemsTable);
+		tab1.add(myTableSP);
+
 		m_tab.addTab("Add",tab1);
 		m_tab.addTab("Edit",tab2);
 		JPanel p=new JPanel(new BorderLayout());
@@ -1485,9 +1440,9 @@ public class RootCause extends JFrame implements ActionListener {
     class TreeMouseListener extends MouseInputAdapter {
 		// User clicked on the tree; Check if the information is saved
     	public void mousePressed(MouseEvent evt){
-			if (jifNewMorphMatrixFrame.isSelected()){
+			if (jifNewRootCauseFrame.isSelected()){
 			    if (!isAttributeSaved){
-				    int answer = JOptionPane.showConfirmDialog(jifNewMorphMatrixFrame,"Do you want to save the changes?");
+				    int answer = JOptionPane.showConfirmDialog(jifNewRootCauseFrame,"Do you want to save the changes?");
 				    if (answer == JOptionPane.YES_OPTION) {
 				    	boolean statusOfSaveDataToTree = saveInputsToNode(previousNode);
 				    	// User clicked YES.
@@ -1584,12 +1539,12 @@ public class RootCause extends JFrame implements ActionListener {
 		        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
 				treePanel.tree.getLastSelectedPathComponent();
 				boolean statusOfSaveDataToTree = saveInputsToNode(node);
-				jifNewMorphMatrixFrame.repaint();
+				jifNewRootCauseFrame.repaint();
 		        }
-		    else if (jifNewMorphMatrixFrame.isSelected()) {
+		    else if (jifNewRootCauseFrame.isSelected()) {
 				isAttributeSaved = false;
 				saveAttributes.setVisible(true);
-				jifNewMorphMatrixFrame.repaint();
+				jifNewRootCauseFrame.repaint();
 			}
 		}
 	}
@@ -1704,6 +1659,127 @@ public class RootCause extends JFrame implements ActionListener {
 				return true;
 			return afile.getName().toLowerCase().endsWith(m_extension);
 		}
+	}
+	class ActionTableModel extends AbstractTableModel {
+
+
+		private String[] columnNames = {"#",
+				"Owner",
+				"Description",
+				"Assigned",
+				"Date Due",
+				"Completed",
+		"Status"};
+		//private ActionItems data;
+
+
+		public int getColumnCount() {
+			return columnNames.length;
+		}
+
+		public int getRowCount() {
+			return actionList.size();
+		}
+
+		public String getColumnName(int col) {
+			return columnNames[col];
+		}
+
+		public Object getValueAt(int row, int col) {
+			
+			switch (col){
+			case 0: return new Integer(actionList.elementAt(row).getID());
+			case 1: return actionList.elementAt(row).getOwner();
+			case 2: return actionList.elementAt(row).getDescription();
+			case 3: return actionList.elementAt(row).getStartDate();
+			case 4: return actionList.elementAt(row).getDueDate();
+			case 5: return actionList.elementAt(row).getEndDate();
+			case 6: return (actionList.elementAt(row).getStatus()==1)? new Boolean(true): new Boolean(false);
+			default: return new Boolean(false);
+			}
+
+		}
+
+		/*
+		 * JTable uses this method to determine the default renderer/
+		 * editor for each cell.  If we didn't implement this method,
+		 * then the last column would contain text ("true"/"false"),
+		 * rather than a check box.
+		 */
+		public Class getColumnClass(int c) {
+			return getValueAt(0, c).getClass();
+		}
+
+		
+		public boolean isCellEditable(int row, int col) {
+			if (col == 1) {
+				return false;  // user should not be able to change Task ID#.
+			} else {
+				return true;
+			}
+		}
+
+
+		public void setValueAt(Object value, int row, int col) {
+
+			switch (col){
+			//case 1: data.elementAt(row).setOwner((String)value));
+			case 2: actionList.elementAt(row).setDescription((String)value);
+			case 3: actionList.elementAt(row).setStartDate((String)value);
+			case 4: actionList.elementAt(row).setDueDate((String)value);
+			case 5: actionList.elementAt(row).setEndDate((String) value);
+			//case 6: return (data.elementAt(row).getStatus()==1)? new Boolean(true): new Boolean(false);
+			}
+			
+			fireTableCellUpdated(row, col);
+			// maybe set TableWasEdited to true;
+
+		}
+		public void deleteRow(int row){
+			
+		    JOptionPane.showMessageDialog(jifmakeActionItemsFrame," I will delete Row: " + row);
+//            ArrayList<String> temp = data.get(row);//backup of value in case of IOException while writing to file
+//            BufferedWriter bfr = null;
+//            try
+//            {
+//                data.remove(row);
+//                //Write here the logic for repopulating file with new records.
+//                bfr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("records.temp")));
+//                StringBuffer sBuffer = new StringBuffer();
+//                for (ArrayList<String> list : data)
+//                {
+//                    StringBuffer buf = new StringBuffer();
+//                    for (String val : list )
+//                    {
+//                        buf.append(val+"\t");
+//                    }
+//                    buf.replace(buf.length() - 1, buf.length(),"\n");
+//                    sBuffer.append(buf.toString());
+//                }
+//                bfr.write(sBuffer.toString());
+//                bfr.flush();
+//                bfr.close();
+//                fireTableRowsDeleted(row,row);
+//            }
+//            catch (Exception ex)
+//            {
+//                data.add(row,temp);//Rollback the delete from ArrayList
+//                ex.printStackTrace();
+//            }
+//            finally
+//            {
+//                if (bfr != null)
+//                {
+//                    try
+//                    {
+//                        bfr.close();
+//                    }
+//                    catch (Exception ex){}
+//                }
+//            }
+
+        }
+
 	}
 }
 class AboutBox extends JDialog {
