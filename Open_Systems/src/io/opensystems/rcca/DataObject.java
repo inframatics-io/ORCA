@@ -21,6 +21,7 @@
  *
  */
 package io.opensystems.rcca;
+//import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.*;
@@ -50,40 +51,32 @@ public class DataObject {
     private int p_id;
 	protected String m_Name, ref_URL, probability, difficulty, cost;
 	private String nodeType;
-    private int TRL_Number; // change this with a list of action items
+//    private int TRL_Number; // change this with a list of action items
     protected String descriptionText;
     protected Vector<Integer> myActionIDs;
+    
     //    protected Vector allowVector;
 //    protected Vector disallowVector;
     //protected Vector vDescriptors;
     
 	
 
-    public DataObject(int id, String name,int trl){
-		m_id = id;
-		setName(name);
-		setTRL_Numver(trl);
-//		allowVector = new Vector();
-//		disallowVector = new Vector();
-		//vDescriptors=new Vector();
-		probability ="low"; 
-		difficulty="low"; 
-		cost="low";
+    public DataObject(int id, String name){
+		this(id,name, new Vector<Integer>(),"low", "low","low");
 	}
-    public DataObject(int id, String name,int trl, String _probability, String _difficulty, String _cost){
+    public DataObject(int id, String name,Vector<Integer> action_IDs){
+    	this(id,name, action_IDs,"low", "low","low");
+    }
+    public DataObject(int id, String name,Vector<Integer> action_IDs, String _probability, String _difficulty, String _cost){
 		m_id = id;
 		setName(name);
-		setTRL_Numver(trl);
-//		allowVector = new Vector();
-//		disallowVector = new Vector();
-		//vDescriptors=new Vector();
-		
+		myActionIDs=action_IDs;
 		probability = _probability;
 		difficulty= _difficulty;
 		cost= _cost;
 	}
-    public DataObject(int id,String name,int trl,String type){
-        new DataObject(id,name,trl);
+    public DataObject(int id,String name,String type){
+        new DataObject(id,name);
         if (type.equalsIgnoreCase(CATEGORY)){
            setTypeToCategory();
         }else if(type.equalsIgnoreCase(GROUP)){
@@ -107,54 +100,46 @@ public class DataObject {
 	public void setName(String n){m_Name=n;myCheckBox=new JCheckBox(m_Name);}
 	public String getName(){return m_Name;}
 	public String toString(){return m_Name;}
-	public int getTRL_Number(){return TRL_Number;}
-	public void setTRL_Numver(int trl){TRL_Number=trl;}
+	/**
+	 * This function return all the Action Item IDs
+	 * @return Vector<Integer> 
+	 */
+	public Vector<Integer> getActionIDs(){return myActionIDs;}
+	public String getActionIDsString(){
+		String s="";
+		for(int i=0; i<myActionIDs.size(); i++){
+			s+=myActionIDs.get(i).toString()+",";
+		}
+		return s;
+	}
+	public void addActionID(int id){myActionIDs.add(id);}
+	public void setActionIDs(Vector<Integer> aIDs){ myActionIDs=aIDs;}
+	
+	
 	public void setdesctiptionText(String desc){descriptionText=desc;}
 	public String getdesctiptionText(){return descriptionText;}
+	
 	public void setReferenceURL(String rf_url){ref_URL=rf_url;}
 	public String getReferenceURL(){return ref_URL;}
+	
 	public void setProbability(String p){probability=p;}
 	public String getProbability(){return probability;}
+	
 	public void setDifficulty(String dif){difficulty=dif;}
 	public String getDifficulty(){return difficulty;}
+	
 	public void setCost(String c){cost=c;}
 	public String getCost(){return cost;}
 
 	
-	public void linkActionItem(int actionID){
-		myActionIDs.add((Integer)actionID);
-	}
-	
-	
-//	public void adddisallowVector(DataObject newD){
-//		disallowVector.add(newD);	
-//	}
-	
-//	public void addAllAllowVectors(Vector vIn){
-//		if (vIn.size() == 0){
-//			allowVector.removeAllElements();
-//		}
-//		else{
-//			for (int i = 0; i < vIn.size(); i++){
-//				allowVector.add(vIn.get(i));
-//			}
-//		}
-//	}
-//	public void addAllDisallowVectors(Vector<ActionItems> vIn){
-//		if (vIn.size() == 0){
-//			disallowVector.removeAllElements();
-//		}
-//		else{
-//			for (int i = 0; i < vIn.size(); i++){
-//				disallowVector.add(vIn.get(i));
-//			}
-//		}
+//	public void linkActionItem(int actionID){
+//		myActionIDs.add((Integer)actionID);
 //	}
 	
 	public void copy(DataObject dataIn){
 		m_id = dataIn.getId();
 		m_Name = dataIn.getName();
 		nodeType = dataIn.getType();
-		TRL_Number = dataIn.getTRL_Number();
+		myActionIDs = dataIn.getActionIDs();
 	}
 }

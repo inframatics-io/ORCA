@@ -97,7 +97,7 @@ public class Open {
            try {
             String nameOfCategory =returnFirstElement((String)v_category.elementAt(i),"Name");
             String IDOfCategory   =returnFirstElement((String)v_category.elementAt(i),"ID");
-            String TRLOfCategory  =returnFirstElement((String)v_category.elementAt(i),"TRL");
+            //String TRLOfCategory  =returnFirstElement((String)v_category.elementAt(i),"TRL");
             String DescriptionOfCategory =returnFirstElement((String)v_category.elementAt(i),"Description");
             String reference_URL =returnFirstElement((String)v_category.elementAt(i),"Reference");
             
@@ -105,10 +105,10 @@ public class Open {
 
             int intID=Integer.parseInt(IDOfCategory);
             m_treePanel.catigoryIdCounter=intID;
-            int intTRL=Integer.parseInt(TRLOfCategory);
+           // int intTRL=Integer.parseInt(TRLOfCategory);
         
             
-            nodeInfo =new DataObject(intID ,nameOfCategory,intTRL);
+            nodeInfo =new DataObject(intID ,nameOfCategory);
             nodeInfo.setDescription(xmlFilter(DescriptionOfCategory));
             nodeInfo.setReferenceURL(reference_URL);
             nodeInfo.setProbability(returnFirstElement((String)v_category.elementAt(i),"Probability"));
@@ -133,16 +133,16 @@ public class Open {
            try {
             String nameOfGroup =returnFirstElement((String)v_group.elementAt(i),"Name");
             String IDOfGroup  =returnFirstElement((String)v_group.elementAt(i),"ID");
-            String TRLOfGroup  =returnFirstElement((String)v_group.elementAt(i),"TRL");
+            //String TRLOfGroup  =returnFirstElement((String)v_group.elementAt(i),"TRL");
             String DescriptionOfGroup =returnFirstElement((String)v_group.elementAt(i),"Description");
             String reference_URL =returnFirstElement((String)v_group.elementAt(i),"Reference");
 
             int intID=Integer.parseInt(IDOfGroup);
             m_treePanel.groupIdCounter=intID;
-            int intTRL=Integer.parseInt(TRLOfGroup);
+            //int intTRL=Integer.parseInt(TRLOfGroup);
         
             
-            nodeInfo =new DataObject(intID ,nameOfGroup,intTRL);
+            nodeInfo =new DataObject(intID ,nameOfGroup);
             nodeInfo.setDescription(xmlFilter(DescriptionOfGroup));
             nodeInfo.setReferenceURL(reference_URL);
             nodeInfo.setProbability(returnFirstElement((String)v_group.elementAt(i),"Probability"));
@@ -166,17 +166,17 @@ public class Open {
            try {
             String nameOfAttribute        =returnFirstElement((String)v_attribute.elementAt(i),"Name");
             String IDOfAttribute          =returnFirstElement((String)v_attribute.elementAt(i),"ID");
-            String TRLOfAttribute  		  =returnFirstElement((String)v_attribute.elementAt(i),"TRL");
+           // String TRLOfAttribute  		  =returnFirstElement((String)v_attribute.elementAt(i),"TRL");
             String DescriptionOfAttribute =returnFirstElement((String)v_attribute.elementAt(i),"Description");
             String reference_URL 		  =returnFirstElement((String)v_attribute.elementAt(i),"Reference");
             String str_selected       =returnFirstElement((String)v_attribute.elementAt(i),"Selected");
            
             int intID=Integer.parseInt(IDOfAttribute);
             m_treePanel.attributIdCounter=intID;
-            int intTRL=Integer.parseInt(TRLOfAttribute);
+            //int intTRL=Integer.parseInt(TRLOfAttribute);
             Boolean selected =Boolean.valueOf(str_selected);
             
-            nodeInfo =new DataObject(intID ,nameOfAttribute,intTRL);
+            nodeInfo =new DataObject(intID ,nameOfAttribute);
             nodeInfo.myCheckBox.setSelected(selected.booleanValue());
             nodeInfo.setDescription(xmlFilter(DescriptionOfAttribute));
             nodeInfo.setReferenceURL(reference_URL);

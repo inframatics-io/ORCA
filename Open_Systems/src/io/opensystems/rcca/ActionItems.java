@@ -4,6 +4,10 @@ package io.opensystems.rcca;
 //import java.util.Date;
 import java.util.Vector;
 
+/**
+ * @author g145162
+ *
+ */
 public class ActionItems {
 
 	
@@ -39,10 +43,19 @@ public int size(){
 public Task elementAt(int i){
 	return actions.elementAt(i);
 }
-
-//public int remve(int actionID){
-//	
-//	actions.remove(index)
-//}
-
+/**
+ * Removes a task element at a given index
+ * @param index
+ */
+public void remveAt(int index){
+	actions.remove(index);
+}
+/**
+ * Find task based on input ID and Removes it.
+ * @param Task_ID
+ * @return true if task was found and it was removed false otherwise
+ */
+public boolean remveTask(int Task_ID){
+	return false;
+}
 }

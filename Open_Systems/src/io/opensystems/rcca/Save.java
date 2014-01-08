@@ -121,7 +121,7 @@ public class Save {
 			value =" "+ "<Category>" +
 							"<Name>" + xmlFilter(nodeIn.getName()) + "</Name>"+
 							"<ID>" + nodeIn.getId()+"</ID>" +
-							"<TRL>"+ nodeIn.getTRL_Number()+"</TRL>"+
+							"<ACTIONS>"+ nodeIn.getActionIDsString()+"</ACTIONS>"+
 							"<Description>"+ xmlFilter(nodeIn.getdesctiptionText()) + "</Description>"+
 							"<Probability>"+ nodeIn.getProbability()+ "</Probability>"+
 							"<Difficulty>"+ nodeIn.getDifficulty()+ "</Difficulty>"+
@@ -135,7 +135,7 @@ public class Save {
 			value = "  "  + "<Group>" + 
 							"<Name>"+xmlFilter(nodeIn.getName()) + "</Name>" +
 							"<ID>"+nodeIn.getId() +"</ID>" +
-							"<TRL>"+nodeIn.getTRL_Number()+"</TRL>" +
+							"<ACTIONS>"+nodeIn.getActionIDsString()+"</ACTIONS>" +
 							"<Description>"+ xmlFilter(nodeIn.getdesctiptionText()) + "</Description>"+
 							"<Probability>"+ nodeIn.getProbability()+ "</Probability>"+
 							"<Difficulty>"+ nodeIn.getDifficulty()+ "</Difficulty>"+
@@ -147,7 +147,7 @@ public class Save {
 			value = "   " + "<Attribute>" + 
 							"<Name>"+xmlFilter(nodeIn.getName()) +"</Name>"+ 
 							"<ID>"+nodeIn.getId()+"</ID>"+
-							"<TRL>"+nodeIn.getTRL_Number()+"</TRL>" +  
+							"<ACTIONS>"+nodeIn.getActionIDsString()+"</ACTIONS>" +  
 							"<Description>"+ xmlFilter(nodeIn.getdesctiptionText())+"</Description>" +
 							"<Probability>"+ nodeIn.getProbability()+ "</Probability>"+
 							"<Difficulty>"+ nodeIn.getDifficulty()+ "</Difficulty>"+

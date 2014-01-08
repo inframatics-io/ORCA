@@ -35,10 +35,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 
+import java.util.StringTokenizer;
 //import java.time.*
 //import java.math.BigInteger;
 import java.util.Vector;
 import java.io.File;
+
 
 
 
@@ -73,7 +75,7 @@ import layouts.*;
 
 
 /**
- * @author's Payman S. Touliat
+ * @author's Payman Touliat
  * 		     
  */
 
@@ -108,7 +110,7 @@ public class RootCause extends JFrame implements ActionListener {
 	protected JButton createCompatMatrix, addActionItem,
 			  makeFishbone,saveAttributes,backToMain,
 			  backToCompatibility,resetActionItems,ref1Button;
-	protected JTextField nameTextField, trlTextField, ref1TextField;
+	protected JTextField nameTextField, actionTextField, ref1TextField;
 	protected JTextArea descriptionTextField,infoTextField;
 	protected JTable compatMatrix, morphMatrix;
 
@@ -119,6 +121,7 @@ public class RootCause extends JFrame implements ActionListener {
 	protected String node_probability;
 	protected String node_difficulty;
 	protected String node_cost;
+	protected String selected;
 	
 	protected String errorMsg = "";
 //	protected JList allowList, disallowList;GregorianCalendar(year + 1900, month, date)
@@ -309,16 +312,16 @@ public class RootCause extends JFrame implements ActionListener {
 		    	(DefaultMutableTreeNode)treePanel.tree.getLastSelectedPathComponent();
 
 			if (node == null || node.isRoot()){
-				DataObject newNode = new DataObject(++treePanel.catigoryIdCounter,"NewNode" + newNodeSuffix++,2);
+				DataObject newNode = new DataObject(++treePanel.catigoryIdCounter,"NewNode" + newNodeSuffix++);
 				treePanel.addObject(newNode);
 			}
 			else if ( ((DataObject)node.getUserObject()).getType()==((DataObject)node.getUserObject()).CATEGORY){
-				DataObject newNode = new DataObject(++treePanel.groupIdCounter,"NewNode" + newNodeSuffix++,2);
+				DataObject newNode = new DataObject(++treePanel.groupIdCounter,"NewNode" + newNodeSuffix++);
 				
 				treePanel.addObject(newNode);
 			}
 			else if ( ((DataObject)node.getUserObject()).getType() == ((DataObject)node.getUserObject()).GROUP){
-				DataObject newNode = new DataObject(++treePanel.attributIdCounter,"NewNode" + newNodeSuffix++,2);
+				DataObject newNode = new DataObject(++treePanel.attributIdCounter,"NewNode" + newNodeSuffix++);
 				// next few linew can be moved to DataObject itself
 				newNode.myCheckBox.setEnabled(true);
 				newNode.myCheckBox.setSelected(false);
@@ -498,8 +501,8 @@ public class RootCause extends JFrame implements ActionListener {
 		addActionItem.setOpaque(false);
 		addActionItem.setMargin(new Insets(0, 0, 0, 0));
 		addActionItem.addActionListener(this);
-		trlTextField = new JTextField(10);
-		trlTextField.addKeyListener(akeyListener);
+		actionTextField = new JTextField(10);
+		actionTextField.addKeyListener(akeyListener);
 		
 //		Description Field
 		JLabel descriptionTextLabel = new JLabel("Description: ");
@@ -587,7 +590,7 @@ public class RootCause extends JFrame implements ActionListener {
 		innerRightPanel.add(nameTextField);
 
 		innerRightPanel.add(addActionItem, ParagraphLayout.NEW_PARAGRAPH);
-		innerRightPanel.add(trlTextField);
+		innerRightPanel.add(actionTextField);
 
 		innerRightPanel.add(descriptionTextLabel, ParagraphLayout.NEW_PARAGRAPH_TOP);
 		JScrollPane scrollPane = new JScrollPane(descriptionTextField);
@@ -1102,20 +1105,30 @@ public class RootCause extends JFrame implements ActionListener {
 	    if (sNode == null || sNode.isRoot()) return false;
 
 		DataObject nodeInfo = (DataObject)sNode.getUserObject();
-		String newtrl = trlTextField.getText();
+		String newActions = actionTextField.getText();
 		String newDesc = descriptionTextField.getText();
 		String ref1 = ref1TextField.getText();
 		
 		
-		int INTtrl;
-		try{
-		    INTtrl=Integer.parseInt(newtrl);
-		    if (INTtrl > 10 || INTtrl < 0) 
-		        JOptionPane.showMessageDialog(jifNewRootCauseFrame,
-	            " Please Enter A Numeric Value Between 0 and 10");
-		    else {
-		    	if (search(newName, ((DataObject)sNode.getUserObject()).getId())){
-					nodeInfo.setTRL_Numver(INTtrl);
+		Integer Id;
+		Vector<Integer> tempIDs= new Vector<Integer>();
+		boolean flag=false;
+		StringTokenizer tokenizer= new StringTokenizer(newActions,",");
+		if (search(newName, ((DataObject)sNode.getUserObject()).getId())){
+			try{
+				while (tokenizer.hasMoreTokens()){
+			    	Id= Integer.parseInt(tokenizer.nextToken());
+			    	if (Id > 1000 || Id < 0){ // Check for valid action item ID
+			    		JOptionPane.showMessageDialog(jifNewRootCauseFrame,
+					            " Please Enter A Valid Numerical Value for Action IDs");
+			    		flag=true;
+			    		break;
+			    	}else{
+			    		tempIDs.add(Id);
+			    	}
+			    }
+				if(!flag){
+					nodeInfo.setActionIDs(tempIDs);
 					nodeInfo.setdesctiptionText(newDesc);
 					nodeInfo.setName(newName);
 					nodeInfo.setReferenceURL(ref1);
@@ -1123,23 +1136,21 @@ public class RootCause extends JFrame implements ActionListener {
 					nodeInfo.setDifficulty(node_difficulty);
 					nodeInfo.setCost(node_cost);
 					isFileSaved = false;
-
 				}
-				else {
-					JOptionPane.showMessageDialog(null,"You have entered a Duplicate Node Name","Error!!"
-							,JOptionPane.INFORMATION_MESSAGE);
-		    	}
-		    }
-		}
-		catch (NumberFormatException nfex){
-		    JOptionPane.showMessageDialog(jifNewRootCauseFrame,
-		            " Please Enter A Numeric Value For TRL.");
-		}
+			}
+			catch (NumberFormatException nfex){
+			    JOptionPane.showMessageDialog(jifNewRootCauseFrame,
+			            " Please Enter A Numeric Value For Action Item ID #.");
+			}
+		
+		}else {
+			JOptionPane.showMessageDialog(null,"You have entered a Duplicate Node Name","Error!!"
+					,JOptionPane.INFORMATION_MESSAGE);
+    	}
+			
 		return true;
 	}
-//	public BigInteger calculatedPossibilities(){
 
-//	}
 	public static void main(String[] args) {
 		new RootCause();
 	}
@@ -1327,8 +1338,13 @@ public class RootCause extends JFrame implements ActionListener {
     	//DefaultMutableTreeNode  nodeT = new DefaultMutableTreeNode(node);
     	//DataObject nodeInfo=(DataObject) nodeT.getUserObject();
     	//System.out.println(nodeInfo.getName());
-    	
-    	leftPanel.add(new JButton (node.toString()));
+    	//
+    	JButton causeNode= new JButton (node.toString());
+    	causeNode.setBackground(dynamicMorphColors[2]);
+    	causeNode.setPreferredSize(buttonDim);
+    	cbItemListener myCB = new cbItemListener();
+    	causeNode.addMouseListener(myCB);
+    	leftPanel.add(causeNode);
 //    	System.out.println(space + node.toString());
     	for (int i=0; i<model.getChildCount(node);i++){
     		printAllNodes(model, model.getChild(node, i),indent + 1,leftPanel);
@@ -1343,30 +1359,14 @@ public class RootCause extends JFrame implements ActionListener {
 		jifNewFilterFrame.setDefaultCloseOperation(HIDE_ON_CLOSE);
 		jifNewFilterFrame.setBackground(Color.white);
 		JTabbedPane m_tab=new JTabbedPane();
-		JPanel tab1=new JPanel(new BorderLayout()); //First Tab [Add]
-		JPanel tab2=new JPanel(new BorderLayout()); //Second Tab [Edit]
+		JPanel tab1=new JPanel(new BorderLayout()); //First Tab [Add New]
+		JPanel tab2=new JPanel(new BorderLayout()); //Second Tab [Select From List]
 		final JButton cancelFilter= new JButton("Cancel");
 		final JButton okayFilter= new JButton("OK");
 
-		ActionListener lst=new ActionListener(){
-		    public void actionPerformed(ActionEvent e){
-		        if(e.getSource()==okayFilter){}
-
-		        jifNewFilterFrame.dispose();
-		    	}
-		    };
-		    
-		okayFilter.addActionListener(lst);
-		cancelFilter.addActionListener(lst);
-		JPanel filterButtonBar= new JPanel(new FlowLayout());
-		filterButtonBar.add(okayFilter);
-		filterButtonBar.add(cancelFilter);
-		
 // random add to make sure the list works ... DELETE LATER		
-		actionList.add("Payman", "add a add botton", "2014/2/1");
-		actionList.add("Payman", "to make select option", "2014/1/12");
-		actionList.add("Payman", "how about the design of frame 2","2014/1/1");
-		actionList.add("Payman", "and to remove aciton items","2014/1/1");
+//		actionList.add("Payman", "add a add botton", "2014/2/1");
+
 		
 //		String slected="";
 //		class RowListener implements ListSelectionListener {
@@ -1379,8 +1379,9 @@ public class RootCause extends JFrame implements ActionListener {
 //	            }
 //	        }
 //	    }
+		
 		// create the  
-		JTable actionItemsTable = new JTable( new ActionTableModel());
+		final JTable actionItemsTable = new JTable( new ActionTableModel());
 		//actionItemsTable.setAutoCreateRowSorter(true);
 		//actionItemsTable.setPreferredScrollableViewportSize(new Dimension(700, 200));
 		actionItemsTable.getColumnModel().getColumn(0).setPreferredWidth(20);	
@@ -1388,10 +1389,35 @@ public class RootCause extends JFrame implements ActionListener {
 		actionItemsTable.getColumnModel().getColumn(2).setPreferredWidth(300);
 	//	actionItemsTable.getSelectionModel().addListSelectionListener(new RowListener());
 		JScrollPane myTableSP= new JScrollPane(actionItemsTable);
-		tab1.add(myTableSP);
+		
 
-		m_tab.addTab("Add",tab1);
-		m_tab.addTab("Edit",tab2);
+		selected="";
+		ActionListener lst=new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				if(e.getSource()==okayFilter){
+					//int[] a =actionItemsTable.getSelectedRows();
+					for(int c: actionItemsTable.getSelectedRows()){
+						selected += actionList.elementAt(c).getID()+",";
+					}
+					actionTextField.setText(selected);
+					isAttributeSaved=false;
+					saveAttributes.setVisible(true);
+				}
+
+				jifNewFilterFrame.dispose();
+			}
+		};
+		    
+		okayFilter.addActionListener(lst);
+		cancelFilter.addActionListener(lst);
+		JPanel filterButtonBar= new JPanel(new FlowLayout());
+		filterButtonBar.add(okayFilter);
+		filterButtonBar.add(cancelFilter);
+		
+		tab2.add(myTableSP);
+
+		m_tab.addTab("Add New",tab1);
+		m_tab.addTab("Select From List",tab2);
 		JPanel p=new JPanel(new BorderLayout());
 		p.add(m_tab,BorderLayout.CENTER);
 		p.add(filterButtonBar,BorderLayout.SOUTH);
@@ -1417,15 +1443,15 @@ public class RootCause extends JFrame implements ActionListener {
     	  		DataObject nodeInfo=search(((JCheckBox)evt.getSource()).getText());
     	  	    if(nodeInfo!=null){
     	  	      infoTextField.setText("Name: "+" "+nodeInfo.getName()+'\n'+
-    	  	              "TRL: "+" "+nodeInfo.getTRL_Number()+'\n'+
+    	  	              "Action Items: "+" "+nodeInfo.getActionIDsString()+'\n'+
 	  					  "Description:\n"+" "+nodeInfo.getdesctiptionText());   
     	  	    }
     	  	}
     	  	else if (evt.getSource().getClass() ==  temp2.getClass()){
     	  	    DataObject nodeInfo=search(((JButton)evt.getSource()).getText());
     	  	    if(nodeInfo!=null){
-    	  	        infoTextField.setText("Name:\n"+" "+nodeInfo.getName()+'\n'+
-  	  	              "TRL:\n"+" "+nodeInfo.getTRL_Number()+'\n'+
+    	  	        infoTextField.setText("Name: "+" "+nodeInfo.getName()+'\n'+
+  	  	              "Action Items: "+" "+nodeInfo.getActionIDsString()+'\n'+
 	  					  "Description:\n"+" "+nodeInfo.getdesctiptionText());   
   	  	    	}
     	  	}
@@ -1458,14 +1484,14 @@ public class RootCause extends JFrame implements ActionListener {
 // TO DO delete and make sure you save the discription
 				if (node==null ||node.isRoot()) {
 				 	nameTextField.setVisible(false);
-				    trlTextField.setVisible(false);
+				    actionTextField.setVisible(false);
 
 				    descriptionTextField.setVisible(false);
 				    return;
 				}
 
 			    nameTextField.setVisible(true);
-		        trlTextField.setVisible(true);
+		        actionTextField.setVisible(true);
 		    	descriptionTextField.setVisible(true);
 
 				DataObject nodeInfo = (DataObject)node.getUserObject();
@@ -1477,9 +1503,9 @@ public class RootCause extends JFrame implements ActionListener {
 //				}
 				nameTextField.setText(nodeInfo.getName());
 				// this is where the tree attributes gets updated
-				String trl = new String();
-				trl = ""+nodeInfo.getTRL_Number();
-				trlTextField.setText(trl);
+				String actions = new String();
+				actions = nodeInfo.getActionIDsString();
+				actionTextField.setText(actions);
 				descriptionTextField.setText(nodeInfo.getdesctiptionText());
 				ref1TextField.setText(nodeInfo.getReferenceURL());
 				// setting the JRadioButton for Probability
@@ -1736,8 +1762,9 @@ public class RootCause extends JFrame implements ActionListener {
 
 		}
 		public void deleteRow(int row){
+			actionList.remveAt(row);
 			
-		    JOptionPane.showMessageDialog(jifmakeActionItemsFrame," I will delete Row: " + row);
+			
 //            ArrayList<String> temp = data.get(row);//backup of value in case of IOException while writing to file
 //            BufferedWriter bfr = null;
 //            try
