@@ -50,7 +50,7 @@ import java.io.File;
 import javax.swing.*;
 import javax.swing.filechooser.*;
 import javax.swing.JFileChooser;
-import javax.swing.JList;
+//import javax.swing.JList;
 import javax.swing.ImageIcon;
 import javax.swing.border.BevelBorder;
 import javax.swing.border.Border;
@@ -59,15 +59,15 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.border.EtchedBorder;
 import javax.swing.border.SoftBevelBorder;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.ListSelectionListener;
+//import javax.swing.event.ListSelectionListener;
 import javax.swing.event.MouseInputAdapter;
 import javax.swing.event.MouseInputListener;
-import javax.swing.event.ChangeListener;
-import javax.swing.event.ChangeEvent;
+//import javax.swing.event.ChangeListener;
+//import javax.swing.event.ChangeEvent;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
+//import javax.swing.tree.TreeModel;
 
 import layouts.*;
 
@@ -107,7 +107,7 @@ public class RootCause extends JFrame implements ActionListener {
 			  menuItemExit, menuViewProjector, menuViewDesktop, menuToolsTopsis, menuHelpAbout;
 	protected JCheckBoxMenuItem menuActinItems;
 	
-	protected JButton createCompatMatrix, addActionItem,
+	protected JButton createManageActionFrame, addActionItem,
 			  makeFishbone,saveAttributes,backToMain,
 			  backToCompatibility,resetActionItems,ref1Button;
 	protected JTextField nameTextField, actionTextField, ref1TextField;
@@ -115,12 +115,12 @@ public class RootCause extends JFrame implements ActionListener {
 	protected JTable compatMatrix, morphMatrix;
 
 	protected JRadioButton lProbabilityRButton,mProbabilityRButton, hProbabilityRButton,
-						lCostRButton, mCostRButton, hCostRButton, 
+						lImpactRButton, mImpactRButton, hImpactRButton, 
 						lDifficultyRButton, mDifficultyRButton, hDifficultyRButton;
 	protected int maxNumberOfAttributes;
 	protected String node_probability;
 	protected String node_difficulty;
-	protected String node_cost;
+	protected String node_Impact;
 	protected String selected;
 	
 	protected String errorMsg = "";
@@ -131,15 +131,7 @@ public class RootCause extends JFrame implements ActionListener {
 	//private JLabel possibelCombsLabel;
 	JPanel possibleCombs;
 	JPanel rightBorder;
-	Color[] dynamicMorphColors;
-	// Color choices for dynamicMorph
-	// 0=background
-	// 1=Catigory
-	// 2=groups
-	// 3=attributes
-	// 4=options
-	// 5=inactive attribute
-    // 6=inactive attribute due to filter
+	Color[] RootCauseColors;
 	Dimension buttonDim;
 	Font textFont;
 	private boolean isAttributeSaved=true;
@@ -147,13 +139,12 @@ public class RootCause extends JFrame implements ActionListener {
 	protected boolean ableToSave = false;
 	protected boolean reToMorphMatrix = false;
 	
-
+// this is just a place holder 
 	ActionListener checkBoxListener = new ActionListener(){
 	    public void actionPerformed(ActionEvent e){
 	        if(jifDynamicFaultMatrixFrame!= null &&jifDynamicFaultMatrixFrame.isVisible()){
 	            jifDynamicFaultMatrixFrame.dispose();
 	            makeDynamicFaultMatrix();
-	            infoTextField.setText("Please click on the new Filter to apply the setting");
 	        }
 	    }
 	};
@@ -170,23 +161,15 @@ public class RootCause extends JFrame implements ActionListener {
 		makeMenu();
 		buttonDim = new Dimension(150,35);
 		textFont = new Font("TimesRoman",Font.ITALIC,16);
-		// Color choices for dynamicMorph
-		// 0=background
-		// 1=Catigory
-		// 2=groups
-		// 3=attributes
-		// 4=options
-		// 5=inactive attribute due to incompatibility
-		// 6=inactive attribute due to filter
-		dynamicMorphColors = new Color[7];
+		RootCauseColors = new Color[7];
 
-		dynamicMorphColors[0] = Color.decode("#DBDBE5");//"#EFEFEF");//"#9DACBD");//"#3AA4F4");//"#FFFFFF");//"#EFEFEF");//background
-		dynamicMorphColors[1] = Color.decode("#FFCC00");//cats
-		dynamicMorphColors[2] = Color.decode("#FF6600");//groups
-		dynamicMorphColors[3] = Color.decode("#A1E09C");//attrib
-		dynamicMorphColors[4] = Color.decode("#7384FF");//options
-		dynamicMorphColors[5] = Color.decode("#CC0000");//off
-		dynamicMorphColors[6] = Color.decode("#CD5C5C");//off due to filter 
+		RootCauseColors[0] = Color.decode("#DBDBE5");//"#EFEFEF");//"#9DACBD");//"#3AA4F4");//"#FFFFFF");//"#EFEFEF");//background
+		RootCauseColors[1] = Color.decode("#FFCC00");//YEllow low probability and low impact incomplete 
+		RootCauseColors[2] = Color.decode("#FF6600");//Orange Low Probability and High/Mid Impact incomplete
+		RootCauseColors[3] = Color.decode("#A1E09C");//Greenish complete and selected
+		RootCauseColors[4] = Color.decode("#7384FF");//blue complete but unselected
+		RootCauseColors[5] = Color.decode("#CC0000");//Red: High/Mid Probability && High/Mid Impact) incomplete 
+		RootCauseColors[6] = Color.decode("#CD5C5C");//off incomplete but checked
 
 
 		setJMenuBar(menuBar);
@@ -322,10 +305,11 @@ public class RootCause extends JFrame implements ActionListener {
 			}
 			else if ( ((DataObject)node.getUserObject()).getType() == ((DataObject)node.getUserObject()).GROUP){
 				DataObject newNode = new DataObject(++treePanel.attributIdCounter,"NewNode" + newNodeSuffix++);
-				// next few linew can be moved to DataObject itself
+				// next few line can be moved to DataObject itself
+				// or deleted... i think
 				newNode.myCheckBox.setEnabled(true);
 				newNode.myCheckBox.setSelected(false);
-				newNode.myCheckBox.setBackground(dynamicMorphColors[3]);
+				newNode.myCheckBox.setBackground(RootCauseColors[3]);
 				treePanel.addObject(newNode);
 			}
 			else if ( ((DataObject)node.getUserObject()).getType() == ((DataObject)node.getUserObject()).ATTRIBUTE){
@@ -362,22 +346,24 @@ public class RootCause extends JFrame implements ActionListener {
 		else if (e.getSource() == saveAttributes){
 			DefaultMutableTreeNode node = (DefaultMutableTreeNode)
 			treePanel.tree.getLastSelectedPathComponent();
-			boolean statusOfSaveDataToTree = saveInputsToNode(node);
+//			boolean statusOfSaveDataToTree = saveInputsToNode(node);
+			saveInputsToNode(node);
 			jifNewRootCauseFrame.repaint();
 		}
-		else if (e.getSource() == createCompatMatrix){
+		else if (e.getSource() == createManageActionFrame){
 //		check to see if the data is saved
 		    if (!isAttributeSaved){
-			    int answer =JOptionPane.showConfirmDialog(jifNewRootCauseFrame,"Do you want to save the changes?");
+		    	boolean statusOfSaveDataToTree=true;
+		    	int answer =JOptionPane.showConfirmDialog(jifNewRootCauseFrame,"Do you want to save the changes?");
 			    if (answer == JOptionPane.YES_OPTION) {
 			        // User clicked YES.
-					boolean statusOfSaveDataToTree = saveInputsToNode(previousNode);
+					statusOfSaveDataToTree = saveInputsToNode(previousNode);
 					jifNewRootCauseFrame.repaint();
 			    } else if (answer == JOptionPane.NO_OPTION) {
 			        // User clicked NO.
 			    }
-			    isAttributeSaved=true;
-			    saveAttributes.setVisible(false);
+			    isAttributeSaved=statusOfSaveDataToTree;
+			    saveAttributes.setVisible(!statusOfSaveDataToTree);
 			}
 		    //initializeCompatibility(treePanel.getNewOPTIONNodes(),treePanel.processedOptionNodes);
 		    treePanel.resetNewOPIONNodes();
@@ -386,39 +372,24 @@ public class RootCause extends JFrame implements ActionListener {
 		}
 		else if (e.getSource() == addActionItem){
 		    // check to see if the data is saved
-		    if (!isAttributeSaved){
-			    int answer =JOptionPane.showConfirmDialog(jifNewRootCauseFrame,"Do you want to save the changes?");
-			    switch (answer){
-			    case JOptionPane.YES_OPTION:
-			    	boolean statusOfSaveDataToTree = saveInputsToNode(previousNode);
-					jifNewRootCauseFrame.repaint();
-				case JOptionPane.NO_OPTION:;
-				case JOptionPane.CANCEL_OPTION:;
-			    }
-			    isAttributeSaved=true;
-			    saveAttributes.setVisible(false);
-			}
-		    //
-		    
+//			boolean statusOfSaveDataToTree =true;
+//			if (!isAttributeSaved){
+//			    int answer =JOptionPane.showConfirmDialog(jifNewRootCauseFrame,"Do you want to save the changes?");
+//			    switch (answer){
+//			    case JOptionPane.YES_OPTION:
+//			    	statusOfSaveDataToTree = saveInputsToNode(previousNode);
+//					jifNewRootCauseFrame.repaint();
+//				case JOptionPane.NO_OPTION:;
+//				case JOptionPane.CANCEL_OPTION:;
+//			    }
+//			    isAttributeSaved=statusOfSaveDataToTree;
+//			    saveAttributes.setVisible(!statusOfSaveDataToTree);
+//			}
 
-		    // make a new frame to ask for inputs
-		    //if (newFilterSuffix==2)// Remember the Min TRL filter automatically was added 
-		    //{
 		    	makeAddActionFrame();
-		    //	}   // therefore the first filter that the user will add has a suffix of 2
-		    //else
-		    //{ jifNewFilterFrame.setVisible(true);}
 		   	    
 		}
 		else if (e.getSource() ==resetActionItems){ //Not sure what to do here
-//		    DataObject nodeInfo;
-//		    for(int i=0; i<treePanel.processedOptionNodes.size();++i){
-//		        nodeInfo= (DataObject) treePanel.processedOptionNodes.get(i);
-//		        for (int j=0; j<nodeInfo.disallowVector.size();++j){
-//		         nodeInfo.allowVector.add(nodeInfo.disallowVector.get(j));
-//		         nodeInfo.disallowVector.clear();
-//		        }
-//		    }	        
 		
 		}
 		else if (e.getSource() == backToMain){
@@ -446,7 +417,7 @@ public class RootCause extends JFrame implements ActionListener {
 	public void newRootCauseFrame(boolean aNewFrame) {
 		jifNewRootCauseFrame = new JInternalFrame(
 				"Make Fault Tree",true,true,true,true);
-		jifNewRootCauseFrame.setBounds(0,0,750,400);
+		jifNewRootCauseFrame.setBounds(0,0,800,600);
 		jifNewRootCauseFrame.setDefaultCloseOperation(HIDE_ON_CLOSE);
 //------------------
 // NOT SURE WHERE TO PUT THIS
@@ -456,14 +427,14 @@ public class RootCause extends JFrame implements ActionListener {
 		
 		actionList.add("Team", "Form the Team", "2014/1/31", "2014/1/31", "2014/1/20", Task.UNCOMPLETE);
 		actionList.add("Team", "Develop the Meeting Schedule Ground Rules", "2014/1/21", "2014/1/31", "2014/1/31");
-		actionList.add("Team", "Develop and Use An Action Item List", "2014/1/22");
-		actionList.add("Team", "Develop the Root Cause Tree", "2014/1/23");
-		actionList.add("Team", "Develop a Critical Path Schedule", "2014/1/24");
-		actionList.add("Team", "Conduct the Event Investigation", "2014/1/25");
-		actionList.add("Team", "Establish the Root Causes", "2014/1/26");
-		actionList.add("Team", "Determine the Corrective Actions", "2014/1/27");
-		actionList.add("Team", "DEstablish and Implement the Closure Plan", "2014/1/28");
-		actionList.add("Team", "Final Out Brief", "2014/1/29");
+		actionList.add("Team", "Develop and Use An Action Item List", "2014/1/1", "2014/1/22");
+		actionList.add("Team", "Develop the Root Cause Tree", "2014/1/1", "2014/1/23");
+		actionList.add("Team", "Develop a Critical Path Schedule", "2014/1/1", "2014/1/24");
+		actionList.add("Team", "Conduct the Event Investigation", "2014/1/1", "2014/1/25");
+		actionList.add("Team", "Establish the Root Causes", "2014/1/1", "2014/1/26");
+		actionList.add("Team", "Determine the Corrective Actions", "2014/1/1", "2014/1/27");
+		actionList.add("Team", "DEstablish and Implement the Closure Plan", "2014/1/1", "2014/1/28");
+		actionList.add("Team", "Final Out Brief", "2014/1/1", "2014/1/29");
 		}
 //------------------------------
 		
@@ -474,7 +445,7 @@ public class RootCause extends JFrame implements ActionListener {
 //		setting up of the tree
 //		treePanel = new DynamicTree(rootName,textFont);
 		treePanel.tree.addMouseListener(new TreeMouseListener());
-        treePanel.setPreferredSize(new Dimension(400, 300));
+        treePanel.setPreferredSize(new Dimension(500, 400));
 
 //		panel where all of the descriptors are located on the Right Pane
 //		This is using the ParagraphLayout Mgr site is listed below for more info
@@ -495,8 +466,7 @@ public class RootCause extends JFrame implements ActionListener {
 		nameTextField.addKeyListener(akeyListener);
 		
 
-//		Trl Field
-		// change all of trllable to Action Items
+//		Action Button and Field
 		addActionItem = new JButton("<HTML> <A HREF=URL>Action Items:</A></HTML> ");
 		addActionItem.setOpaque(false);
 		addActionItem.setMargin(new Insets(0, 0, 0, 0));
@@ -504,24 +474,21 @@ public class RootCause extends JFrame implements ActionListener {
 		actionTextField = new JTextField(10);
 		actionTextField.addKeyListener(akeyListener);
 		
-//		Description Field
+		// Description Field
 		JLabel descriptionTextLabel = new JLabel("Description: ");
 		descriptionTextField = new JTextArea(" ",4,20);
 		descriptionTextField.setLineWrap(true);
 		descriptionTextField.addKeyListener(akeyListener);
 		
-		//Reference 1
-		
-		//ref1Label=new JLabel("<HTML><A HREF=URL>Reference</A>: </HTML>");
-		ref1TextField=new JTextField(15);// have to make it Global
-		
 		// Probability
 		JLabel probLabel=new JLabel("Probability:");
-		//Cost
-		JLabel costLabel=new JLabel("Cost:");
+		//Impact
+		JLabel impactLabel=new JLabel("Impact:");
 		//difficulty
 		JLabel difficultyLabel=new JLabel("Difficulty:");
 
+		//Reference 1
+		ref1TextField=new JTextField(15);
 		ref1Button = new JButton("<HTML><A HREF=URL>Reference</A>: </HTML>");
 		ref1Button.setOpaque(false);
 		ref1Button.setMargin(new Insets(0, 0, 0, 0));
@@ -538,15 +505,15 @@ public class RootCause extends JFrame implements ActionListener {
 		lProbabilityRButton.setSelected(true);
 		node_probability="low";
 
-		ButtonGroup cost_group= new ButtonGroup();
-		lCostRButton  =new JRadioButton("Low");
-		mCostRButton  =new JRadioButton("Mid");
-		hCostRButton =new JRadioButton("High");
-		cost_group.add(lCostRButton);
-		cost_group.add(mCostRButton);
-		cost_group.add(hCostRButton);
-		lCostRButton.setSelected(true);
-		node_cost="low";
+		ButtonGroup impact_group= new ButtonGroup();
+		lImpactRButton  =new JRadioButton("Low");
+		mImpactRButton  =new JRadioButton("Mid");
+		hImpactRButton =new JRadioButton("High");
+		impact_group.add(lImpactRButton);
+		impact_group.add(mImpactRButton);
+		impact_group.add(hImpactRButton);
+		lImpactRButton.setSelected(true);
+		node_Impact="low";
 		
 		ButtonGroup difficulty_group= new ButtonGroup();
 		lDifficultyRButton  =new JRadioButton("Low");
@@ -567,9 +534,9 @@ public class RootCause extends JFrame implements ActionListener {
 				else if (mDifficultyRButton.isSelected()) node_difficulty = "mid";
 				else node_difficulty = "high";
 				
-				if (lCostRButton.isSelected()) node_cost = "low";
-				else if (mCostRButton.isSelected()) node_cost = "mid";
-				else node_cost = "high";
+				if (lImpactRButton.isSelected()) node_Impact = "low";
+				else if (mImpactRButton.isSelected()) node_Impact = "mid";
+				else node_Impact = "high";
 				
 				isAttributeSaved=false;
 				saveAttributes.setVisible(true);
@@ -581,9 +548,9 @@ public class RootCause extends JFrame implements ActionListener {
 		lDifficultyRButton.addActionListener(RadioButtonListener);
 		mDifficultyRButton.addActionListener(RadioButtonListener);
 		hDifficultyRButton.addActionListener(RadioButtonListener);
-		lCostRButton.addActionListener(RadioButtonListener);
-		mCostRButton.addActionListener(RadioButtonListener);
-		hCostRButton.addActionListener(RadioButtonListener);
+		lImpactRButton.addActionListener(RadioButtonListener);
+		mImpactRButton.addActionListener(RadioButtonListener);
+		hImpactRButton.addActionListener(RadioButtonListener);
 	
 //		this is where all the features are added
 		innerRightPanel.add(nameLabel, ParagraphLayout.NEW_PARAGRAPH);
@@ -606,10 +573,10 @@ public class RootCause extends JFrame implements ActionListener {
 		innerRightPanel.add(mDifficultyRButton);
 		innerRightPanel.add(hDifficultyRButton);
 		
-		innerRightPanel.add(costLabel,ParagraphLayout.NEW_PARAGRAPH);
-		innerRightPanel.add(lCostRButton);
-		innerRightPanel.add(mCostRButton);
-		innerRightPanel.add(hCostRButton);
+		innerRightPanel.add(impactLabel,ParagraphLayout.NEW_PARAGRAPH);
+		innerRightPanel.add(lImpactRButton);
+		innerRightPanel.add(mImpactRButton);
+		innerRightPanel.add(hImpactRButton);
 		
 		innerRightPanel.add(ref1Button,ParagraphLayout.NEW_PARAGRAPH);
 	
@@ -632,11 +599,11 @@ public class RootCause extends JFrame implements ActionListener {
 		saveAttributes.setVisible(false);
 		middleRightPanel.add(saveAttributes);
 
-		createCompatMatrix = new JButton("Manage Action Items ");
-		createCompatMatrix.addActionListener(this);
+		createManageActionFrame = new JButton("Manage Action Items ");
+		createManageActionFrame.addActionListener(this);
 
 //		rightButtonBar.add(addActionItem);
-		rightButtonBar.add(createCompatMatrix);
+		rightButtonBar.add(createManageActionFrame);
 
 //		this section deals with the left side of the panned window
 //		Left buttons bar container
@@ -773,7 +740,9 @@ public class RootCause extends JFrame implements ActionListener {
                 if (aTableM.getRowCount() > 0 && actionItemsTable.getSelectedRow() != -1 )
                 {
                     aTableM.deleteRow(actionItemsTable.getSelectedRow());
+                    actionItemsTable.repaint();
                 }
+                
             }
         });
         
@@ -848,7 +817,7 @@ public class RootCause extends JFrame implements ActionListener {
 
         JPanel leftPanel = new JPanel(new ParagraphLayout());
         JScrollPane leftScrollPane = new JScrollPane(leftPanel);
-        leftPanel.setBackground(dynamicMorphColors[0]);     
+        leftPanel.setBackground(RootCauseColors[0]);     
 
         spLeft.add(leftScrollPane, BorderLayout.CENTER);
 
@@ -860,90 +829,9 @@ public class RootCause extends JFrame implements ActionListener {
 		
 		int numDummyLabel =0;
 
-//		DefaultMutableTreeNode nodeT = (DefaultMutableTreeNode) treeModel.getRoot();
-//		DataObject nodeInfo=(DataObject) nodeT.getUserObject();
-//		for(int i=0; i<treePanel.processedOptionNodes.size();++i){
-//            DataObject nodeInfo= (DataObject)treePanel.processedOptionNodes.get(i);
-//            System.out.println(nodeInfo.getName());
-//		}
-		printAllNodes(treeModel,treeModel.getRoot(),numDummyLabel,leftPanel);
+		printAllNodes(treeModel,treePanel.rootNode,numDummyLabel,leftPanel);
 		
-		
-
-
-      
-//      categoriesCounter = 0;
-//      groupCounter =0;
-//      attributCounter = 0;   
-//
-//		categoriesCounter = treeModel.getChildCount(treeModel.getRoot());
-//	    JButton[] categoryButton = new JButton[categoriesCounter];
-//	    cbItemListener myCB = new cbItemListener();  
-//
-//	    for (int i=0;i< categoriesCounter;++i){
-//            DefaultMutableTreeNode nodeT = (DefaultMutableTreeNode) treeModel.getChild(treeModel.getRoot(),i);
-//            DataObject nodeInfo=(DataObject) nodeT.getUserObject();
-//            categoryButton[i] = new JButton (nodeInfo.toString());
-//            categoryButton[i].setEnabled(true);
-//            categoryButton[i].addMouseListener(myCB);  
-//            categoryButton[i].setBackground(dynamicMorphColors[1]);
-//            categoryButton[i].setPreferredSize(buttonDim);
-//            leftPanel.add(categoryButton[i], ParagraphLayout.NEW_PARAGRAPH);
-//			groupCounter = treeModel.getChildCount(treeModel.getChild(treeModel.getRoot(),i));
-//	        JButton[] groupButton = new JButton[groupCounter];
-//	        int total=groupCounter;
-//
-//			for(int j =0; j < groupCounter; j++){
-//
-//		        nodeT = (DefaultMutableTreeNode) treeModel.getChild((treeModel.getChild(treeModel.getRoot(),i)),j);
-//		        nodeInfo= (DataObject) nodeT.getUserObject();
-//		        groupButton[j] = new JButton (nodeInfo.toString());
-//		        groupButton[j].setBackground(dynamicMorphColors[2]);
-//		        groupButton[j].setPreferredSize(buttonDim);
-//		        groupButton[j].addMouseListener(myCB); 
-//		        leftPanel.add(groupButton[j]);
-//		        total--;
-//		   	  	attributCounter =  treeModel.getChildCount(treeModel.getChild((
-//									treeModel.getChild(treeModel.getRoot(),i)),j));
-//				for(int k = 0; k< attributCounter;k++){
-//
-//					nodeT = (DefaultMutableTreeNode) treeModel.getChild(treeModel.getChild(
-//                    treeModel.getChild(treeModel.getRoot(),i),j),k);
-//					nodeInfo= (DataObject)nodeT.getUserObject();
-//
-//					nodeInfo.myCheckBox.setPreferredSize(buttonDim);
-//					nodeInfo.myCheckBox.addItemListener(myCB);  
-//					nodeInfo.myCheckBox.addMouseListener(myCB); 
-//					leftPanel.add(nodeInfo.myCheckBox);
-//					// by not restting the color  of the JCheckBox we
-//					// can retain the status of Dyamic Root Cause
-//  				}
-//				if (total>=1){
-//					JButton sameCategory = new JButton("");
-//					sameCategory.setEnabled(false);
-//					sameCategory.setBackground(dynamicMorphColors[0]);
-//					sameCategory.setPreferredSize(buttonDim);
-//					sameCategory.setBorderPainted(false);
-//					leftPanel.add(sameCategory, ParagraphLayout.NEW_PARAGRAPH);
-//				}
-//				else
-//				break;
-//			}
-//	    }
 	    rightBorder = new JPanel(new BorderLayout());
-//	    possibleCombs = new JPanel(new BorderLayout());
-//		possibleCombs.setBackground(Color.yellow);
-//		possibleCombs.setBorder(new TitledBorder(new SoftBevelBorder(5),"# of Technologies"));
-//		possibelCombsLabel = new JLabel();
-//		updateComboFrame();
-//		possibleCombs.add(possibelCombsLabel,BorderLayout.SOUTH);
-//		possibleCombs.add(new JLabel("# of Possible Combinations"),BorderLayout.CENTER);
-//		String nOfTech="<HTML><FONT SIZE=4>"+treePanel.processedOptionNodes.size()+"</FONT></HTML>";
-//		possibleCombs.add(new JLabel(nOfTech),BorderLayout.NORTH);
-//		
-//		rightBorder.add(possibleCombs,BorderLayout.NORTH);
-//		
-//		updateSlideBarsFrame();
 ////	    enableEvents(ComponentEvent.)
 		JPanel lowerPanel =new JPanel(/*new ParagraphLayout()*/);
 		lowerPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"INFORMATION:"));
@@ -962,7 +850,7 @@ public class RootCause extends JFrame implements ActionListener {
 		jifDynamicFaultMatrixFrame.setVisible(true);
 		
 		// add RadioButtons to select low mid high probability
-		// and other stuff such as difficulty and cost
+		// and other stuff such as difficulty and Impact
 		// also selectors for table view (default), 
 		// fish-bone view, plot view and  maybe list view
 	}
@@ -1048,56 +936,8 @@ public class RootCause extends JFrame implements ActionListener {
 	//in the the spreadsheet table.  it is returning a boolean to notify
 	//the user if there is a category that does not have any groups associated
 	//with it.
-// either makeDataVectors or initialize
-//	public void updateSlideBarsFrame(){
-//
-//	    //	  Sliders are created to work as a filter
-//		JPanel filterPane= new JPanel(new ParagraphLayout());
-//		JScrollPane filterScrollPane =new JScrollPane(filterPane);
-//	    filterScrollPane.setPreferredSize(new Dimension(100,465));
-//	    
-//	    
-//	    for (int i=0; i<vCheckBoxFilters.size();++i){
-//			if(((JCheckBoxMenuItem)vCheckBoxFilters.get(i)).isSelected()){
-//				filterPane.add(((Filter)globalVectorOfActions.get(i)).mySlider,ParagraphLayout.NEW_PARAGRAPH);
-//			}
-//		}
-//	    rightBorder.add(filterScrollPane,BorderLayout.CENTER);
-//	    rightBorder.repaint();
-//	    jifDynamicFaultMatrixFrame.repaint();
-//	}
-//	public void initializeCompatibility(Vector sentAttributes,Vector oldAttributes){
-//		for(int i=0;i< sentAttributes.size();++i){
-//	    	DataObject currentOption = (DataObject)sentAttributes.get(i);
-//			for(int j=i+1; j< sentAttributes.size();++j){
-//				DataObject nodeInfo = (DataObject) sentAttributes.get(j);
-//				if (nodeInfo.getParentId()==currentOption.getParentId()){
-//					nodeInfo.adddisallowVector(currentOption);
-//					currentOption.adddisallowVector(nodeInfo);
-//				}else{
-//					nodeInfo.addAllowVector(currentOption);
-//					currentOption.addAllowVector(nodeInfo);
-//				}
-//			}
-//	    }
-//		if (oldAttributes !=null && !oldAttributes.isEmpty()){
-//			for(int i=0;i< sentAttributes.size();++i){
-//				DataObject currentOption = (DataObject)sentAttributes.get(i);
-//				for(int j=0; j< oldAttributes.size();++j){
-//					DataObject nodeInfo = (DataObject)oldAttributes.get(j);
-//					if (nodeInfo.getParentId()==currentOption.getParentId()){
-//						nodeInfo.adddisallowVector(currentOption);
-//						currentOption.adddisallowVector(nodeInfo);
-//					}else{
-//						nodeInfo.addAllowVector(currentOption);
-//						currentOption.addAllowVector(nodeInfo);
-//					}
-//				}
-//		    }
-//		}
-//	}
 	public boolean saveInputsToNode(DefaultMutableTreeNode sNode){
-		String name = new String(((DataObject)sNode.getUserObject()).getName());
+//		String name = new String(((DataObject)sNode.getUserObject()).getName());
 		String newName=nameTextField.getText();
 		jifNewRootCauseFrame.repaint();
 		isAttributeSaved=true;
@@ -1134,7 +974,7 @@ public class RootCause extends JFrame implements ActionListener {
 					nodeInfo.setReferenceURL(ref1);
 					nodeInfo.setProbability(node_probability);
 					nodeInfo.setDifficulty(node_difficulty);
-					nodeInfo.setCost(node_cost);
+					nodeInfo.setImpact(node_Impact);
 					isFileSaved = false;
 				}
 			}
@@ -1229,125 +1069,58 @@ public class RootCause extends JFrame implements ActionListener {
         }   
         return null;
     }
-//	public void applyFilter(int filterValue,String filterName,int filterNumber){
-//		Vector vOfFilteredNodes= new Vector();
-//		if(filterName.equals("Min TRL")){
-//            for(int i=0; i<treePanel.processedOptionNodes.size();++i){
-//                DataObject nodeInfo= (DataObject)treePanel.processedOptionNodes.get(i);
-//                if(nodeInfo.getTRL_Number()< filterValue){
-//                    vOfFilteredNodes.add(nodeInfo);
-//                }
-//            }
-//        }else{
-//        	  for(int i=0; i<treePanel.processedOptionNodes.size();++i){
-//                DataObject nodeInfo= (DataObject)treePanel.processedOptionNodes.get(i);
-//                //checking to see if the nodes has this filter
-//                for(int j=0;j<nodeInfo.vDescriptors.size();++j){
-//                	Descriptor aDescriptor=(Descriptor)nodeInfo.vDescriptors.get(j);
-//                	if (aDescriptor.getName().equals(filterName)){
-//                		// now evaluate the filter
-//                		if(aDescriptor.getValue()>filterValue){
-//                			vOfFilteredNodes.add(nodeInfo);
-//                		}
-//                	}
-//                }
-//            }
-//        }
-//		// since we will be adding and re evalute some of these Filter
-//		// we need to use add or set fucntion
-//        if (vFiltersVector !=null){
-//            if(filterNumber> vFiltersVector.size()){
-//                vFiltersVector.add(vOfFilteredNodes);
-//            }else{
-//                vFiltersVector.set(filterNumber-1,vOfFilteredNodes);   
-//            }
-//        }
-//        
-//        updateDynamicMorphFrame();
-//       // updateComboFrame();
-//    }
+    public void updateManageActionFrame(){
+    	
+    }
     public void updateDynamicMorphFrame(){
-//   	  	for( int i=0;i<treePanel.processedOptionNodes.size();++i){
-//	  		((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.setBackground(dynamicMorphColors[3]);
-//	  		((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.setEnabled(true);
-//	  	}
-//	  	for( int i=0;i<treePanel.processedOptionNodes.size();++i){
-//	  		if (((DataObject)treePanel.processedOptionNodes.get(i)).myCheckBox.isSelected()){
-//	  			DataObject nodeInfo=(DataObject)treePanel.processedOptionNodes.get(i);
-//	  			for(int j=0;j<nodeInfo.disallowVector.size();++j){
-//	  				((DataObject)nodeInfo.disallowVector.get(j)).myCheckBox.setBackground(dynamicMorphColors[5]);
-//    	  			((DataObject)nodeInfo.disallowVector.get(j)).myCheckBox.setEnabled(false);
-//    	  		}
-//			}
-//	  	}
-        
-//	  	if(!vFiltersVector.isEmpty()){
-//	  	    for (int j=0; j<vFiltersVector.size();++j){
-//	  		  	Vector HoldList= (Vector)vFiltersVector.elementAt(j);    	//DefaultMutableTreeNode  nodeT = new DefaultMutableTreeNode(node);
-//	  	    	
-//	  	    	//DataObject nodeInfo=(DataObject) nodeT.getUserObject();
-//	  	    	//System.out.println(nodeInfo.getName());
-//	  		  	if(HoldList!= null){
-//	  		        for(int i=0; i<HoldList.size();++i){    	//DefaultMutableTreeNode  nodeT = new DefaultMutableTreeNode(node);
-//	  		      	
-//	  		      	//DataObject nodeInfo=(DataObject) nodeT.getUserObject();
-//	  		      	//System.out.println(nodeInfo.getName());
-//	  		            DataObject nodeInfo=(DataObject)HoldList.get(i);
-//	  		            if(nodeInfo.myCheckBox.isSelected()){// later if we be able to make a fram that containes the list of these nodes and alowing the user to select which node to pass the filter
-//	  		                int answer = JOptionPane.showConfirmDialog(jifDynamicFaultMatrixFrame,nodeInfo.getName()+
-//	  		                        ", selected by the user does not pass through the TRL filter.\n" +
-//	  		                		"Do you wan to by pass the filter? ");
-//	  					    if (answer == JOptionPane.YES_OPTION) {
-//	  					    		HoldList.remove(nodeInfo);
-//	  					    		continue;
-//	  					    } else if (answer == JOptionPane.NO_OPTION) {
-//	  					        	nodeInfo.myCheckBox.setSelected(false);
-//	  					        	updateDynamicMorphFrame();
-//	  					        	break;
-//	  					    } else if (answer == JOptionPane.CANCEL_OPTION){
-//	  					        
-//	  					    }
-//	  		            }
-//	  		            nodeInfo.myCheckBox.setEnabled(false);
-//	  		            nodeInfo.myCheckBox.setBackground(dynamicMorphColors[6]);
-//	  		        }// end of inner loop    
-//	  	        }
-//	  	    }// end of loop
-//	  	}
+
 
     }
-//    public void updateComboFrame(){
-//    }
-    private void printAllNodes(DefaultTreeModel model, Object node, int indent, JPanel leftPanel){
-    	JButton indentionSpace = new JButton("");
-		indentionSpace.setEnabled(false);
-		indentionSpace.setBackground(dynamicMorphColors[0]);
-		indentionSpace.setBorderPainted(false);
-		leftPanel.add(indentionSpace);
-    	leftPanel.add(indentionSpace,ParagraphLayout.NEW_PARAGRAPH);
-    	for(int i=0; i<indent;++i){
-    		
-    		indentionSpace = new JButton("");
-    		indentionSpace.setEnabled(false);
-    		indentionSpace.setBackground(dynamicMorphColors[0]);
-    		indentionSpace.setPreferredSize(buttonDim);
-    		indentionSpace.setBorderPainted(false);
-			leftPanel.add(indentionSpace);  
+
+    private void printAllNodes(DefaultTreeModel model, DefaultMutableTreeNode node, int indent, JPanel leftPanel){
+    	// Fix the RootNode later!
+    	if (node.isRoot()){
+    		JButton rootDisplayButton = new JButton(node.toString());
+    		rootDisplayButton.setPreferredSize(buttonDim);
+    		rootDisplayButton.setBackground(RootCauseColors[2]);
+    		leftPanel.add(rootDisplayButton,ParagraphLayout.NEW_PARAGRAPH);
+    		--indent;
     	}
+    	else{
     	
-    	//DefaultMutableTreeNode  nodeT = new DefaultMutableTreeNode(node);
-    	//DataObject nodeInfo=(DataObject) nodeT.getUserObject();
-    	//System.out.println(nodeInfo.getName());
-    	//
-    	JButton causeNode= new JButton (node.toString());
-    	causeNode.setBackground(dynamicMorphColors[2]);
-    	causeNode.setPreferredSize(buttonDim);
-    	cbItemListener myCB = new cbItemListener();
-    	causeNode.addMouseListener(myCB);
-    	leftPanel.add(causeNode);
-//    	System.out.println(space + node.toString());
+    		JButton indentionSpace = new JButton("");
+    		indentionSpace.setEnabled(false);
+    		indentionSpace.setBackground(RootCauseColors[0]);
+    		indentionSpace.setBorderPainted(false);
+    		leftPanel.add(indentionSpace);
+        	leftPanel.add(indentionSpace,ParagraphLayout.NEW_PARAGRAPH);
+        	for(int i=0; i<indent;++i){
+        		
+        		indentionSpace = new JButton("");
+        		indentionSpace.setEnabled(false);
+        		indentionSpace.setBackground(RootCauseColors[0]);
+        		indentionSpace.setPreferredSize(buttonDim);
+        		indentionSpace.setBorderPainted(false);
+    			leftPanel.add(indentionSpace);  
+        	}
+        	
+        	DataObject nodeInfo=(DataObject) node.getUserObject();
+        	nodeInfo.myCheckBox.setPreferredSize(buttonDim);
+        	if (nodeInfo.getProbability().equals("high") || nodeInfo.getProbability().equals("mid"))
+        		nodeInfo.myCheckBox.setBackground(RootCauseColors[5]);
+        	else if (nodeInfo.getImpact().contains("high"))
+        		nodeInfo.myCheckBox.setBackground(RootCauseColors[2]);
+        	else
+        		nodeInfo.myCheckBox.setBackground(RootCauseColors[1]);
+        	
+        	cbItemListener myCB = new cbItemListener();
+        	nodeInfo.myCheckBox.addItemListener(myCB);  
+			nodeInfo.myCheckBox.addMouseListener(myCB);
+        	leftPanel.add(nodeInfo.myCheckBox);
+//        	System.out.println(space + node.toString());
+        	}
     	for (int i=0; i<model.getChildCount(node);i++){
-    		printAllNodes(model, model.getChild(node, i),indent + 1,leftPanel);
+    		printAllNodes(model, (DefaultMutableTreeNode)model.getChild(node, i),indent + 1,leftPanel);
     	}
     }
     public void makeAddActionFrame(){
@@ -1361,11 +1134,10 @@ public class RootCause extends JFrame implements ActionListener {
 		JTabbedPane m_tab=new JTabbedPane();
 		JPanel tab1=new JPanel(new BorderLayout()); //First Tab [Add New]
 		JPanel tab2=new JPanel(new BorderLayout()); //Second Tab [Select From List]
-		final JButton cancelFilter= new JButton("Cancel");
-		final JButton okayFilter= new JButton("OK");
+		final JButton cancelAction= new JButton("Cancel");
+		final JButton okayAction= new JButton("OK");
 
-// random add to make sure the list works ... DELETE LATER		
-//		actionList.add("Payman", "add a add botton", "2014/2/1");
+
 
 		
 //		String slected="";
@@ -1379,8 +1151,31 @@ public class RootCause extends JFrame implements ActionListener {
 //	            }
 //	        }
 //	    }
+		//Tab 1 create the Add Action Item
+		//Description of Action 
+		JLabel actionDescriptionLabel = new JLabel("Description");
+		final JTextArea actionDescriptionTextArea = new JTextArea("",2,12);
+		//Owner of Action
+		JLabel actionOwnerLabel = new JLabel("Owner");
+		final JTextField actionOwnerText = new JTextField(12);
+		//Start Date of Action
+		JLabel actionSDateLabel = new JLabel("Start Date");
+		final JTextField actionSDateText = new JTextField(8);
+		actionSDateText.setText("14/01/01"); // todays date FIX IT
+		//Owner of Action
+		JLabel actionDDateLabel = new JLabel("Due Date");
+		final JTextField actionDDateText = new JTextField(8);
+		JPanel addPanel=new JPanel(new ParagraphLayout());
+		addPanel.add(actionDescriptionLabel,ParagraphLayout.NEW_PARAGRAPH);
+		addPanel.add(actionDescriptionTextArea);
+		addPanel.add(actionOwnerLabel,ParagraphLayout.NEW_PARAGRAPH);
+		addPanel.add(actionOwnerText);
+		addPanel.add(actionSDateLabel,ParagraphLayout.NEW_PARAGRAPH);
+		addPanel.add(actionSDateText);
+		addPanel.add(actionDDateLabel,ParagraphLayout.NEW_PARAGRAPH);
+		addPanel.add(actionDDateText);
 		
-		// create the  
+		// Tab2: Create the  Action Item Table 
 		final JTable actionItemsTable = new JTable( new ActionTableModel());
 		//actionItemsTable.setAutoCreateRowSorter(true);
 		//actionItemsTable.setPreferredScrollableViewportSize(new Dimension(700, 200));
@@ -1392,35 +1187,48 @@ public class RootCause extends JFrame implements ActionListener {
 		
 
 		selected="";
+		
 		ActionListener lst=new ActionListener(){
 			public void actionPerformed(ActionEvent e){
-				if(e.getSource()==okayFilter){
+				if(e.getSource()==okayAction){
 					//int[] a =actionItemsTable.getSelectedRows();
 					for(int c: actionItemsTable.getSelectedRows()){
 						selected += actionList.elementAt(c).getID()+",";
 					}
-					actionTextField.setText(selected);
-					isAttributeSaved=false;
-					saveAttributes.setVisible(true);
+					if(!selected.isEmpty()){
+						actionTextField.setText(selected);
+						isAttributeSaved=false;
+						saveAttributes.setVisible(true);
+					}
+					if(!actionDescriptionTextArea.getText().isEmpty()){
+						int newActionID=actionList.add(actionOwnerText.getText(),actionDescriptionTextArea.getText(),
+								actionSDateText.getText(),actionDDateText.getText());
+						selected += newActionID;
+						actionTextField.setText(selected);
+						isAttributeSaved=false;
+						saveAttributes.setVisible(true);
+					}
+				
 				}
 
 				jifNewFilterFrame.dispose();
 			}
 		};
 		    
-		okayFilter.addActionListener(lst);
-		cancelFilter.addActionListener(lst);
-		JPanel filterButtonBar= new JPanel(new FlowLayout());
-		filterButtonBar.add(okayFilter);
-		filterButtonBar.add(cancelFilter);
+		okayAction.addActionListener(lst);
+		cancelAction.addActionListener(lst);
+		JPanel addActionButtonBar= new JPanel(new FlowLayout());
+		addActionButtonBar.add(okayAction);
+		addActionButtonBar.add(cancelAction);
 		
 		tab2.add(myTableSP);
+		tab1.add(addPanel);
 
 		m_tab.addTab("Add New",tab1);
 		m_tab.addTab("Select From List",tab2);
 		JPanel p=new JPanel(new BorderLayout());
 		p.add(m_tab,BorderLayout.CENTER);
-		p.add(filterButtonBar,BorderLayout.SOUTH);
+		p.add(addActionButtonBar,BorderLayout.SOUTH);
 		p.setBorder(new EmptyBorder(5,5,5,5));
 		jifNewFilterFrame.add(p);
 
@@ -1430,53 +1238,45 @@ public class RootCause extends JFrame implements ActionListener {
     // cbItemListenre is a checkbox listener. It is used in the DynamicFaultMatrix frame
     // to create a quick info is a user clicks on a Root cause.
     class  cbItemListener extends MouseMotionAdapter implements ItemListener, MouseInputListener {
-    	  public void itemStateChanged(ItemEvent ie) {
- 
+    	public void itemStateChanged(ItemEvent ie) {
+
     		updateDynamicMorphFrame();
-    		//updateComboFrame();
-    	  }
+    	}
 
-    	  public void mouseEntered(MouseEvent evt){
-    	  	JCheckBox temp = new JCheckBox();
-    	  	JButton temp2 = new JButton();
-    	  	if (evt.getSource().getClass() == temp.getClass()){
-    	  		DataObject nodeInfo=search(((JCheckBox)evt.getSource()).getText());
-    	  	    if(nodeInfo!=null){
-    	  	      infoTextField.setText("Name: "+" "+nodeInfo.getName()+'\n'+
-    	  	              "Action Items: "+" "+nodeInfo.getActionIDsString()+'\n'+
-	  					  "Description:\n"+" "+nodeInfo.getdesctiptionText());   
-    	  	    }
-    	  	}
-    	  	else if (evt.getSource().getClass() ==  temp2.getClass()){
-    	  	    DataObject nodeInfo=search(((JButton)evt.getSource()).getText());
-    	  	    if(nodeInfo!=null){
-    	  	        infoTextField.setText("Name: "+" "+nodeInfo.getName()+'\n'+
-  	  	              "Action Items: "+" "+nodeInfo.getActionIDsString()+'\n'+
-	  					  "Description:\n"+" "+nodeInfo.getdesctiptionText());   
-  	  	    	}
-    	  	}
-    	  }
+    	public void mouseEntered(MouseEvent evt){
 
-    	  public void mouseClicked(MouseEvent e){}
-    	  public void mousePressed(MouseEvent e){}
-    	  public void mouseReleased(MouseEvent e){}
-    	  public void mouseExited(MouseEvent e){}
+    		DataObject nodeInfo=search(((JCheckBox)evt.getSource()).getText());
+    		if(nodeInfo!=null){
+    			infoTextField.setText("Name: "+" "+nodeInfo.getName()+'\n'+
+    					"Action Items: "+" "+nodeInfo.getActionIDsString()+'\n'+
+    					"Probability: "+nodeInfo.getProbability()+'\n'+
+    					"Difficulty: "+nodeInfo.getDifficulty()+'\n'+
+    					"Impact: "+nodeInfo.getImpact()+'\n'+
+    					"Description:\n"+" "+nodeInfo.getdesctiptionText()); 
+    		}
+    	}
+
+    	public void mouseClicked(MouseEvent e){}
+    	public void mousePressed(MouseEvent e){}
+    	public void mouseReleased(MouseEvent e){}
+    	public void mouseExited(MouseEvent e){}
     }
 
     class TreeMouseListener extends MouseInputAdapter {
 		// User clicked on the tree; Check if the information is saved
     	public void mousePressed(MouseEvent evt){
-			if (jifNewRootCauseFrame.isSelected()){
+    		boolean statusOfSaveDataToTree=true;
+    		if (jifNewRootCauseFrame.isSelected()){
 			    if (!isAttributeSaved){
 				    int answer = JOptionPane.showConfirmDialog(jifNewRootCauseFrame,"Do you want to save the changes?");
 				    if (answer == JOptionPane.YES_OPTION) {
-				    	boolean statusOfSaveDataToTree = saveInputsToNode(previousNode);
+				    	statusOfSaveDataToTree = saveInputsToNode(previousNode);
 				    	// User clicked YES.
 				    } else if (answer == JOptionPane.NO_OPTION) {
 				        // User clicked NO.
 				    }
-				    isAttributeSaved=true;
-				    saveAttributes.setVisible(false);
+				    isAttributeSaved=statusOfSaveDataToTree;
+				    saveAttributes.setVisible(!statusOfSaveDataToTree);
 				}
 
 			    DefaultMutableTreeNode node =
@@ -1518,11 +1318,11 @@ public class RootCause extends JFrame implements ActionListener {
 				else if(nodeInfo.getDifficulty().contains("mid")) mDifficultyRButton.setSelected(true);
 				else if (nodeInfo.getDifficulty().contains("high")) hDifficultyRButton.setSelected(true);
 				else System.out.println("Difficulty is not low, mid, or high: " +nodeInfo.getDifficulty());
-				// setting the JRadioButton for Cost
-				if (nodeInfo.getCost().contains("low")) lCostRButton.setSelected(true);
-				else if(nodeInfo.getCost().contains("mid")) mCostRButton.setSelected(true);
-				else if (nodeInfo.getCost().contains("high")) hCostRButton.setSelected(true);
-				else System.out.println("Cost is not low mid, or high: " +nodeInfo.getCost());
+				// setting the JRadioButton for Impact
+				if (nodeInfo.getImpact().contains("low")) lImpactRButton.setSelected(true);
+				else if(nodeInfo.getImpact().contains("mid")) mImpactRButton.setSelected(true);
+				else if (nodeInfo.getImpact().contains("high")) hImpactRButton.setSelected(true);
+				else System.out.println("Impact is not low mid, or high: " +nodeInfo.getImpact());
 
 				//save the pointer to node for later
 				previousNode=node;

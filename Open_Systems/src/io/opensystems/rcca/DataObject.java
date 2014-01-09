@@ -49,7 +49,7 @@ public class DataObject {
 	
     private int m_id;
     private int p_id;
-	protected String m_Name, ref_URL, probability, difficulty, cost;
+	protected String m_Name, ref_URL, probability, difficulty, impact;
 	private String nodeType;
 //    private int TRL_Number; // change this with a list of action items
     protected String descriptionText;
@@ -67,13 +67,13 @@ public class DataObject {
     public DataObject(int id, String name,Vector<Integer> action_IDs){
     	this(id,name, action_IDs,"low", "low","low");
     }
-    public DataObject(int id, String name,Vector<Integer> action_IDs, String _probability, String _difficulty, String _cost){
+    public DataObject(int id, String name,Vector<Integer> action_IDs, String _probability, String _difficulty, String _impact){
 		m_id = id;
 		setName(name);
 		myActionIDs=action_IDs;
 		probability = _probability;
 		difficulty= _difficulty;
-		cost= _cost;
+		impact= _impact;
 	}
     public DataObject(int id,String name,String type){
         new DataObject(id,name);
@@ -128,8 +128,8 @@ public class DataObject {
 	public void setDifficulty(String dif){difficulty=dif;}
 	public String getDifficulty(){return difficulty;}
 	
-	public void setCost(String c){cost=c;}
-	public String getCost(){return cost;}
+	public void setImpact(String c){this.impact=impact;}
+	public String getImpact(){return this.impact;}
 
 	
 //	public void linkActionItem(int actionID){

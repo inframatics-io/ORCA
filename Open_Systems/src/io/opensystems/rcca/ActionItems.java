@@ -5,7 +5,7 @@ package io.opensystems.rcca;
 import java.util.Vector;
 
 /**
- * @author g145162
+ * @author Payman Touliat
  *
  */
 public class ActionItems {
@@ -18,12 +18,19 @@ public ActionItems(int actionIDIndex, int size){
 	startingIDIndex =actionIDIndex;
 	actions = new Vector<Task>(size);
 }
-
-public void add(String owner, String description, String due){
-	String today="2014/1/5";	
-	 Task e= new Task(startingIDIndex++, owner, description, today, due, "", Task.UNCOMPLETE); 
+/**
+ * 
+ * @param owner String Owner of Task
+ * @param description String Description of Task
+ * @param start Date Action was assigned
+ * @param due Date Action is to be completed
+ * 
+ * @return action ID
+ */
+public int add(String owner, String description, String start, String due){
+	 Task e= new Task(startingIDIndex++, owner, description, start, due, "", Task.UNCOMPLETE); 
 	actions.add(e);
-	
+	return startingIDIndex-1;
 }
 public void add(String owner, String description, String start, String due, String end){
 	 Task e= new Task(startingIDIndex++, owner, description, start, due, end, Task.UNCOMPLETE); 

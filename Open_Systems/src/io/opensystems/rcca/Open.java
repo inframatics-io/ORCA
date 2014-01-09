@@ -113,7 +113,7 @@ public class Open {
             nodeInfo.setReferenceURL(reference_URL);
             nodeInfo.setProbability(returnFirstElement((String)v_category.elementAt(i),"Probability"));
             nodeInfo.setDifficulty(returnFirstElement((String)v_category.elementAt(i),"Difficulty"));
-            nodeInfo.setCost(returnFirstElement((String)v_category.elementAt(i),"Cost"));
+            nodeInfo.setImpact(returnFirstElement((String)v_category.elementAt(i),"Impact"));
             
             c_category=m_treePanel.addObject(nodeInfo);
             Vector v_groups=xmlParser((String)v_category.elementAt(i),"Group");
@@ -147,7 +147,7 @@ public class Open {
             nodeInfo.setReferenceURL(reference_URL);
             nodeInfo.setProbability(returnFirstElement((String)v_group.elementAt(i),"Probability"));
             nodeInfo.setDifficulty(returnFirstElement((String)v_group.elementAt(i),"Difficulty"));
-            nodeInfo.setCost(returnFirstElement((String)v_group.elementAt(i),"Cost"));
+            nodeInfo.setImpact(returnFirstElement((String)v_group.elementAt(i),"Impact"));
             c_group=m_treePanel.addObject(c_category,nodeInfo);
             Vector v_attributes=xmlParser((String)v_group.elementAt(i),"Attribute");
             addAttributes(v_attributes);
@@ -182,7 +182,7 @@ public class Open {
             nodeInfo.setReferenceURL(reference_URL);
             nodeInfo.setProbability(returnFirstElement((String)v_attribute.elementAt(i),"Probability"));
             nodeInfo.setDifficulty(returnFirstElement((String)v_attribute.elementAt(i),"Difficulty"));
-            nodeInfo.setCost(returnFirstElement((String)v_attribute.elementAt(i),"Cost"));
+            nodeInfo.setImpact(returnFirstElement((String)v_attribute.elementAt(i),"Impact"));
             
             String s_Incompatibility=returnFirstElement((String) v_attribute.elementAt(i),"Incompatible");
             linkActionItems(s_Incompatibility,nodeInfo);

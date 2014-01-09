@@ -125,7 +125,7 @@ public class Save {
 							"<Description>"+ xmlFilter(nodeIn.getdesctiptionText()) + "</Description>"+
 							"<Probability>"+ nodeIn.getProbability()+ "</Probability>"+
 							"<Difficulty>"+ nodeIn.getDifficulty()+ "</Difficulty>"+
-							"<Cost>"+ nodeIn.getCost()+ "</Cost>"+
+							"<Impact>"+ nodeIn.getImpact()+ "</Impact>"+
 							"<Reference>"+ xmlFilter(nodeIn.getReferenceURL()) + "</Reference>";
 							
 							//+"<Parent-ID>"+nodeIn.getParentId()+"</Parent-ID>";
@@ -139,7 +139,7 @@ public class Save {
 							"<Description>"+ xmlFilter(nodeIn.getdesctiptionText()) + "</Description>"+
 							"<Probability>"+ nodeIn.getProbability()+ "</Probability>"+
 							"<Difficulty>"+ nodeIn.getDifficulty()+ "</Difficulty>"+
-							"<Cost>"+ nodeIn.getCost()+ "</Cost>"+
+							"<Impact>"+ nodeIn.getImpact()+ "</Impact>"+
 							"<Reference>"+ xmlFilter(nodeIn.ref_URL) + "</Reference>";
 			p.println(value);
 		}
@@ -151,7 +151,7 @@ public class Save {
 							"<Description>"+ xmlFilter(nodeIn.getdesctiptionText())+"</Description>" +
 							"<Probability>"+ nodeIn.getProbability()+ "</Probability>"+
 							"<Difficulty>"+ nodeIn.getDifficulty()+ "</Difficulty>"+
-							"<Cost>"+ nodeIn.getCost()+ "</Cost>"+
+							"<Impact>"+ nodeIn.getImpact()+ "</Impact>"+
 							"<Reference>"+ xmlFilter(nodeIn.ref_URL) + "</Reference>"+
 							"<Selected>"+nodeIn.myCheckBox.isSelected()+"</Selected>";
 			p.println(value);
