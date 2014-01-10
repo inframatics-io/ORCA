@@ -18,7 +18,7 @@ import javax.swing.tree.DefaultTreeModel;
 
 /**
  * 
- * @author Payman S. Touliat
+ * @author Payman Touliat
  * 		   
  *
  * TODO To change the template for this generated type comment go to

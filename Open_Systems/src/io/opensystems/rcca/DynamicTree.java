@@ -48,8 +48,8 @@ public class DynamicTree extends JPanel {
     protected DefaultTreeModel treeModel;
     protected JTree tree;
     private Toolkit toolkit = Toolkit.getDefaultToolkit();
-    protected Vector newOPTIONNodesAdded;
-    protected Vector processedOptionNodes;
+    protected Vector newOPTIONNodesAdded; 
+    protected Vector processedOptionNodes; // maybe delete this is and 
 	public int catigoryIdCounter = 1000; // remove these counters and change
 	public int groupIdCounter = 2000;	// them with something else
 	public int attributIdCounter = 3000;

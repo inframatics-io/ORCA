@@ -51,7 +51,7 @@ public class Open {
 	private DefaultMutableTreeNode c_category;
 	private DefaultMutableTreeNode c_group;
 	private Vector notProcessedYet = new Vector();
-	private int AttributeIDCounter, GroupIDCounter, CatagoryIDCounter;
+//	private int AttributeIDCounter, GroupIDCounter, CatagoryIDCounter;
 	
     
 	

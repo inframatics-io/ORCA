@@ -42,6 +42,10 @@ import javax.swing.*;
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class DataObject {
+	final static public String LOW ="LOW";
+	final static public String MID ="MID";
+	final static public String HIGH ="HIGH";
+	
 	public String CATEGORY  = "CATEGORY";
 	public String GROUP     = "GROUP";
 	public String ATTRIBUTE = "ATTRIBUTE";
@@ -51,7 +55,6 @@ public class DataObject {
     private int p_id;
 	protected String m_Name, ref_URL, probability, difficulty, impact;
 	private String nodeType;
-//    private int TRL_Number; // change this with a list of action items
     protected String descriptionText;
     protected Vector<Integer> myActionIDs;
     
@@ -62,10 +65,10 @@ public class DataObject {
 	
 
     public DataObject(int id, String name){
-		this(id,name, new Vector<Integer>(),"low", "low","low");
+		this(id,name, new Vector<Integer>(),LOW, LOW,LOW);
 	}
     public DataObject(int id, String name,Vector<Integer> action_IDs){
-    	this(id,name, action_IDs,"low", "low","low");
+    	this(id,name, action_IDs,LOW, LOW,LOW);
     }
     public DataObject(int id, String name,Vector<Integer> action_IDs, String _probability, String _difficulty, String _impact){
 		m_id = id;
@@ -96,10 +99,24 @@ public class DataObject {
 	public void setTypeToGroup(){nodeType=GROUP;}
 	public void setTypeToAttribute(){nodeType=ATTRIBUTE;}
 	public void setDescription(String s){descriptionText=s;}
+	public int getHeatIndex(){
+		return (3*attributeToIndex(probability)+2*attributeToIndex(impact)+
+				(4-attributeToIndex(difficulty))-5);
+	}
 
 	public void setName(String n){m_Name=n;myCheckBox=new JCheckBox(m_Name);}
 	public String getName(){return m_Name;}
 	public String toString(){return m_Name;}
+	private int attributeToIndex(String s){
+		int i=0;
+		if (s.equals(HIGH))
+			return 3;
+		if (s.equals(MID))
+		return 2;
+		if (s.equals(LOW))
+		return 1;
+		return i;
+	}
 	/**
 	 * This function return all the Action Item IDs
 	 * @return Vector<Integer> 
@@ -119,27 +136,27 @@ public class DataObject {
 	public void setdesctiptionText(String desc){descriptionText=desc;}
 	public String getdesctiptionText(){return descriptionText;}
 	
-	public void setReferenceURL(String rf_url){ref_URL=rf_url;}
+	public void setReferenceURL(String ref_URL){this.ref_URL=ref_URL;}
 	public String getReferenceURL(){return ref_URL;}
 	
-	public void setProbability(String p){probability=p;}
+	public void setProbability(String probability){this.probability=probability;}
 	public String getProbability(){return probability;}
 	
-	public void setDifficulty(String dif){difficulty=dif;}
-	public String getDifficulty(){return difficulty;}
+	public void setDifficulty(String difficulty){this.difficulty=difficulty;}
+	public String getDifficulty(){return this.difficulty;}
 	
-	public void setImpact(String c){this.impact=impact;}
+	public void setImpact(String c){this.impact=c;}
 	public String getImpact(){return this.impact;}
 
-	
-//	public void linkActionItem(int actionID){
-//		myActionIDs.add((Integer)actionID);
-//	}
-	
 	public void copy(DataObject dataIn){
-		m_id = dataIn.getId();
-		m_Name = dataIn.getName();
-		nodeType = dataIn.getType();
-		myActionIDs = dataIn.getActionIDs();
+		this.m_id = dataIn.getId();
+		this.m_Name = dataIn.getName();
+		this.nodeType = dataIn.getType();
+		this.myActionIDs = dataIn.getActionIDs();
+		this.probability =dataIn.getProbability();
+		this.difficulty = dataIn.getDifficulty();
+		this.impact= dataIn.getImpact();
+		this.ref_URL=dataIn.getReferenceURL();
+		this.myActionIDs =dataIn.getActionIDs();
 	}
 }
