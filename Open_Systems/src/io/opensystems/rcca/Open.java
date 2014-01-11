@@ -88,8 +88,6 @@ public class Open {
             e.printStackTrace();
         }
 
-        m_treePanel.resetNewOPIONNodes();
-        m_treePanel.newOPTIONNodesAdded=notProcessedYet;
     }
     private void addCategories(Vector v_category){
         DataObject nodeInfo;
@@ -104,7 +102,7 @@ public class Open {
             
 
             int intID=Integer.parseInt(IDOfCategory);
-            m_treePanel.catigoryIdCounter=intID;
+           // m_treePanel.catigoryIdCounter=intID;
            // int intTRL=Integer.parseInt(TRLOfCategory);
         
             
@@ -138,7 +136,7 @@ public class Open {
             String reference_URL =returnFirstElement((String)v_group.elementAt(i),"Reference");
 
             int intID=Integer.parseInt(IDOfGroup);
-            m_treePanel.groupIdCounter=intID;
+            //m_treePanel.groupIdCounter=intID;
             //int intTRL=Integer.parseInt(TRLOfGroup);
         
             
@@ -172,7 +170,7 @@ public class Open {
             String str_selected       =returnFirstElement((String)v_attribute.elementAt(i),"Selected");
            
             int intID=Integer.parseInt(IDOfAttribute);
-            m_treePanel.attributIdCounter=intID;
+            //m_treePanel.attributIdCounter=intID;
             //int intTRL=Integer.parseInt(TRLOfAttribute);
             Boolean selected =Boolean.valueOf(str_selected);
             

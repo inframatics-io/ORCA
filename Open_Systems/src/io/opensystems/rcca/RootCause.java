@@ -82,7 +82,6 @@ import layouts.*;
 public class RootCause extends JFrame implements ActionListener {
 
     protected File m_currentDir;
-	private int newNodeSuffix = 1;
     private int newActionItemID=1;
     
 
@@ -307,28 +306,27 @@ public class RootCause extends JFrame implements ActionListener {
             //Add button clicked
 			DefaultMutableTreeNode node =
 		    	(DefaultMutableTreeNode)treePanel.tree.getLastSelectedPathComponent();
-
-			if (node == null || node.isRoot()){
-				DataObject newNode = new DataObject(++treePanel.catigoryIdCounter,"NewNode" + newNodeSuffix++);
-				treePanel.addObject(newNode);
+			
+			if (node == null){
+				node =treePanel.rootNode; 
 			}
-			else if ( ((DataObject)node.getUserObject()).getType()==((DataObject)node.getUserObject()).CATEGORY){
-				DataObject newNode = new DataObject(++treePanel.groupIdCounter,"NewNode" + newNodeSuffix++);
-				
-				treePanel.addObject(newNode);
-			}
-			else if ( ((DataObject)node.getUserObject()).getType() == ((DataObject)node.getUserObject()).GROUP){
-				DataObject newNode = new DataObject(++treePanel.attributIdCounter,"NewNode" + newNodeSuffix++);
-				// next few line can be moved to DataObject itself
-				// or deleted... i think
-				newNode.myCheckBox.setEnabled(true);
-				newNode.myCheckBox.setSelected(false);
-				newNode.myCheckBox.setBackground(RootCauseColors[newNode.getHeatIndex()]);
-				treePanel.addObject(newNode);
-			}
-			else if ( ((DataObject)node.getUserObject()).getType() == ((DataObject)node.getUserObject()).ATTRIBUTE){
-				System.out.println("error can't add more than 3 levels");
-			}
+			// get the ID based on Level: 
+			// 1000-1999 level 1
+			// 2000-2999 level 2
+			// 3000-3999 level 3 ...
+			int level=node.getLevel();
+			if (level>= treePanel.ID.size())
+				treePanel.ID.add(level*1000+1);
+			else
+				treePanel.ID.set(level, treePanel.ID.get(level)+1);
+			
+			DataObject newNode = new DataObject(treePanel.ID.get(level),  treePanel.ID.get(level)+" NewNode");
+			// next few line can be moved to DataObject itself
+			// or deleted... i think
+			newNode.myCheckBox.setEnabled(true);
+			newNode.myCheckBox.setSelected(false);
+			newNode.myCheckBox.setBackground(RootCauseColors[newNode.getHeatIndex()]);
+			treePanel.addObject(newNode);
 		}
 
 		else if (REMOVE_COMMAND.equals(command)) {
@@ -380,7 +378,7 @@ public class RootCause extends JFrame implements ActionListener {
 			    saveAttributes.setEnabled(!statusOfSaveDataToTree);
 			}
 		    //initializeCompatibility(treePanel.getNewOPTIONNodes(),treePanel.processedOptionNodes);
-		    treePanel.resetNewOPIONNodes();
+//		    treePanel.resetNewOPIONNodes();
 		    jifNewRootCauseFrame.setVisible(false);
 			makeManageActionFrame();
 		}
@@ -849,11 +847,9 @@ public class RootCause extends JFrame implements ActionListener {
 
         spLeft.add(leftScrollPane, BorderLayout.CENTER);
 
-		DefaultMutableTreeNode  rootNode = new DefaultMutableTreeNode(treePanel.rootNode);
+		//DefaultMutableTreeNode  rootNode = new DefaultMutableTreeNode(treePanel.rootNode);
 		
-		DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
-		treeModel = treePanel.treeModel;
-		
+		DefaultTreeModel treeModel = treePanel.treeModel;
 		
 		int numDummyLabel =0;
 		
@@ -873,8 +869,7 @@ public class RootCause extends JFrame implements ActionListener {
 		jifDynamicFaultMatrixFrame.add(buttonPanel, BorderLayout.SOUTH);
 		jifDynamicFaultMatrixFrame.add(sp, BorderLayout.CENTER);
 		main_desktop.add(jifDynamicFaultMatrixFrame);
-		updateDynamicMorphFrame(); // this line should be removed latter
-								   // For sure
+		
 		jifDynamicFaultMatrixFrame.setVisible(true);
 		
 		// add RadioButtons to select low mid high probability
@@ -1099,8 +1094,26 @@ public class RootCause extends JFrame implements ActionListener {
     }
 
     public void updateDynamicMorphFrame(){
+    	DefaultTreeModel treeModel = treePanel.treeModel;
+    	updateRootCauseNodes(treeModel, (DefaultMutableTreeNode)treeModel.getRoot(),false);
+    }
+    private void updateRootCauseNodes(DefaultTreeModel model, DefaultMutableTreeNode node,boolean parentChecked){
 
-
+    	if(!node.isRoot()){
+    	DataObject nodeInfo=(DataObject) node.getUserObject();
+    	nodeInfo.myCheckBox.setEnabled(!parentChecked);
+    	if (nodeInfo.myCheckBox.isSelected())
+    		nodeInfo.myCheckBox.setBackground(RootCauseColors[14]);
+    	else 
+    		nodeInfo.myCheckBox.setBackground(RootCauseColors[nodeInfo.getHeatIndex()]);
+    	nodeInfo.myCheckBox.setEnabled(!parentChecked);
+    	if (!parentChecked)
+    		parentChecked =nodeInfo.myCheckBox.isSelected();
+    	}
+    	
+    	for (int i=0; i<model.getChildCount(node);i++){
+    		updateRootCauseNodes(model, (DefaultMutableTreeNode)model.getChild(node, i),parentChecked);
+    	}
     }
 /**
  * A recursive Function call to draw all the Root Cause Nodes in "Root Cause Tree" format 
@@ -1152,6 +1165,7 @@ public class RootCause extends JFrame implements ActionListener {
         	leftPanel.add(nodeInfo.myCheckBox);
 //        	System.out.println(space + node.toString());
         	}
+    	
     	for (int i=0; i<model.getChildCount(node);i++){
     		drawRootCauseTree(model, (DefaultMutableTreeNode)model.getChild(node, i),indent + 1,leftPanel,parentChecked);
     	}
@@ -1367,21 +1381,8 @@ public class RootCause extends JFrame implements ActionListener {
 				if (node==null ||node.isRoot()) {
 				    return;
 				}
-				DataObject nodeInfo = (DataObject)node.getUserObject();
-				// the code only allows for attributes to be 
-				// compatibile or incompatible
-//				if(nodeInfo.getType().equals(nodeInfo.ATTRIBUTE)){
-//				    allowList.setVisible(true);
-//				    disallowList.setVisible(true);
-//				    Vector data = nodeInfo.allowVector;
-//				    allowList.setListData(nodeInfo.allowVector);
-//				    disallowList.setBackground(Color.white);
-//				    disallowList.setListData(nodeInfo.disallowVector);
-//				}else{
-//				    allowList.setVisible(false);
-//				    disallowList.setVisible(false);
-//				    
-//				}
+//				DataObject nodeInfo = (DataObject)node.getUserObject();
+
 			}
 
 		}

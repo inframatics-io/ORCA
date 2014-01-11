@@ -46,24 +46,17 @@ public class DataObject {
 	final static public String MID ="MID";
 	final static public String HIGH ="HIGH";
 	
-	public String CATEGORY  = "CATEGORY";
-	public String GROUP     = "GROUP";
-	public String ATTRIBUTE = "ATTRIBUTE";
+//	public String CATEGORY  = "CATEGORY";
+//	public String GROUP     = "GROUP";
+//	public String ATTRIBUTE = "ATTRIBUTE";
 	public JCheckBox myCheckBox;
 	
     private int m_id;
     private int p_id;
 	protected String m_Name, ref_URL, probability, difficulty, impact;
-	private String nodeType;
     protected String descriptionText;
     protected Vector<Integer> myActionIDs;
     
-    //    protected Vector allowVector;
-//    protected Vector disallowVector;
-    //protected Vector vDescriptors;
-    
-	
-
     public DataObject(int id, String name){
 		this(id,name, new Vector<Integer>(),LOW, LOW,LOW);
 	}
@@ -78,26 +71,10 @@ public class DataObject {
 		difficulty= _difficulty;
 		impact= _impact;
 	}
-    public DataObject(int id,String name,String type){
-        new DataObject(id,name);
-        if (type.equalsIgnoreCase(CATEGORY)){
-           setTypeToCategory();
-        }else if(type.equalsIgnoreCase(GROUP)){
-           setTypeToGroup(); 
-        }else if(type.equalsIgnoreCase(ATTRIBUTE)){
-            setTypeToAttribute();
-        }else{
-            //throw and error or something
-        }
-    }
-	
+
 	public int getId(){return m_id;}
 	public int  getParentId(){return p_id;}
 	public void setParentId(int id){p_id=id;}
-	public String getType(){return nodeType;}
-	public void setTypeToCategory(){nodeType=CATEGORY;}
-	public void setTypeToGroup(){nodeType=GROUP;}
-	public void setTypeToAttribute(){nodeType=ATTRIBUTE;}
 	public void setDescription(String s){descriptionText=s;}
 	public int getHeatIndex(){
 		return (3*attributeToIndex(probability)+2*attributeToIndex(impact)+
@@ -151,7 +128,6 @@ public class DataObject {
 	public void copy(DataObject dataIn){
 		this.m_id = dataIn.getId();
 		this.m_Name = dataIn.getName();
-		this.nodeType = dataIn.getType();
 		this.myActionIDs = dataIn.getActionIDs();
 		this.probability =dataIn.getProbability();
 		this.difficulty = dataIn.getDifficulty();
