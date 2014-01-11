@@ -34,12 +34,15 @@ import java.awt.event.WindowListener;
 import java.awt.event.KeyListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
-
+import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.StringTokenizer;
 //import java.time.*
 //import java.math.BigInteger;
-import java.util.Vector;
 import java.io.File;
+
+
+
 
 
 
@@ -68,6 +71,9 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 //import javax.swing.tree.TreeModel;
+
+
+
 
 import layouts.*;
 
@@ -955,10 +961,16 @@ public class RootCause extends JFrame implements ActionListener {
 		menuHelp.add(menuHelpAbout);
 		menuHelpAbout.addActionListener(this);
 	}
-	//this function makes the data vectors that allows the names to placed
-	//in the the spreadsheet table.  it is returning a boolean to notify
-	//the user if there is a category that does not have any groups associated
-	//with it.
+	/**
+	 * this function makes the data vectors that allows the names to placed
+	 * in the the spreadsheet table.  it is returning a boolean to notify
+	 * the user if there is a category that does not have any groups associated
+	 * with it.
+	 * IT saves the data only if Action IDs are valid Integers and name is not 
+	 * duplicate. 
+	 * @param sNode
+	 * @return
+	 */
 	public boolean saveInputsToNode(DefaultMutableTreeNode sNode){
 //		String name = new String(((DataObject)sNode.getUserObject()).getName());
 		String newName=nameTextField.getText();
@@ -974,22 +986,26 @@ public class RootCause extends JFrame implements ActionListener {
 		
 		
 		Integer Id;
-		Vector<Integer> tempIDs= new Vector<Integer>();
+		ArrayList<Integer> tempIDs= new ArrayList<Integer>();
 		boolean flag=false;
 		StringTokenizer tokenizer= new StringTokenizer(newActions,",");
-		if (search(newName, ((DataObject)sNode.getUserObject()).getId())){
+		// Tokenizing the Action IDs
+		if (nameIDMatch(newName, ((DataObject)sNode.getUserObject()).getId())){
 			try{
 				while (tokenizer.hasMoreTokens()){
 			    	Id= Integer.parseInt(tokenizer.nextToken());
-			    	if (Id > 1000 || Id < 0){ // Check for valid action item ID
+			    	if (actionList.isValid(Id)){ // Check for valid action item ID
+			    		tempIDs.add(Id);
+			    	}else{
+			    		
 			    		JOptionPane.showMessageDialog(jifNewRootCauseFrame,
-					            " Please Enter A Valid Numerical Value for Action IDs");
+					            "Action ID: "+Id.toString()+" dosen't exist\n"+
+			    				"Please enter a valid action ID");
 			    		flag=true;
 			    		break;
-			    	}else{
-			    		tempIDs.add(Id);
 			    	}
 			    }
+				// if not issue then save the data
 				if(!flag){
 					nodeInfo.setActionIDs(tempIDs);
 					nodeInfo.setdesctiptionText(newDesc);
@@ -1010,88 +1026,58 @@ public class RootCause extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(null,"You have entered a Duplicate Node Name","Error!!"
 					,JOptionPane.INFORMATION_MESSAGE);
     	}
-			
+		// this is done in case the user had put duplicate IDs.
+		actionTextField.setText(nodeInfo.getActionIDsString());	
 		return true;
 	}
 
 	public static void main(String[] args) {
 		new RootCause();
 	}
-	public boolean search(String name, int sentID){
-		boolean rValue = true;
-		DefaultMutableTreeNode  rootNode = new DefaultMutableTreeNode(treePanel.rootNode);
-		DefaultTreeModel treeModel = new DefaultTreeModel(rootNode);
-		treeModel = treePanel.treeModel;
+	
 
-		int categoriesCounter = 0;
-		int groupCounter =0;
-		int attributCounter = 0;
-
-		categoriesCounter = treeModel.getChildCount(treeModel.getRoot());
-	    String tempName;
-	    for (int i=0;i< categoriesCounter;++i){
-	    	DefaultMutableTreeNode nodeT = (DefaultMutableTreeNode) treeModel.getChild(treeModel.getRoot(),i);
-			groupCounter = treeModel.getChildCount(treeModel.getChild(treeModel.getRoot(),i));
-			tempName = ((DataObject)nodeT.getUserObject()).getName();
-			if (tempName.equals(name) && sentID != ((DataObject)nodeT.getUserObject()).getId() ){
-				rValue = false;
-				break;
-			}
-			for(int j =0; j < groupCounter; j++){
-				nodeT = (DefaultMutableTreeNode) treeModel.getChild((treeModel.getChild(treeModel.getRoot(),i)),j);
-				tempName = ((DataObject)nodeT.getUserObject()).getName();
-				if (tempName.equals(name) && sentID != ((DataObject)nodeT.getUserObject()).getId() ){
-					rValue = false;
-					break;
-				}
-		   	  	attributCounter =  treeModel.getChildCount(treeModel.getChild((
-									treeModel.getChild(treeModel.getRoot(),i)),j));
-				for(int k = 0; k< attributCounter;k++){
-					nodeT = (DefaultMutableTreeNode) treeModel.getChild(treeModel.getChild(
-		                    treeModel.getChild(treeModel.getRoot(),i),j),k);
-					tempName = ((DataObject)nodeT.getUserObject()).getName();
-					if (tempName.equals(name) && sentID != ((DataObject)nodeT.getUserObject()).getId() ){
-						rValue = false;
-						break;
-					}
-  				}
-
-			}
-	    }
-		return rValue;
-	}
+	/**
+	 * This function searches the tree for name
+	 *  (used by the last makeDaynamicFaultMatrix to find the 
+	 *   node the user is pointing to)
+	 * @param name of the node 
+	 * @return the corresponding node to the name
+	 */
     public DataObject search(String name){
-        DefaultTreeModel treeModel = treePanel.treeModel;
-        int categoriesCounter = 0;
-        int groupCounter =0;
-        int attributCounter = 0;
+
+    	DefaultTreeModel treeModel = treePanel.treeModel;
+        DefaultMutableTreeNode root=(DefaultMutableTreeNode) treeModel.getRoot();
         DataObject nodeInfo;
-        categoriesCounter=treeModel.getChildCount(treeModel.getRoot());  
-        for(int i=0; i< categoriesCounter;++i){
-            DefaultMutableTreeNode nodeCategoryTemp = (DefaultMutableTreeNode) treeModel.getChild(treeModel.getRoot(),i);
-            nodeInfo=(DataObject)nodeCategoryTemp.getUserObject();
-            if(nodeInfo.getName().equals(name)){
-                return nodeInfo;
-            }
-            groupCounter = treeModel.getChildCount(nodeCategoryTemp);
-            for(int j=0; j<groupCounter;++j){
-                DefaultMutableTreeNode nodeGroupTemp=(DefaultMutableTreeNode) treeModel.getChild(nodeCategoryTemp,j);
-                nodeInfo=(DataObject)nodeGroupTemp.getUserObject();
-                if(nodeInfo.getName().equals(name)){
-                    return nodeInfo;
-                }
-                attributCounter= treeModel.getChildCount(nodeGroupTemp);
-                for(int k=0;k<attributCounter;++k){
-                    DefaultMutableTreeNode nodeAttribut=(DefaultMutableTreeNode) treeModel.getChild(nodeGroupTemp,k);
-                    nodeInfo=(DataObject) nodeAttribut.getUserObject();
-                    if(nodeInfo.getName().equals(name)){
-                        return nodeInfo;
-                    }
+        
+        for (Enumeration e = root.depthFirstEnumeration(); e.hasMoreElements();) {
+            DefaultMutableTreeNode node = (DefaultMutableTreeNode) e.nextElement();
+            if (!node.isRoot()){
+            	nodeInfo =(DataObject) node.getUserObject();
+                if (nodeInfo.getName().equals(name)) {   
+                	return nodeInfo;
                 }
             }
-        }   
+            
+        }
         return null;
     }
+	/**
+	 * This function searches the tree to see if the name already exists.
+	 * if name and ID match 
+	 * it may be unnecessary 
+	 * @param name
+	 * @param sentID
+	 * @return true if the name and ID match otherwise false
+	 */
+	public boolean nameIDMatch(String name, int sentID){
+		
+		DataObject nodeInfo;
+		nodeInfo =search(name);
+		if (nodeInfo !=null)
+			return nodeInfo.getId() == sentID;
+		else
+			return false;
+	}
 
     public void updateDynamicMorphFrame(){
     	DefaultTreeModel treeModel = treePanel.treeModel;
@@ -1387,6 +1373,23 @@ public class RootCause extends JFrame implements ActionListener {
 
 		}
 	}
+    /**
+     * Removes all instances of the Action <b>ID</b> from the tree supplied by <b>model</b> 
+     * @param model
+     * @param node
+     * @param ID
+     */
+    private void removeActionID(DefaultTreeModel model, DefaultMutableTreeNode node,Integer ID){
+
+    	if(!node.isRoot()){
+    		DataObject nodeInfo=(DataObject) node.getUserObject();
+    		nodeInfo.removeActionID(ID);
+    	}
+
+    	for (int i=0; i<model.getChildCount(node);i++){
+    		removeActionID(model, (DefaultMutableTreeNode)model.getChild(node, i),ID);
+    	}
+    }
 	class myKeyListener implements KeyListener {
 		public void keyPressed(KeyEvent e) {
 
@@ -1396,112 +1399,21 @@ public class RootCause extends JFrame implements ActionListener {
 		}
 		public void keyTyped(KeyEvent e) {
 		    char ent=e.getKeyChar();
+		    boolean statusOfSaveDataToTree=false;
 		    if(ent=='\n'){
 		        DefaultMutableTreeNode node = (DefaultMutableTreeNode)
 				treePanel.tree.getLastSelectedPathComponent();
-				boolean statusOfSaveDataToTree = saveInputsToNode(node);
+				statusOfSaveDataToTree = saveInputsToNode(node);
 				jifNewRootCauseFrame.repaint();
 		        }
 		    else if (jifNewRootCauseFrame.isSelected()) {
-				isAttributeSaved = false;
-				saveAttributes.setEnabled(true);
+				isAttributeSaved = statusOfSaveDataToTree;
+				saveAttributes.setEnabled(!statusOfSaveDataToTree);
 				jifNewRootCauseFrame.repaint();
 			}
 		}
 	}
-//	class myDropTargetListener implements DropTargetListener {
-//
-//		public void dragEnter(DropTargetDragEvent dtde) {
-//			System.out.println("dragEnter");
-//		}
-//		public void dragOver(DropTargetDragEvent dtde) {
-//
-//		}
-//		public void dropActionChanged(DropTargetDragEvent dtde) {
-//			System.out.println("dropActionChanged");
-//		}
-//
-//		public void dragExit(DropTargetEvent dte) {
-//			System.out.println("dragExit");
-//		}
-//
-//		public void drop(DropTargetDropEvent dtde) {
-//
-//			DropTargetContext data = dtde.getDropTargetContext();
-//			DefaultMutableTreeNode node =
-//		    	(DefaultMutableTreeNode)treePanel.tree.getLastSelectedPathComponent();
-//			DataObject nodeInUse = (DataObject)node.getUserObject();
-//			//and then we need to find the group it is associtated with at take it from that
-//			//-fix the errors.
-//			if (node != null){
-//			    //data.
-//				if (data.getComponent() == disallowList && data.getComponent() != allowList){
-//				    DataObject value = (DataObject)allowList.getSelectedValue();
-//					System.out.println("Allow To Disallow " + value.m_Name);
-//					if(value.myCheckBox.isSelected()&&nodeInUse.myCheckBox.isSelected()){// rewite this message 
-//				        JOptionPane.showInternalMessageDialog(jifmakeActionItemsFrame,"Both Technology are selcted.\n" +
-//				        		"please make corrections by deselcting one of them","Compatibility Error",JOptionPane.INFORMATION_MESSAGE);
-//
-//					}else{
-//						nodeInUse.disallowVector.add(value);
-//						value.disallowVector.add(nodeInUse);
-//						disallowList.setListData(nodeInUse.disallowVector);
-//	
-//	
-//						nodeInUse.allowVector.removeElementAt(allowList.getSelectedIndex());
-//						value.allowVector.remove(nodeInUse);
-//						allowList.setListData(nodeInUse.allowVector);
-//					}
-//				}
-//				else{
-//					DataObject value = (DataObject)disallowList.getSelectedValue();
-//					//System.out.println("DisAllow To allow");
-//
-//					nodeInUse.allowVector.add(value);
-//					value.allowVector.add(nodeInUse);
-//					allowList.setListData(nodeInUse.allowVector);
-//
-//
-//					nodeInUse.disallowVector.removeElementAt(disallowList.getSelectedIndex());
-//					value.disallowVector.remove(nodeInUse);
-//					disallowList.setListData(nodeInUse.disallowVector);
-//				}
-//			}
-//			updateDynamicMorphFrame();
-//    		//updateComboFrame();
-//		}
-//
-//	}
-//	class sliderChangeListener implements ChangeListener{
-//	    public void stateChanged(ChangeEvent e){
-//	        JSlider source = (JSlider)e.getSource();	        
-//	        if (!source.getValueIsAdjusting()) {
-//	            infoTextField.setText("Filter Name:  '"+source.getName()+"' \n"+"Current Value: '"+source.getValue()+"'");
-//	        	String nameOfSlider=source.getName();	
-//	            Filter aFilter;
-//	            int	   fN=-1;
-//	        	for (int i=0;i<globalVectorOfFilters.size();++i){	
-//	        		aFilter=(Filter)globalVectorOfFilters.get(i);
-//	        		if(aFilter.getName().equals(nameOfSlider)){
-//	        			fN=aFilter.FilterNumber;
-//	        			break;
-//	        		}
-//	        	}
-//	            int minTrl = (int)source.getValue();
-//	            if(fN<0){
-//	            	infoTextField.setText("Error: Filter could not be found!!");
-//	            }else{
-//	            	applyFilter(minTrl,nameOfSlider,fN);
-//	            }
-//	        } 
-//	    }
-//	}
-//	class myActionListener  implements ActionListener{
-//	    public void actionPerformed(ActionEvent evn){
-//	       
-//			
-//	    }
-//	}
+	
 	class xmlFileFilter extends FileFilter{
 		private String m_description=null;
 		private String m_extension=null;
@@ -1547,7 +1459,7 @@ public class RootCause extends JFrame implements ActionListener {
 		}
 
 		public Object getValueAt(int row, int col) {
-			
+
 			switch (col){
 			case 0: return new Integer(actionList.elementAt(row).getID());
 			case 1: return actionList.elementAt(row).getOwner();
@@ -1571,7 +1483,7 @@ public class RootCause extends JFrame implements ActionListener {
 			return getValueAt(0, c).getClass();
 		}
 
-		
+
 		public boolean isCellEditable(int row, int col) {
 			if (col == 1) {
 				return false;  // user should not be able to change Task ID#.
@@ -1589,58 +1501,21 @@ public class RootCause extends JFrame implements ActionListener {
 			case 3: actionList.elementAt(row).setStartDate((String)value);
 			case 4: actionList.elementAt(row).setDueDate((String)value);
 			case 5: actionList.elementAt(row).setEndDate((String) value);
-			//case 6: return (data.elementAt(row).getStatus()==1)? new Boolean(true): new Boolean(false);
+			case 6: actionList.elementAt(row).setStatus((boolean) value? 1: 0);
 			}
-			
+
 			fireTableCellUpdated(row, col);
 			// maybe set TableWasEdited to true;
 
 		}
 		public void deleteRow(int row){
-			actionList.remveAt(row);
-			
-			
-//            ArrayList<String> temp = data.get(row);//backup of value in case of IOException while writing to file
-//            BufferedWriter bfr = null;
-//            try
-//            {
-//                data.remove(row);
-//                //Write here the logic for repopulating file with new records.
-//                bfr = new BufferedWriter(new OutputStreamWriter(new FileOutputStream("records.temp")));
-//                StringBuffer sBuffer = new StringBuffer();
-//                for (ArrayList<String> list : data)
-//                {
-//                    StringBuffer buf = new StringBuffer();
-//                    for (String val : list )
-//                    {
-//                        buf.append(val+"\t");
-//                    }
-//                    buf.replace(buf.length() - 1, buf.length(),"\n");
-//                    sBuffer.append(buf.toString());
-//                }
-//                bfr.write(sBuffer.toString());
-//                bfr.flush();
-//                bfr.close();
-//                fireTableRowsDeleted(row,row);
-//            }
-//            catch (Exception ex)
-//            {
-//                data.add(row,temp);//Rollback the delete from ArrayList
-//                ex.printStackTrace();
-//            }
-//            finally
-//            {
-//                if (bfr != null)
-//                {
-//                    try
-//                    {
-//                        bfr.close();
-//                    }
-//                    catch (Exception ex){}
-//                }
-//            }
-
-        }
+			if (row >-1 && row<actionList.size()){
+				DefaultTreeModel treeModel = treePanel.treeModel;
+				removeActionID(treeModel, (DefaultMutableTreeNode)treeModel.getRoot(),
+						actionList.elementAt(row).getID());
+				actionList.remveAt(row);	
+			}
+		}
 
 	}
 }

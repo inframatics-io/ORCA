@@ -29,6 +29,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Toolkit;
 import java.util.Vector;
+
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
@@ -44,6 +45,7 @@ import javax.swing.event.TreeModelListener;
 //import java.util.Vector;
 
 //@SuppressWarnings("serial")
+@SuppressWarnings("serial")
 public class DynamicTree extends JPanel {
 
 	protected DefaultMutableTreeNode rootNode;

@@ -42,8 +42,21 @@ public void add(String owner, String description, String start, String due, Stri
 	actions.add(e);
 }
 
-
-
+/**
+ * 
+ * @param id
+ * @return
+ */
+public boolean isValid(Integer id){
+	boolean f =false;
+	for(Task c:actions){
+		if (c.getID() ==id){
+			f=true;
+			break;
+		}
+	}
+	return f;
+}
 public int size(){
 	return actions.size();
 }

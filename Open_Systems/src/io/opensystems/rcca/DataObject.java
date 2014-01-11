@@ -21,8 +21,8 @@
  *
  */
 package io.opensystems.rcca;
-//import java.util.ArrayList;
-import java.util.Vector;
+import java.util.ArrayList;
+import java.util.Collections;
 
 import javax.swing.*;
 
@@ -53,17 +53,19 @@ public class DataObject {
 	
     private int m_id;
     private int p_id;
-	protected String m_Name, ref_URL, probability, difficulty, impact;
+    private ArrayList<Integer> myActionIDs;
+    protected String m_Name, ref_URL, probability, difficulty, impact;
     protected String descriptionText;
-    protected Vector<Integer> myActionIDs;
+
     
     public DataObject(int id, String name){
-		this(id,name, new Vector<Integer>(),LOW, LOW,LOW);
+		this(id,name, new ArrayList<Integer>(),LOW, LOW,LOW);
 	}
-    public DataObject(int id, String name,Vector<Integer> action_IDs){
+    public DataObject(int id, String name,ArrayList<Integer> action_IDs){
     	this(id,name, action_IDs,LOW, LOW,LOW);
     }
-    public DataObject(int id, String name,Vector<Integer> action_IDs, String _probability, String _difficulty, String _impact){
+    public DataObject(int id, String name,ArrayList<Integer> action_IDs, String _probability, 
+    		String _difficulty, String _impact){
 		m_id = id;
 		setName(name);
 		myActionIDs=action_IDs;
@@ -98,7 +100,7 @@ public class DataObject {
 	 * This function return all the Action Item IDs
 	 * @return Vector<Integer> 
 	 */
-	public Vector<Integer> getActionIDs(){return myActionIDs;}
+	public ArrayList<Integer> getActionIDs(){return myActionIDs;}
 	public String getActionIDsString(){
 		String s="";
 		for(int i=0; i<myActionIDs.size(); i++){
@@ -106,9 +108,17 @@ public class DataObject {
 		}
 		return s;
 	}
-	public void addActionID(int id){myActionIDs.add(id);}
-	public void setActionIDs(Vector<Integer> aIDs){ myActionIDs=aIDs;}
-	
+	public void addActionID(Integer id){
+		if (myActionIDs.indexOf(id) <0){
+			myActionIDs.add(id);
+			Collections.sort(myActionIDs);
+		}
+	}
+	public void setActionIDs(ArrayList<Integer> aIDs){ 
+		for(Integer id:aIDs){
+			addActionID(id);
+		}
+	}
 	
 	public void setdesctiptionText(String desc){descriptionText=desc;}
 	public String getdesctiptionText(){return descriptionText;}
@@ -124,6 +134,9 @@ public class DataObject {
 	
 	public void setImpact(String c){this.impact=c;}
 	public String getImpact(){return this.impact;}
+	public void removeActionID(Integer ID){
+		this.myActionIDs.remove(ID);
+	}
 
 	public void copy(DataObject dataIn){
 		this.m_id = dataIn.getId();

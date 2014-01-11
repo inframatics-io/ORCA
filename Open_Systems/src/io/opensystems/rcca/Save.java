@@ -2,7 +2,7 @@ package io.opensystems.rcca;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.io.File;
-import java.util.Vector;
+//import java.util.Vector;
 
 import javax.swing.JTree;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -115,7 +115,7 @@ public class Save {
 	}
 	
 	private void nodePrint(DataObject nodeIn, int counter, String command, PrintStream p){
-		//Put in XML or TXT write capibilities here
+		//Put in XML or TXT write capabilities here
 		String value = new String("");
 		if (command == "<Category>"){
 			value =" "+ "<Category>" +
@@ -155,19 +155,19 @@ public class Save {
 							"<Reference>"+ xmlFilter(nodeIn.ref_URL) + "</Reference>"+
 							"<Selected>"+nodeIn.myCheckBox.isSelected()+"</Selected>";
 			p.println(value);
-  			p.println("   <Incompatible>"+DataObjectVectorToString(nodeIn.myActionIDs)+"</Incompatible>"+"</Attribute>");
+//  			p.println("   <Incompatible>"+DataObjectVectorToString(nodeIn.myActionIDs)+"</Incompatible>"+"</Attribute>");
 			
 			}
 	}
 
-	private String DataObjectVectorToString(Vector<Integer> vIn){
-		String value = new String("");
-		for (int i = 0; i < vIn.size(); i++){
-			value += "<ActionID>"+xmlFilter(vIn.elementAt(i).toString())+"</ActionID>";
-		}
-		
-		return value;
-	}
+//	private String DataObjectVectorToString(Vector<Integer> vIn){
+//		String value = new String("");
+//		for (int i = 0; i < vIn.size(); i++){
+//			value += "<ActionID>"+xmlFilter(vIn.elementAt(i).toString())+"</ActionID>";
+//		}
+//		
+//		return value;
+//	}
 	
 	
 }
