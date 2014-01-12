@@ -698,7 +698,7 @@ public class RootCause extends JFrame implements ActionListener {
 //		main split pane creation
 		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,spLeft,spRight);
 		sp.setDividerSize(8);
-		sp.setDividerLocation(jifNewRootCauseFrame.getWidth()/2);
+		sp.setDividerLocation(jifNewRootCauseFrame.getWidth()-360);
 		sp.setResizeWeight(0.5);
 		sp.setContinuousLayout(true);
 		sp.setOneTouchExpandable(true);
@@ -741,7 +741,7 @@ public class RootCause extends JFrame implements ActionListener {
 		spRight.setContinuousLayout(true);
 		spRight.setLayout(new BorderLayout());
 
-		//JSplitPane spRightVert = new JSplitPane(JSplitPane.VERTICAL_SPLIT,spRight,spRight);
+//		JSplitPane spRightVert = new JSplitPane(JSplitPane.VERTICAL_SPLIT,spRight,spRight);
 		JPanel bottomButtonBar = new JPanel(new FlowLayout());
 
 		backToMain = new JButton("<< Back");
@@ -758,7 +758,7 @@ public class RootCause extends JFrame implements ActionListener {
 //		main split pane creation
 		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,spLeft,spRight);
 		sp.setDividerSize(8);
-		sp.setDividerLocation(jifNewRootCauseFrame.getWidth()/2);
+		sp.setDividerLocation(jifNewRootCauseFrame.getWidth()/4);
 		sp.setResizeWeight(0.5);
 		sp.setContinuousLayout(true);
 		sp.setOneTouchExpandable(true);
@@ -775,16 +775,21 @@ public class RootCause extends JFrame implements ActionListener {
 		JScrollPane topRightSP= new JScrollPane(actionItemsTable);
 		
 // 		Create a Delete Button for Action Items
-		JButton deleteActionButton = new JButton("Delete");
+		JButton deleteActionButton = new JButton("Delete Actions");
+		JButton addNewActionButton = new JButton("Create Actions");
+		
 		deleteActionButton.addActionListener( new ActionListener() {
-            public void actionPerformed(ActionEvent evt)
-            {
-                if (aTableM.getRowCount() > 0 && actionItemsTable.getSelectedRow() != -1 )
-                {
+            public void actionPerformed(ActionEvent evt){
+                if (aTableM.getRowCount() > 0 && actionItemsTable.getSelectedRow() != -1 ){
                     aTableM.deleteRow(actionItemsTable.getSelectedRow());
                     actionItemsTable.repaint();
                 }
-                
+            }
+        });
+		addNewActionButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt){
+                    aTableM.addRow();
+                    actionItemsTable.repaint();
             }
         });
         
@@ -795,9 +800,10 @@ public class RootCause extends JFrame implements ActionListener {
 		topRightPanel.add(topRightSP,ParagraphLayout.NEW_PARAGRAPH);
 
 //		this is the bottom right panel which has the Team Members
-		JPanel bottomRightPanel = new JPanel(new ParagraphLayout());
+		JPanel bottomRightPanel = new JPanel(new FlowLayout());
 		bottomRightPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"Team Members"));
-		bottomRightPanel.add(deleteActionButton,ParagraphLayout.NEW_PARAGRAPH);
+		bottomRightPanel.add(deleteActionButton,FlowLayout.LEFT);
+		bottomRightPanel.add(addNewActionButton,FlowLayout.CENTER);
 
 //		adding components to the right split panel
 		spRight.add(topRightPanel,BorderLayout.NORTH);
@@ -1179,21 +1185,9 @@ public class RootCause extends JFrame implements ActionListener {
 		JPanel tab2=new JPanel(new BorderLayout()); //Second Tab [Select From List]
 		final JButton cancelAction= new JButton("Cancel");
 		final JButton okayAction= new JButton("OK");
-
-
+//		final JButton createNew= new JButton("Create New");
 
 		
-//		String slected="";
-//		class RowListener implements ListSelectionListener {
-//	        public void valueChanged(ListSelectionEvent event) {
-//	            if (event.getValueIsAdjusting()) {
-//	                return;
-//	            }
-//	            for (int c : table.getSelectedRows()) {
-//	                output.append(String.format(" %d", c));
-//	            }
-//	        }
-//	    }
 		//Tab 1 create the Add Action Item
 		//Description of Action 
 		JLabel actionDescriptionLabel = new JLabel("Description");
@@ -1506,12 +1500,13 @@ public class RootCause extends JFrame implements ActionListener {
 		public void setValueAt(Object value, int row, int col) {
 
 			switch (col){
-			//case 1: data.elementAt(row).setOwner((String)value));
+			case 1: ;
 			case 2: actionList.elementAt(row).setDescription((String)value);
 			case 3: actionList.elementAt(row).setStartDate((String)value);
 			case 4: actionList.elementAt(row).setDueDate((String)value);
 			case 5: actionList.elementAt(row).setEndDate((String) value);
 			case 6: actionList.elementAt(row).setStatus((boolean) value? 1: 0);
+			default : ;
 			}
 
 			fireTableCellUpdated(row, col);
@@ -1523,8 +1518,13 @@ public class RootCause extends JFrame implements ActionListener {
 				DefaultTreeModel treeModel = treePanel.treeModel;
 				removeActionID(treeModel, (DefaultMutableTreeNode)treeModel.getRoot(),
 						actionList.elementAt(row).getID());
-				actionList.remveAt(row);	
+				actionList.remveAt(row);
+				fireTableRowsDeleted(row,row);
 			}
+		}
+		public void addRow(){
+			actionList.add("Team", "Team", "2014/1/1", "2014/2/1");	
+			fireTableRowsInserted(actionList.size()-1,actionList.size()-1);
 		}
 
 	}
