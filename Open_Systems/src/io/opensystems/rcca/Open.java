@@ -36,7 +36,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
  */
 
 /**
- * @author Payman S. Touliat
+ * @author Payman Touliat
  *
  * TODO To change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
@@ -50,7 +50,7 @@ public class Open {
 	public DynamicTree m_treePanel;
 	private DefaultMutableTreeNode c_category;
 	private DefaultMutableTreeNode c_group;
-	private Vector notProcessedYet = new Vector();
+//	private Vector notProcessedYet = new Vector();
 //	private int AttributeIDCounter, GroupIDCounter, CatagoryIDCounter;
 	
     

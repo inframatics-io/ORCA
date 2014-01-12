@@ -236,8 +236,11 @@ public class RootCause extends JFrame implements ActionListener {
 				}
 				m_currentDir=m_chooser.getCurrentDirectory();
 				File m_currentFile= m_chooser.getSelectedFile();
-				Save saveFile = new Save(treePanel.treeModel, treePanel.tree,m_currentFile);
-				if (saveFile.error.isEmpty()) isFileSaved=true;
+				Save saveFile = new Save(treePanel.treeModel, treePanel.tree,m_currentFile,actionList);
+				if (saveFile.error.isEmpty()){
+					isFileSaved=true;
+					JOptionPane.showMessageDialog(jifNewRootCauseFrame, "File was successfully saved.");
+				}
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 			}
 		}else if (e.getSource() == menuItemOpen){
@@ -289,10 +292,17 @@ public class RootCause extends JFrame implements ActionListener {
 						}
 						m_currentDir=m_chooser.getCurrentDirectory();
 						File m_currentFile= m_chooser.getSelectedFile();
-						Save saveFile = new Save(treePanel.treeModel, treePanel.tree,m_currentFile);
+						Save saveFile = new Save(treePanel.treeModel, treePanel.tree,m_currentFile,actionList);
 						setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
-						isFileSaved=true;
-						System.exit(NORMAL);
+						if (saveFile.error.isEmpty())
+							System.exit(NORMAL);
+						else{
+							answer = JOptionPane.showConfirmDialog(jifNewRootCauseFrame, 
+									"Unable to Save: "+saveFile.error + " Exit anyway?");
+							if (answer == JOptionPane.YES_OPTION)
+								System.exit(NORMAL);
+						}
+							
 					}
 				case JOptionPane.NO_OPTION:
 					System.exit(NORMAL);
