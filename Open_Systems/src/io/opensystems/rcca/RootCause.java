@@ -1489,7 +1489,7 @@ public class RootCause extends JFrame implements ActionListener {
 
 
 		public boolean isCellEditable(int row, int col) {
-			if (col == 1) {
+			if (col == 0) {
 				return false;  // user should not be able to change Task ID#.
 			} else {
 				return true;
@@ -1500,16 +1500,29 @@ public class RootCause extends JFrame implements ActionListener {
 		public void setValueAt(Object value, int row, int col) {
 
 			switch (col){
-			case 1: ;
+			case 1: actionList.elementAt(row).setOwner(new TeamMember((String)value,"",1));
+					fireTableCellUpdated(row, col);
+					break;
 			case 2: actionList.elementAt(row).setDescription((String)value);
+					fireTableCellUpdated(row, col);
+					break;
 			case 3: actionList.elementAt(row).setStartDate((String)value);
+					fireTableCellUpdated(row, col);
+					break;
 			case 4: actionList.elementAt(row).setDueDate((String)value);
+					fireTableCellUpdated(row, col);
+					break;
 			case 5: actionList.elementAt(row).setEndDate((String) value);
+					fireTableCellUpdated(row, col);
+					break;
+
 			case 6: actionList.elementAt(row).setStatus((boolean) value? 1: 0);
+					fireTableCellUpdated(row, col);
+					break;
 			default : ;
 			}
 
-			fireTableCellUpdated(row, col);
+			
 			// maybe set TableWasEdited to true;
 
 		}
