@@ -116,7 +116,8 @@ public class RootCause extends JFrame implements ActionListener {
 			  makeFishbone,saveAttributes,backToMain,
 			  backToCompatibility,resetActionItems,ref1Button;
 	protected JTextField nameTextField, actionTextField, ref1TextField;
-	protected JTextArea descriptionTextField,infoTextField;
+	protected JTextArea descriptionTextField/*,infoTextField*/;
+	protected JEditorPane infoEditorPane;
 	protected JTable compatMatrix, morphMatrix;
 
 	protected JRadioButton lProbabilityRButton,mProbabilityRButton, hProbabilityRButton,
@@ -207,11 +208,16 @@ public class RootCause extends JFrame implements ActionListener {
 		    String rootName=(String) JOptionPane.showInputDialog(main_desktop,"Please Enter a name for your " +
 			"Root Cause Investigation\n ex.  Name:...Gearbox Failure","Gearbox Failure");
 		   // To Be Done: check input throughly
-			if (rootName != null /* && rootName.length() >0 */ ){
-				treePanel = new DynamicTree(rootName,textFont);
-				newRootCauseFrame(true);
-				isFileSaved = false;
-			}			
+		    try {
+		    	setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+		    	if (rootName != null /* && rootName.length() >0 */ ){
+		    		treePanel = new DynamicTree(rootName,textFont);
+		    		newRootCauseFrame(true);
+		    		isFileSaved = false;
+		    	}
+		    }finally{
+		    	setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+		    }
 		}else if (e.getSource() == menuViewDesktop){
 		}else if (e.getSource() == menuItemExport){
 			if (true){
@@ -843,7 +849,7 @@ public class RootCause extends JFrame implements ActionListener {
 
 		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,spLeft,spRight);
 		sp.setDividerSize(8);
-		sp.setDividerLocation(jifDynamicFaultMatrixFrame.getWidth()-200);
+		sp.setDividerLocation(jifDynamicFaultMatrixFrame.getWidth()-205);
 		sp.setResizeWeight(0.5);
 		sp.setContinuousLayout(true);
 		sp.setOneTouchExpandable(true);
@@ -856,6 +862,7 @@ public class RootCause extends JFrame implements ActionListener {
 		backToCompatibility.addActionListener(this);
 		buttonPanel.add(backToCompatibility);
 
+		
 		JTextArea txtTitle = new JTextArea(treePanel.rootNode.toString());
 		txtTitle.setFont(textFont);
 		txtTitle.setEditable(false);
@@ -881,10 +888,20 @@ public class RootCause extends JFrame implements ActionListener {
 ////	    enableEvents(ComponentEvent.)
 		JPanel lowerPanel =new JPanel(/*new ParagraphLayout()*/);
 		lowerPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"INFORMATION:"));
-		infoTextField = new JTextArea(" ",15,16);// make it dynamic
-		infoTextField.setLineWrap(true);
+		// Information panel is created
+		infoEditorPane = new JEditorPane();
+		infoEditorPane.setContentType("text/html");
+		infoEditorPane.setEditable(false); 
+//		infoTextField = new JTextArea(" ",15,16);// make it dynamic
+//		infoTextField.setLineWrap(true);
 		//descriptionTextField.addKeyListener(akeyListener);
-		JScrollPane scrollPane = new JScrollPane(infoTextField);
+//		JScrollPane scrollPane = new JScrollPane(infoTextField);
+		JScrollPane scrollPane = new JScrollPane(infoEditorPane);
+		//scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setPreferredSize(new Dimension(170, 250));
+		//scrollPane.setMinimumSize(new Dimension(10, 10)); 
+//		scrollPane.setMaximumSize(new Dimension(170, 250));
+		
 		lowerPanel.add(scrollPane/*,ParagraphLayout.NEW_PARAGRAPH*/);
 		rightBorder.add(lowerPanel,BorderLayout.SOUTH);
 	    spRight.add(rightBorder,BorderLayout.NORTH);
@@ -1191,10 +1208,12 @@ public class RootCause extends JFrame implements ActionListener {
 		//Tab 1 create the Add Action Item
 		//Description of Action 
 		JLabel actionDescriptionLabel = new JLabel("Description");
-		final JTextArea actionDescriptionTextArea = new JTextArea("",2,12);
+		final JTextArea actionDescriptionTextArea = new JTextArea("",3,14);
+		actionDescriptionTextArea.setWrapStyleWord(true);
+		JScrollPane spDiv = new JScrollPane(actionDescriptionTextArea);
 		//Owner of Action
 		JLabel actionOwnerLabel = new JLabel("Owner");
-		final JTextField actionOwnerText = new JTextField(12);
+		final JTextField actionOwnerText = new JTextField(8);
 		//Start Date of Action
 		JLabel actionSDateLabel = new JLabel("Start Date");
 		final JTextField actionSDateText = new JTextField(8);
@@ -1204,12 +1223,12 @@ public class RootCause extends JFrame implements ActionListener {
 		final JTextField actionDDateText = new JTextField(8);
 		JPanel addPanel=new JPanel(new ParagraphLayout());
 		addPanel.add(actionDescriptionLabel,ParagraphLayout.NEW_PARAGRAPH);
-		addPanel.add(actionDescriptionTextArea);
-		addPanel.add(actionOwnerLabel,ParagraphLayout.NEW_PARAGRAPH);
+		addPanel.add(spDiv);
+		addPanel.add(actionOwnerLabel /*,ParagraphLayout.NEW_PARAGRAPH*/);
 		addPanel.add(actionOwnerText);
-		addPanel.add(actionSDateLabel,ParagraphLayout.NEW_PARAGRAPH);
+		addPanel.add(actionSDateLabel/*,ParagraphLayout.NEW_PARAGRAPH*/);
 		addPanel.add(actionSDateText);
-		addPanel.add(actionDDateLabel,ParagraphLayout.NEW_PARAGRAPH);
+		addPanel.add(actionDDateLabel/*,ParagraphLayout.NEW_PARAGRAPH*/);
 		addPanel.add(actionDDateText);
 		
 		// Tab2: Create the  Action Item Table 
@@ -1272,8 +1291,23 @@ public class RootCause extends JFrame implements ActionListener {
 		main_desktop.add(jifNewFilterFrame);
 		jifNewFilterFrame.setVisible(true);
     }
+    /**
+     * Helper function to create HTML Tag for High MID and LOW 
+     * @param s
+     */
+    private String colorHML(String s){
+    	if (s.equals(DataObject.HIGH))
+			return "<Font color=red>High</Font><BR>";
+		else if(s.equals(DataObject.MID))
+			return "<Font color=orange>Mid</Font><BR>";
+		else if(s.equals(DataObject.LOW))
+			return "<Font color=green>Low</Font><BR>";
+		else
+			return s+"<BR>";	
+    }
     // cbItemListenre is a checkbox listener. It is used in the DynamicFaultMatrix frame
     // to create a quick info is a user clicks on a Root cause.
+ 
     class  cbItemListener extends MouseMotionAdapter implements ItemListener, MouseInputListener {
     	public void itemStateChanged(ItemEvent ie) {
 
@@ -1281,16 +1315,26 @@ public class RootCause extends JFrame implements ActionListener {
     	}
 
     	public void mouseEntered(MouseEvent evt){
-
+    		String value="";
     		DataObject nodeInfo=search(((JCheckBox)evt.getSource()).getText());
     		if(nodeInfo!=null){
-    			infoTextField.setText("Name: "+" "+nodeInfo.getName()+'\n'+
-    					"Action Items: "+" "+nodeInfo.getActionIDsString()+'\n'+
-    					"Probability: "+nodeInfo.getProbability()+'\n'+
-    					"Difficulty: "+nodeInfo.getDifficulty()+'\n'+
-    					"Impact: "+nodeInfo.getImpact()+'\n'+
-    					"Heat Score"+nodeInfo.getHeatIndex()+'\n'+
-    					"Description:\n"+" "+nodeInfo.getdesctiptionText()); 
+    			value="<HTML><Font size=6><B>Cause:</B> </Font><B>"+nodeInfo.getName()+"</B><BR>"+
+				"<B>Action Items: </B>";
+    			if (nodeInfo.getActionIDsString().isEmpty())
+    				value= value+"<Font color=red>None </Font><BR><BR>";
+    			else
+    				value=value+ "<Font size=5>"+nodeInfo.getActionIDsString()+"</Font><BR><BR>";
+    			value += "<B>Probability:</B> "+colorHML(nodeInfo.getProbability());
+				value +="<B>Difficulty:</B> "+colorHML(nodeInfo.getDifficulty());
+				value +="<B>Impact:</B> "+colorHML(nodeInfo.getImpact());
+				
+				if (nodeInfo.getdesctiptionText() ==null || nodeInfo.getdesctiptionText().isEmpty())
+					value +="<B>Description:</B><BR> Not Provided.</HTML>";
+				else
+					value +="<B>Description: </B><BR><PRE>"+
+							nodeInfo.getdesctiptionText()+"</PRE></HTML>";
+    			infoEditorPane.setText(value);
+    			
     		}
     	}
 
@@ -1516,9 +1560,9 @@ public class RootCause extends JFrame implements ActionListener {
 					fireTableCellUpdated(row, col);
 					break;
 
-			case 6: actionList.elementAt(row).setStatus((boolean) value? 1: 0);
-					fireTableCellUpdated(row, col);
-					break;
+//			case 6: actionList.elementAt(row).setStatus((boolean) value? 1: 0);
+//					fireTableCellUpdated(row, col);
+//					break;
 			default : ;
 			}
 

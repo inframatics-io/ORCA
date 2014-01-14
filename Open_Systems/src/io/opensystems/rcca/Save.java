@@ -79,7 +79,7 @@ public class Save {
 			value = indent + "<Node>" + 
 					"<Name>"+xmlFilter(nodeInfo.getName()) +"</Name>"+ 
 					"<ID>"+nodeInfo.getId()+"</ID>"+
-					"<ACTIONS>"+nodeInfo.getActionIDsString()+"</ACTIONS>" +  
+					"<Actions>"+nodeInfo.getActionIDsString()+"</Actions>" +  
 					"<Description>"+ xmlFilter(nodeInfo.getdesctiptionText())+"</Description>" +
 					"<Probability>"+ nodeInfo.getProbability()+ "</Probability>"+
 					"<Difficulty>"+ nodeInfo.getDifficulty()+ "</Difficulty>"+
