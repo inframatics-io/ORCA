@@ -102,13 +102,14 @@ public class Save {
 
 	// converting Entity References
 	private String xmlFilter(String st){
-		if (st!=null){
+		if (st!=null && !st.isEmpty()){
 			st=st.replace("<","&lt;");
 			st=st.replace(">","&gt;");
 			st=st.replace("&","&amp;");
 			st=st.replace("'","&apos;");
-		}
-		return st;    
+			return st;
+		}else
+			return "";    
 	}
 	
 	/**

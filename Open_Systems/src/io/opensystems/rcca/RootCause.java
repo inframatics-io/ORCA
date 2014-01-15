@@ -264,7 +264,7 @@ public class RootCause extends JFrame implements ActionListener {
 				Open openFile = new Open(m_currentFile);
 				treePanel = new DynamicTree(openFile.rootName,textFont);
 				newRootCauseFrame(false);
-				openFile.doXMLparse(treePanel);
+				openFile.parseXMLRootCause(treePanel);
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				ableToSave=true;
 			}

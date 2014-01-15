@@ -27,7 +27,6 @@ import java.io.FileReader;
 import java.util.Vector;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-
 import javax.xml.parsers.DocumentBuilder; 
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -52,13 +51,8 @@ public class Open {
     private StringBuffer strBuffer;
 	public String rootName;
 	public DynamicTree m_treePanel;
-	private DefaultMutableTreeNode c_category;
-	private DefaultMutableTreeNode c_group;
-//	private Vector notProcessedYet = new Vector();
-//	private int AttributeIDCounter, GroupIDCounter, CatagoryIDCounter;
-	
-    
-	
+	private String rcString;
+
 	public Open(File openf){    
         strBuffer=new StringBuffer(10000);
         String temp=null;
@@ -73,8 +67,8 @@ public class Open {
     		    System.out.println("Error in opening file "+e);
     	}
         try{
-            Vector v_rootName=xmlParser(strBuffer.toString(),"Root-Name");
-            rootName=(String) v_rootName.elementAt(0);
+            rootName=returnFirstElement(strBuffer.toString(),"Root-Name");
+            
         }
         catch(Exception e){
             System.out.println(" Error with the  xml Parser "+e);
@@ -82,191 +76,74 @@ public class Open {
 	}
 	
 	
-    public void doXMLparse(DynamicTree m_TP){
+    public void parseXMLRootCause(DynamicTree m_TP){
         m_treePanel=m_TP;
         try {
-            Vector m_categories=xmlParser(strBuffer.toString(),"Category");
-            addCategories(m_categories);
+
+        	searchForNode(45,m_TP.rootNode);
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
     }
-    private void addCategories(Vector v_category){
-        DataObject nodeInfo;
-        for(int i=0; i<v_category.size();++i){
-           try {
-            String nameOfCategory =returnFirstElement((String)v_category.elementAt(i),"Name");
-            String IDOfCategory   =returnFirstElement((String)v_category.elementAt(i),"ID");
-            //String TRLOfCategory  =returnFirstElement((String)v_category.elementAt(i),"TRL");
-            String DescriptionOfCategory =returnFirstElement((String)v_category.elementAt(i),"Description");
-            String reference_URL =returnFirstElement((String)v_category.elementAt(i),"Reference");
-            
-            
+    private int searchForNode(int sI,DefaultMutableTreeNode parent){
+    	String openTag="<Node>";
+    	String closeTag="</Node>";
+    	//    			walk through the strBuffer search for openTag 
+		// if openTag found mark and march if another openTage was found
+		// create a sub string process the data to a node
+		// add it to the tree 
+		// call it self as a parent
+    	int i;
+    	for(i=sI; i<=strBuffer.toString().length()-closeTag.length();i++){
+    		if (strBuffer.toString().regionMatches(sI, openTag, 0, openTag.length())){
+    			DataObject nodeInfo=processNode(sI, i);
+    			DefaultMutableTreeNode child =m_treePanel.addObject(parent,nodeInfo);
+    			i=searchForNode(i+openTag.length(),child);
+    		}else if(strBuffer.toString().regionMatches(i, closeTag, 0, closeTag.length())){
+    			DataObject nodeInfo=processNode(sI, i);
+    			m_treePanel.addObject(parent,nodeInfo);
+    			break;
+    		}
+    	}
+    	return i;
+    }
+    private DataObject processNode(int startIndex, int endIndex){
+    	String str =strBuffer.toString().substring(startIndex, endIndex);
+    	DataObject nodeInfo= new DataObject(0,"UNABLE TO READ");
+	
+    	try {
+			String nameOfAttribute        =returnFirstElement(str,"Name");
+			String IDOfAttribute          =returnFirstElement(str,"ID");
+			String DescriptionOfAttribute =returnFirstElement(str,"Description");
+			String reference_URL 		  =returnFirstElement(str,"Reference");
+			String str_selected       =returnFirstElement(str,"Selected");
 
-            int intID=Integer.parseInt(IDOfCategory);
-           // m_treePanel.catigoryIdCounter=intID;
-           // int intTRL=Integer.parseInt(TRLOfCategory);
-        
-            
-            nodeInfo =new DataObject(intID ,nameOfCategory);
-            nodeInfo.setDescription(xmlFilter(DescriptionOfCategory));
-            nodeInfo.setReferenceURL(reference_URL);
-            nodeInfo.setProbability(returnFirstElement((String)v_category.elementAt(i),"Probability"));
-            nodeInfo.setDifficulty(returnFirstElement((String)v_category.elementAt(i),"Difficulty"));
-            nodeInfo.setImpact(returnFirstElement((String)v_category.elementAt(i),"Impact"));
-            
-            c_category=m_treePanel.addObject(nodeInfo);
-            Vector v_groups=xmlParser((String)v_category.elementAt(i),"Group");
-            addGroups(v_groups);
-           
-           } catch (Exception e) {
-	            // TODO Auto-generated catch block
-	            e.printStackTrace();
-	       }
-           
-        }
-    }
-     
-    private void addGroups(Vector v_group){
-        DataObject nodeInfo;
-        for(int i=0; i<v_group.size();++i){
-           try {
-            String nameOfGroup =returnFirstElement((String)v_group.elementAt(i),"Name");
-            String IDOfGroup  =returnFirstElement((String)v_group.elementAt(i),"ID");
-            //String TRLOfGroup  =returnFirstElement((String)v_group.elementAt(i),"TRL");
-            String DescriptionOfGroup =returnFirstElement((String)v_group.elementAt(i),"Description");
-            String reference_URL =returnFirstElement((String)v_group.elementAt(i),"Reference");
+			int intID=Integer.parseInt(IDOfAttribute);
+			Boolean selected =Boolean.valueOf(str_selected);
 
-            int intID=Integer.parseInt(IDOfGroup);
-            //m_treePanel.groupIdCounter=intID;
-            //int intTRL=Integer.parseInt(TRLOfGroup);
-        
-            
-            nodeInfo =new DataObject(intID ,nameOfGroup);
-            nodeInfo.setDescription(xmlFilter(DescriptionOfGroup));
-            nodeInfo.setReferenceURL(reference_URL);
-            nodeInfo.setProbability(returnFirstElement((String)v_group.elementAt(i),"Probability"));
-            nodeInfo.setDifficulty(returnFirstElement((String)v_group.elementAt(i),"Difficulty"));
-            nodeInfo.setImpact(returnFirstElement((String)v_group.elementAt(i),"Impact"));
-            c_group=m_treePanel.addObject(c_category,nodeInfo);
-            Vector v_attributes=xmlParser((String)v_group.elementAt(i),"Attribute");
-            addAttributes(v_attributes);
-           
-           } catch (Exception e) {
-	            // TODO Auto-generated catch block
-	            e.printStackTrace();
-	       }
-           
-        }        
+			nodeInfo = new DataObject(intID ,nameOfAttribute);
+			nodeInfo.myCheckBox.setSelected(selected.booleanValue());
+			nodeInfo.setDescription(xmlFilter(DescriptionOfAttribute));
+			nodeInfo.setReferenceURL(reference_URL);
+			nodeInfo.setProbability(returnFirstElement(str,"Probability"));
+			nodeInfo.setDifficulty(returnFirstElement(str,"Difficulty"));
+			nodeInfo.setImpact(returnFirstElement(str,"Impact"));
+		} catch (NumberFormatException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+         
+         return nodeInfo;
     }
-   
-    private void addAttributes(Vector v_attribute){
-        DataObject nodeInfo;
-        for(int i=0; i<v_attribute.size();++i){
-           try {
-            String nameOfAttribute        =returnFirstElement((String)v_attribute.elementAt(i),"Name");
-            String IDOfAttribute          =returnFirstElement((String)v_attribute.elementAt(i),"ID");
-           // String TRLOfAttribute  		  =returnFirstElement((String)v_attribute.elementAt(i),"TRL");
-            String DescriptionOfAttribute =returnFirstElement((String)v_attribute.elementAt(i),"Description");
-            String reference_URL 		  =returnFirstElement((String)v_attribute.elementAt(i),"Reference");
-            String str_selected       =returnFirstElement((String)v_attribute.elementAt(i),"Selected");
-           
-            int intID=Integer.parseInt(IDOfAttribute);
-            //m_treePanel.attributIdCounter=intID;
-            //int intTRL=Integer.parseInt(TRLOfAttribute);
-            Boolean selected =Boolean.valueOf(str_selected);
-            
-            nodeInfo =new DataObject(intID ,nameOfAttribute);
-            nodeInfo.myCheckBox.setSelected(selected.booleanValue());
-            nodeInfo.setDescription(xmlFilter(DescriptionOfAttribute));
-            nodeInfo.setReferenceURL(reference_URL);
-            nodeInfo.setProbability(returnFirstElement((String)v_attribute.elementAt(i),"Probability"));
-            nodeInfo.setDifficulty(returnFirstElement((String)v_attribute.elementAt(i),"Difficulty"));
-            nodeInfo.setImpact(returnFirstElement((String)v_attribute.elementAt(i),"Impact"));
-            
-            String s_Incompatibility=returnFirstElement((String) v_attribute.elementAt(i),"Incompatible");
-            linkActionItems(s_Incompatibility,nodeInfo);
-           } catch (Exception e) {
-	            // TODO Auto-generated catch block
-	            e.printStackTrace();
-	       }
-           
-        }           
-    }
-    // delte doCompatibility
-    public void linkActionItems(String s_Incompatibility,DataObject nodeInfo){
-//    	try{
-//	    	Vector v_Incompatibility=xmlParser(s_Incompatibility,"Name");
-//	    	for(int i=0;i<m_treePanel.newOPTIONNodesAdded.size();++i){    
-//    			DataObject nodeTemp=(DataObject)m_treePanel.newOPTIONNodesAdded.get(i);
-//    			boolean found=false;
-//    			for(int j=0;j<v_Incompatibility.size();++j){
-//    	    	    String nameOfAIncompNode=(String)v_Incompatibility.get(j);
-//    	    	    if(nameOfAIncompNode.equals(nodeTemp.getName())){	
-//            			found=true;
-//            			break;
-//            		}    
-//    			}
-//    			if(found){
-//        			nodeInfo.disallowVector.add(nodeTemp);
-//        			nodeTemp.disallowVector.add(nodeInfo);
-//    			}else{
-//    			    nodeInfo.allowVector.add(nodeTemp);        
-//			        nodeTemp.allowVector.add(nodeInfo);
-//    			}
-//        	}
-//	        m_treePanel.addObject(c_group,nodeInfo);
-//    	}catch (Exception e){
-//    		System.out.println(e);
-//    	}
-    }
-	private Vector xmlParser(String xml,String attribute) throws Exception
-	{
-	    String xmlString = new String(xml);
-		Vector v = new Vector();
-		String beginTagToSearch = "<" + attribute + ">";
-		String endTagToSearch = "</" + attribute + ">";
-		
-		// Look for the first occurrence of begin tag
-		int index = xmlString.indexOf(beginTagToSearch);
-		while(index != -1)
-		{
-            // Look for end tag
-			// DOES NOT HANDLE <section Blah />
-			int lastIndex = xmlString.indexOf(endTagToSearch);
-			// Make sure there is no error
-			if((lastIndex == -1) || (lastIndex < index))
-				{throw new Exception("Parsing Error");}
-			
-			// extract the substring
-			String subs = xmlString.substring((index + beginTagToSearch.length()), lastIndex) ;
-            // converting Entity References
-			subs =xmlFilter(subs);
-			// Add it to our list of tag values
-			v.addElement(subs);
-            // Try it again. Narrow down to the part of string which is not 
-            // processed yet.
-			try
-			{
-				xmlString = xmlString.substring(lastIndex + endTagToSearch.length());
-			}
-			catch(Exception e)
-			{
-				xmlString = "";
-			}
-             // Start over again by searching the first occurrence of the begin tag 
-             // to continue the loop.
-			index = xmlString.indexOf(beginTagToSearch);
-		}		
-		
-		return v;	
-	}
+
 	private String returnFirstElement(String xml,String attribute) throws Exception
 	{
 	    String xmlString = new String(xml);
-		Vector v = new Vector();
 		String beginTagToSearch = "<" + attribute + ">";
 		String endTagToSearch = "</" + attribute + ">";
 		
