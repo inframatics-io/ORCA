@@ -24,17 +24,8 @@ package io.opensystems.rcca;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.util.Vector;
-
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.xml.parsers.DocumentBuilder; 
-import javax.xml.parsers.DocumentBuilderFactory;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.DocumentType;
-import org.w3c.dom.Entity;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
 
 
 
@@ -51,8 +42,8 @@ public class Open {
     private StringBuffer strBuffer;
 	public String rootName;
 	public DynamicTree m_treePanel;
-	private String rcString;
-
+	private boolean previousTagWasOpen=false;
+	
 	public Open(File openf){    
         strBuffer=new StringBuffer(10000);
         String temp=null;
@@ -78,9 +69,14 @@ public class Open {
 	
     public void parseXMLRootCause(DynamicTree m_TP){
         m_treePanel=m_TP;
+//        String openTag="<Node>";
+    	String closeTag="</Node>";
         try {
-
-        	searchForNode(45,m_TP.rootNode);
+        	for (int iGlobal=45; iGlobal<=strBuffer.toString().length()-closeTag.length();iGlobal++){
+        		iGlobal=searchForNode(iGlobal,m_TP.rootNode);
+        		previousTagWasOpen=false;
+        	}
+        	
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
@@ -90,22 +86,36 @@ public class Open {
     private int searchForNode(int sI,DefaultMutableTreeNode parent){
     	String openTag="<Node>";
     	String closeTag="</Node>";
-    	//    			walk through the strBuffer search for openTag 
-		// if openTag found mark and march if another openTage was found
-		// create a sub string process the data to a node
-		// add it to the tree 
-		// call it self as a parent
+    	DefaultMutableTreeNode child;
+    	
     	int i;
     	for(i=sI; i<=strBuffer.toString().length()-closeTag.length();i++){
-    		if (strBuffer.toString().regionMatches(sI, openTag, 0, openTag.length())){
-    			DataObject nodeInfo=processNode(sI, i);
-    			DefaultMutableTreeNode child =m_treePanel.addObject(parent,nodeInfo);
-    			i=searchForNode(i+openTag.length(),child);
+    		if (strBuffer.toString().regionMatches(i, openTag, 0, openTag.length())){
+    			if (previousTagWasOpen){
+    				DataObject nodeInfo=processNode(sI, i);
+    				if (parent.isRoot())
+    					child =m_treePanel.addObject(nodeInfo);
+    				else
+    					child =m_treePanel.addObject(parent,nodeInfo);
+    				
+    				i=sI=searchForNode(i+1,child);
+    			}else{
+    				previousTagWasOpen=true;
+    				sI=i;// mark the start of subSting
+    			}
+    				
     		}else if(strBuffer.toString().regionMatches(i, closeTag, 0, closeTag.length())){
-    			DataObject nodeInfo=processNode(sI, i);
-    			m_treePanel.addObject(parent,nodeInfo);
-    			break;
-    		}
+    			if (previousTagWasOpen){
+    				DataObject nodeInfo=processNode(sI, i);
+    				if (parent.isRoot()) 
+    					m_treePanel.addObject(nodeInfo);
+    				else
+    					m_treePanel.addObject(parent,nodeInfo);
+    				previousTagWasOpen=false;
+    			} else
+    				return i;
+    		}else
+    			continue;
     	}
     	return i;
     }
