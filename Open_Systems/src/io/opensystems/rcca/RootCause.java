@@ -1499,7 +1499,10 @@ public class RootCause extends JFrame implements ActionListener {
 		}
 
 		public int getRowCount() {
-			return actionList.size();
+			if (actionList !=null)
+				return actionList.size();
+			else
+				return 0;
 		}
 
 		public String getColumnName(int col) {

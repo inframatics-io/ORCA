@@ -119,14 +119,14 @@ public class Save {
 	private void printActions(){
 		String value;
 		for(int i=0; i<aList.size();++i){
-			value ="<Action>"+"<ID>"+aList.elementAt(i).getID()+"</ID>"+
+			value ="<Task>"+"<ID>"+aList.elementAt(i).getID()+"</ID>"+
 					"<Owner>"+aList.elementAt(i).getOwner()+"</Owner>"+
 					"<Description>"+aList.elementAt(i).getDescription()+"</Description>"+
 					"<Start-Date>"+aList.elementAt(i).getStartDate()+"</Start-Date>"+
 					"<Due-Date>"+aList.elementAt(i).getDueDate()+"</Due-Date>"+
 					"<Finish-Date>"+aList.elementAt(i).getEndDate()+"</Finish-Date>"+
 					"<Status>"+aList.elementAt(i).getStatus()+"</Status>"+
-					"</Action>";
+					"</Task>";
 			p.println(value);
 		}
 	}

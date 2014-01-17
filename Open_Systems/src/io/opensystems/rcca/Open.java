@@ -24,6 +24,8 @@ package io.opensystems.rcca;
 import java.io.File;
 import java.io.BufferedReader;
 import java.io.FileReader;
+import java.util.StringTokenizer;
+
 import javax.swing.tree.DefaultMutableTreeNode;
 
 
@@ -32,18 +34,20 @@ import javax.swing.tree.DefaultMutableTreeNode;
 /**
  * @author Payman Touliat
  *
- * TODO To change the template for this generated type comment go to
+ * TODO  change the template for this generated type comment go to
  * Window - Preferences - Java - Code Style - Code Templates
  */
 public class Open {
     
      // declare a file output object
-    private BufferedReader reader; // declare
-    private StringBuffer strBuffer;
 	public String rootName;
 	public DynamicTree m_treePanel;
+	public String openTag="<Node>";
+	public String closeTag="</Node>";
 	private boolean previousTagWasOpen=false;
-	
+    private BufferedReader reader; // declare
+    private StringBuffer strBuffer;
+    
 	public Open(File openf){    
         strBuffer=new StringBuffer(10000);
         String temp=null;
@@ -59,18 +63,19 @@ public class Open {
     	}
         try{
             rootName=returnFirstElement(strBuffer.toString(),"Root-Name");
-            
         }
         catch(Exception e){
             System.out.println(" Error with the  xml Parser "+e);
         }
 	}
 	
-	
+	/**
+	 * This method parses the XML data for Root Cause Tree Nodes
+	 * It can be called only after {@link #Open(File)} constructor has been called. 
+	 * @param m_TP is the Tree Panel which will hold the results
+	 */
     public void parseXMLRootCause(DynamicTree m_TP){
         m_treePanel=m_TP;
-//        String openTag="<Node>";
-    	String closeTag="</Node>";
         try {
         	for (int iGlobal=45; iGlobal<=strBuffer.toString().length()-closeTag.length();iGlobal++){
         		iGlobal=searchForNode(iGlobal,m_TP.rootNode);
@@ -83,9 +88,26 @@ public class Open {
         }
 
     }
+    /**
+     * This method parses the XML data for ActionItem IDs associated 
+     * with the Root Cause Nodes.
+     * It can be called only after {@link #Open(File)} constructor has been called.
+     * @param a ActionItems that contains the Tasks
+     */
+    public void parseXMLActions(ActionItems a){
+//    	int i=strBuffer.toString().indexOf("<Action-Items>");
+//    	int j=strBuffer.toString().indexOf("</Action-Items>");
+//    	Task actionInfo;
+    	
+    	
+    }
+    /**
+     * 
+     * @param sI
+     * @param parent
+     * @return
+     */
     private int searchForNode(int sI,DefaultMutableTreeNode parent){
-    	String openTag="<Node>";
-    	String closeTag="</Node>";
     	DefaultMutableTreeNode child;
     	
     	int i;
@@ -119,6 +141,12 @@ public class Open {
     	}
     	return i;
     }
+    /**
+     * This method reads the Node data in to an DataObjet 
+     * @param startIndex
+     * @param endIndex
+     * @return
+     */
     private DataObject processNode(int startIndex, int endIndex){
     	String str =strBuffer.toString().substring(startIndex, endIndex);
     	DataObject nodeInfo= new DataObject(0,"UNABLE TO READ");
@@ -126,8 +154,7 @@ public class Open {
     	try {
 			String nameOfAttribute        =returnFirstElement(str,"Name");
 			String IDOfAttribute          =returnFirstElement(str,"ID");
-			String DescriptionOfAttribute =returnFirstElement(str,"Description");
-			String reference_URL 		  =returnFirstElement(str,"Reference");
+			String actions =returnFirstElement(str,"Actions");
 			String str_selected       =returnFirstElement(str,"Selected");
 
 			int intID=Integer.parseInt(IDOfAttribute);
@@ -135,11 +162,18 @@ public class Open {
 
 			nodeInfo = new DataObject(intID ,nameOfAttribute);
 			nodeInfo.myCheckBox.setSelected(selected.booleanValue());
-			nodeInfo.setDescription(xmlFilter(DescriptionOfAttribute));
-			nodeInfo.setReferenceURL(reference_URL);
+			nodeInfo.setDescription(returnFirstElement(str,"Description"));
+			nodeInfo.setReferenceURL(returnFirstElement(str,"Reference"));
 			nodeInfo.setProbability(returnFirstElement(str,"Probability"));
 			nodeInfo.setDifficulty(returnFirstElement(str,"Difficulty"));
 			nodeInfo.setImpact(returnFirstElement(str,"Impact"));
+			
+			// Tokenizing the Action items into int
+			StringTokenizer tokenizer= new StringTokenizer(actions,",");
+			while (tokenizer.hasMoreTokens()){
+		    	nodeInfo.addActionID(Integer.parseInt(tokenizer.nextToken()));
+			}
+			
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -175,7 +209,8 @@ public class Open {
 			// Add it to our list of tag values
 			return subs;    
 		}		
-		System.out.println("not found "+ attribute);
+		System.out.println("Unable to Find XML Attribute "+ 
+				beginTagToSearch +" "+endTagToSearch);
 		return "";
 	
 	}

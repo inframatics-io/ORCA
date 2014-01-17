@@ -109,7 +109,8 @@ public class DataObject {
 		return s;
 	}
 	public void addActionID(Integer id){
-		if (myActionIDs.indexOf(id) <0){
+		// making sure the Action ID is not duplicate
+		if (myActionIDs.indexOf(id) <0){ 
 			myActionIDs.add(id);
 			Collections.sort(myActionIDs);
 		}
