@@ -41,6 +41,9 @@ public void add(String owner, String description, String start, String due, Stri
 	 Task e= new Task(startingIDIndex++, owner, description, start, due, end, status); 
 	actions.add(e);
 }
+public void add(Task e){
+	actions.add(e);
+}
 
 /**
  * 

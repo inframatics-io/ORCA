@@ -17,8 +17,17 @@ public final class Task {
  public String endDate; // date the actionItem was completed.
  public int Status; // should change to Completed Uncompleted suspended
  private int ActionID;
-
-public Task(int actionID, String owner, String description, String start,
+ /**
+  *  Constructor for Task 
+  * @param actionID   Action or Task ID
+  * @param owner   Owenre of the Task
+  * @param description   of the Task
+  * @param start   Date for the Task
+  * @param due   Data for the task 
+  * @param end   Date Task was completed
+  * @param status COMPLETE=1, UNCOMPLETE=0, DUE =-1, OVERDUE=-2;
+  */
+ public Task(int actionID, String owner, String description, String start,
 		String due, String end, int status) {
 	super();
 	ActionID = actionID;

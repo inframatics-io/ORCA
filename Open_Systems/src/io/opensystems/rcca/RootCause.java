@@ -47,6 +47,9 @@ import java.io.File;
 
 
 
+
+
+
 //import java.util.Enumeration;
 //import java.net.*;
 //import java.util.Hashtable;
@@ -75,6 +78,10 @@ import javax.swing.tree.DefaultTreeModel;
 
 
 
+
+
+
+import Resource.ResourceLoader;
 import layouts.*;
 
 
@@ -265,6 +272,14 @@ public class RootCause extends JFrame implements ActionListener {
 				treePanel = new DynamicTree(openFile.rootName,textFont);
 				newRootCauseFrame(false);
 				openFile.parseXMLRootCause(treePanel);
+				actionList = new ActionItems(newActionItemID,20);
+				try {
+					openFile.parseXMLAction(actionList);
+				} catch (Exception e1) {
+					// TODO Auto-generated catch block
+					System.out.println("Action Items wasn't imported");
+					e1.printStackTrace();
+				}
 				setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
 				ableToSave=true;
 			}
@@ -846,6 +861,7 @@ public class RootCause extends JFrame implements ActionListener {
 		spRight.setContinuousLayout(true);
 		spRight.setLayout(new BorderLayout());
 		spRight.setBackground(Color.white);
+		spRight.setBackground(RootCauseColors[0]);
 
 		JSplitPane sp = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,spLeft,spRight);
 		sp.setDividerSize(8);
@@ -885,13 +901,15 @@ public class RootCause extends JFrame implements ActionListener {
 		drawRootCauseTree(treeModel,treePanel.rootNode,numDummyLabel,leftPanel, false);
 		
 	    rightBorder = new JPanel(new BorderLayout());
+	    rightBorder.setBackground(Color.decode("#EFEFEF"));
 ////	    enableEvents(ComponentEvent.)
-		JPanel lowerPanel =new JPanel(/*new ParagraphLayout()*/);
-		lowerPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"INFORMATION:"));
+		JPanel topPanel =new JPanel(/*new ParagraphLayout()*/);
+		topPanel.setBorder(new TitledBorder(new SoftBevelBorder(SoftBevelBorder.RAISED),"INFORMATION:"));
 		// Information panel is created
 		infoEditorPane = new JEditorPane();
 		infoEditorPane.setContentType("text/html");
 		infoEditorPane.setEditable(false); 
+		infoEditorPane.setBackground(Color.decode("#EFEFEF"));
 //		infoTextField = new JTextArea(" ",15,16);// make it dynamic
 //		infoTextField.setLineWrap(true);
 		//descriptionTextField.addKeyListener(akeyListener);
@@ -902,8 +920,8 @@ public class RootCause extends JFrame implements ActionListener {
 		//scrollPane.setMinimumSize(new Dimension(10, 10)); 
 //		scrollPane.setMaximumSize(new Dimension(170, 250));
 		
-		lowerPanel.add(scrollPane/*,ParagraphLayout.NEW_PARAGRAPH*/);
-		rightBorder.add(lowerPanel,BorderLayout.SOUTH);
+		topPanel.add(scrollPane/*,ParagraphLayout.NEW_PARAGRAPH*/);
+		rightBorder.add(topPanel,BorderLayout.SOUTH);
 	    spRight.add(rightBorder,BorderLayout.NORTH);
 		jifDynamicFaultMatrixFrame.add(buttonPanel, BorderLayout.SOUTH);
 		jifDynamicFaultMatrixFrame.add(sp, BorderLayout.CENTER);
@@ -1096,8 +1114,8 @@ public class RootCause extends JFrame implements ActionListener {
     }
 	/**
 	 * This function searches the tree to see if the name already exists.
-	 * if name and ID match 
-	 * it may be unnecessary 
+	 * if name exist then the name and id must match
+	 * if name does not exist then it is a new name;
 	 * @param name
 	 * @param sentID
 	 * @return true if the name and ID match otherwise false
@@ -1109,7 +1127,7 @@ public class RootCause extends JFrame implements ActionListener {
 		if (nodeInfo !=null)
 			return nodeInfo.getId() == sentID;
 		else
-			return false;
+			return true;
 	}
 
     public void updateDynamicMorphFrame(){
@@ -1299,7 +1317,7 @@ public class RootCause extends JFrame implements ActionListener {
     	if (s.equals(DataObject.HIGH))
 			return "<Font color=red>High</Font><BR>";
 		else if(s.equals(DataObject.MID))
-			return "<Font color=orange>Mid</Font><BR>";
+			return "<Font color=yellow>Mid</Font><BR>";
 		else if(s.equals(DataObject.LOW))
 			return "<Font color=green>Low</Font><BR>";
 		else
@@ -1592,7 +1610,15 @@ public class RootCause extends JFrame implements ActionListener {
 class AboutBox extends JDialog {
 	public AboutBox(Frame owner) {
 		super(owner, "About", true);
-		JLabel lbl = new JLabel(new ImageIcon("images/opensys.png"));
+		ImageIcon openSystemIcon;
+		JLabel lbl;
+		
+		if (ResourceLoader.getImage("opensys.png") != null){
+			openSystemIcon =new ImageIcon(ResourceLoader.getImage("opensys.png"));
+			lbl = new JLabel(openSystemIcon);	
+		}else
+			lbl = new JLabel("openSystem.io");
+		
 		JPanel p = new JPanel();
 		Border b1 = new BevelBorder(BevelBorder.LOWERED);
 		Border b2 = new EmptyBorder(5, 5, 5, 5);
