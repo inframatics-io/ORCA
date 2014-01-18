@@ -88,19 +88,7 @@ public class Open {
         }
 
     }
-    /**
-     * This method parses the XML data for ActionItem IDs associated 
-     * with the Root Cause Nodes.
-     * It can be called only after {@link #Open(File)} constructor has been called.
-     * @param a ActionItems that contains the Tasks
-     */
-    public void parseXMLActions(ActionItems a){
-//    	int i=strBuffer.toString().indexOf("<Action-Items>");
-//    	int j=strBuffer.toString().indexOf("</Action-Items>");
-//    	Task actionInfo;
-    	
-    	
-    }
+
     /**
      * 
      * @param sI
@@ -185,6 +173,81 @@ public class Open {
          return nodeInfo;
     }
 
+    /**
+     * This method parses the XML data for ActionItem IDs associated 
+     * with the Root Cause Nodes.
+     * It can be called only after {@link #Open(File)} constructor has been called.
+     * @param a ActionItems that contains the Tasks
+     */
+    public void parseXMLAction(ActionItems a) throws Exception
+    {
+    	String beginTagToSearch = "<" + "Task"+ ">";
+    	String endTagToSearch = "</" + "Task"+ ">";
+
+    	// Look for the first occurrence of begin tag
+    	int index = strBuffer.toString().indexOf("<Action-Items>");
+    	int indexEnd = strBuffer.toString().indexOf("</Action-Items>");
+    	// TODO: Fix this later
+    	if (index == -1){
+    		System.out.print("didn't find any Task");
+    	}else{
+    		String xmlString = strBuffer.toString().substring(index,indexEnd);
+    		
+    		while(index != -1 && !xmlString.isEmpty())
+    		{
+    			index = xmlString.indexOf(beginTagToSearch);
+    			// Look for end tag
+    			// DOES NOT HANDLE <section Blah />
+    			int lastIndex = xmlString.indexOf(endTagToSearch);
+    			// Make sure there is no error
+    			if((lastIndex == -1) || (lastIndex < index))
+    			{throw new Exception("Parsing Error");}
+
+
+    			// Add it to our list of tag values
+    			Task temp = readTask(xmlString.substring(index, lastIndex));
+    			a.add(temp);
+    			// Try it again. Narrow down to the part of string which is not 
+    			// processed yet.
+    			try
+    			{
+    				xmlString = xmlString.substring(lastIndex + endTagToSearch.length());
+    			}
+    			catch(Exception e)
+    			{
+    				xmlString = "String Errot: Open Method";
+    			}
+    			// Start over again by searching the first occurrence of the begin tag 
+    			// to continue the loop.
+//    			index = xmlString.indexOf(beginTagToSearch);
+    		}
+    	}		
+
+    }
+    private Task readTask(String str){
+    	// extract the substring
+    	// converting Entity References
+    	str =xmlFilter(str);
+    	Task a = new Task(1001,"Team","UNABLE TO READ TASK","1/1/1","1/1/1","1/1/1",-1);
+    	try{
+    		String id = returnFirstElement(str,"ID");
+    		int intID=Integer.parseInt(id);
+    		String owner =returnFirstElement(str,"Owner");
+    		String description =returnFirstElement(str,"Description");
+    		String start =returnFirstElement(str,"Start-Date");
+    		String due =returnFirstElement(str,"Due-Date");
+    		String end =returnFirstElement(str,"Finish-Date");
+//    		String status =returnFirstElement(str,"Status");
+    		
+    		a = new Task(intID,owner,description,start,due,end,0);
+    		
+    	}catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+    	}    
+    	
+    	return a; 
+    }
 	private String returnFirstElement(String xml,String attribute) throws Exception
 	{
 	    String xmlString = new String(xml);
